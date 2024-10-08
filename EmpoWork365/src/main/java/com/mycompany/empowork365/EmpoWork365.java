@@ -11,6 +11,6 @@ package com.mycompany.empowork365;
 public class EmpoWork365 {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        System.out.println("Hello!");
     }
 }
