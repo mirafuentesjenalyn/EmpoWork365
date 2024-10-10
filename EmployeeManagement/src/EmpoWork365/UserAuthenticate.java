@@ -9,9 +9,9 @@ public class UserAuthenticate {
     private String password;
     private String gender;
     private String jobtitle;
-    private String departmentName; // Changed to hold department name
-    private String roleName;       // Changed to hold role name
-    private String imagepath; 
+    private String departmentName; 
+    private String roleName;       
+    private String imagepath;
 
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
 
@@ -29,18 +29,16 @@ public class UserAuthenticate {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.password = hashPassword(password); // Hash the password
+        this.password = hashPassword(password); 
         this.gender = gender;
         this.jobtitle = jobtitle;
         this.departmentName = departmentName; 
         this.roleName = roleName;               
         this.imagepath = imagepath;
     }
-
+   
     // Password hashing method (using BCrypt as an example)
     private String hashPassword(String password) {
-        // Implement password hashing logic here
-        // For example: return BCrypt.hashpw(password, BCrypt.gensalt());
         return password; // Placeholder
     }
 
@@ -85,7 +83,7 @@ public class UserAuthenticate {
     public String getImagepath() {
         return imagepath;
     }
-
+    
     @Override
     public String toString() {
         return "UserAuthenticate{" +
