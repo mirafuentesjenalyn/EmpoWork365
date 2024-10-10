@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -176,21 +178,21 @@ public final class SignUp extends javax.swing.JFrame {
     }
 
 
-private List<Role> getRoles() {
-    List<Role> roles = new ArrayList<>();
-    String selectRolesSQL = "SELECT fld_role_id, fld_role_name FROM tbl_roles"; // Update column names
-    try (PreparedStatement pstmt = connection.prepareStatement(selectRolesSQL);
-         ResultSet rs = pstmt.executeQuery()) {
-        while (rs.next()) {
-            int roleId = rs.getInt("fld_role_id"); // Use fld_role_id
-            String roleName = rs.getString("fld_role_name"); // Use fld_role_name
-            roles.add(new Role(roleId, roleName));
+    private List<Role> getRoles() {
+        List<Role> roles = new ArrayList<>();
+        String selectRolesSQL = "SELECT fld_role_id, fld_role_name FROM tbl_roles"; // Update column names
+        try (PreparedStatement pstmt = connection.prepareStatement(selectRolesSQL);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                int roleId = rs.getInt("fld_role_id"); // Use fld_role_id
+                String roleName = rs.getString("fld_role_name"); // Use fld_role_name
+                roles.add(new Role(roleId, roleName));
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error fetching roles: " + ex.getMessage());
         }
-    } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(this, "Error fetching roles: " + ex.getMessage());
+        return roles;
     }
-    return roles;
-}
 
     
     public int getSelectedRoleId() {
@@ -617,50 +619,38 @@ private List<Role> getRoles() {
     }//GEN-LAST:event_passWordActionPerformed
 
     private void btnCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateAccountActionPerformed
-        String firstNameInput = firstName.getText().trim();
-        String lastNameInput = lastName.getText().trim();
-        String emailInput = eMail.getText().trim();
-        String passwordInput = new String(passWord.getPassword()).trim();
-        String jobTitleInput = (String) comboBoxJobTitle.getSelectedItem();
-        String genderInput = (String) comboBoxGender.getSelectedItem();
+       String firstNameInput = firstName.getText().trim();
+       String lastNameInput = lastName.getText().trim();
+       String emailInput = eMail.getText().trim();
+       String passwordInput = new String(passWord.getPassword()).trim();
+       String jobTitleInput = (String) comboBoxJobTitle.getSelectedItem();
+       String genderInput = (String) comboBoxGender.getSelectedItem();
 
-        Department selectedDepartment = (Department) comboBoxDepartment.getSelectedItem(); // Get selected department
-        int departmentId = selectedDepartment != null ? selectedDepartment.getId() : -1; // Use department ID
-        Role selectedRole = (Role) comboBoxRole.getSelectedItem(); // Get selected role
-        int roleId = selectedRole != null ? selectedRole.getRoleId() : -1; // Use role ID
-        String imagePath = addImageToFolder(); // Handle image upload
+       Department selectedDepartment = (Department) comboBoxDepartment.getSelectedItem(); // Get selected department
+       int departmentId = selectedDepartment != null ? selectedDepartment.getId() : -1; // Use department ID
+       Role selectedRole = (Role) comboBoxRole.getSelectedItem(); // Get selected role
+       int roleId = selectedRole != null ? selectedRole.getRoleId() : -1; // Use role ID
+       String imagePath = addImageToFolder(); // Handle image upload
 
-        if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty() || passwordInput.isEmpty() || imagePath == null) {
-            JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
-            return;
-        }
+       // Set the date of employment to the current date if it's empty
+       String dateOfEmployment = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // Use current date in YYYY-MM-DD format
 
-        sqlConnector connector = new sqlConnector();
-        try (Connection conn = connector.createConnection()) {
-            // Insert into tbl_users
-            String insertUserSQL = "INSERT INTO tbl_users (fld_first_name, fld_last_name, fld_email, fld_password, fld_gender, fld_job_title, fld_department_id, fld_role_id, fld_image_path) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(insertUserSQL)) {
-                pstmt.setString(1, firstNameInput);
-                pstmt.setString(2, lastNameInput);
-                pstmt.setString(3, emailInput);
-                pstmt.setString(4, passwordInput);
-                pstmt.setString(5, genderInput);
-                pstmt.setString(6, jobTitleInput);
-                pstmt.setInt(7, departmentId); // Use department ID here
-                pstmt.setInt(8, roleId); // Use role ID here
-                pstmt.setString(9, imagePath);
-                pstmt.executeUpdate();
+       if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty() || passwordInput.isEmpty() || imagePath == null) {
+           JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
+           return;
+       }
 
-                // Additional employee insertion logic can follow here...
+       // Create an instance of SignUpMethod
+       SignUpMethod signUpMethod = new SignUpMethod();
+       boolean accountCreated = signUpMethod.createAccount(firstNameInput, lastNameInput, emailInput, passwordInput, 
+                                                           genderInput, jobTitleInput, departmentId, roleId, 
+                                                           dateOfEmployment, imagePath);
 
-                JOptionPane.showMessageDialog(this, "Account created successfully!");
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error creating account: " + ex.getMessage());
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(SignUp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       if (accountCreated) {
+           JOptionPane.showMessageDialog(this, "Account created successfully!");
+       } else {
+           JOptionPane.showMessageDialog(this, "Error creating account. Please try again.");
+       }
     }//GEN-LAST:event_btnCreateAccountActionPerformed
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
