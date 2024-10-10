@@ -21,14 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -40,6 +39,7 @@ public final class SignUp extends javax.swing.JFrame {
     private String imageLocation;
     private boolean imageSelected = false;
     
+    
 
     /**
      * Creates new form SignUp
@@ -49,23 +49,49 @@ public final class SignUp extends javax.swing.JFrame {
         setTitle("Sign Up");
         initializeConnection();
         populateJobTitles();
-        initializeDepartmentComboBox();
         initializeRoleComboBox(); 
         setupComboBoxes();
+        setupJobTitleComboBox();
+        initializeDepartmentComboBox();
     }
 
         
     private void setupComboBoxes() {
-        comboBoxGender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {
-            "Male", "Female", "Prefer Not To Say"
-        }));
+        populateGenderComboBox();
+    }
 
+    private void populateGenderComboBox() {
+        SwingWorker<Void, String> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                String selectGenderSQL = "SELECT DISTINCT fld_gender FROM tbl_users"; // Adjust table/field as needed
+                List<String> genderList = new ArrayList<>();
+
+                try (PreparedStatement pstmt = connection.prepareStatement(selectGenderSQL);
+                     ResultSet rs = pstmt.executeQuery()) {
+
+                    while (rs.next()) {
+                        String gender = rs.getString("fld_gender");
+                        if (gender != null && !gender.isEmpty()) {
+                            genderList.add(gender);
+                        }
+                    }
+
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error fetching gender values: " + ex.getMessage());
+                }
+
+                comboBoxGender.setModel(new DefaultComboBoxModel<>(genderList.toArray(new String[0])));
+                return null;
+            }
+        };
+        worker.execute();
+    }
+
+    
+    private void setupJobTitleComboBox() {
         comboBoxJobTitle.setModel(new javax.swing.DefaultComboBoxModel<>(jobTitles.toArray(new String[0])));
         comboBoxJobTitle.setEditable(true);
-
-//        comboBoxRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {
-//            "Administrator", "HR Manager", "Department Manager", "Employee"
-//        }));
 
         JTextField jobTitleTextField = (JTextField) comboBoxJobTitle.getEditor().getEditorComponent();
         jobTitleTextField.addKeyListener(new KeyAdapter() {
@@ -77,20 +103,13 @@ public final class SignUp extends javax.swing.JFrame {
                 comboBoxJobTitle.getEditor().setItem(input);  
                 jobTitleTextField.setCaretPosition(input.length());  
             }
-    });
-        
-//        comboBoxDepartment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {
-//            "Engineering & IT Department", "Human Resources (HR) & Administration Department", 
-//            "Finance & Accounting Department", "Sales & Marketing Department", "Operations & Management Department"
-//        }));
-        
-
+        });
     }
     
     private void initializeConnection() {
-        sqlConnector dbConnector = new sqlConnector(); // Create a connector instance
+        sqlConnector dbConnector = new sqlConnector(); 
         try {
-            connection = dbConnector.createConnection(); // Create connection
+            connection = dbConnector.createConnection(); 
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to connect to database.", "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -99,93 +118,104 @@ public final class SignUp extends javax.swing.JFrame {
         
     private void filterJobTitles(JComboBox<String> comboBox, String input) {
         DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) comboBox.getModel();
-        model.removeAllElements();  // Clear existing items in the combo box
+        model.removeAllElements();  
 
-        // Loop through the base job titles and add matching items
         for (String jobTitle : jobTitles) {
             if (jobTitle.toLowerCase().contains(input.toLowerCase())) {
                 model.addElement(jobTitle);
             }
         }
 
-        // Show or hide the combo box dropdown based on matching results
         if (model.getSize() > 0) {
-            comboBox.showPopup();  // Show dropdown if there are matches
+            comboBox.showPopup();  
         } else {
-            comboBox.hidePopup();  // Hide dropdown if no matches are found
+            comboBox.hidePopup(); 
         }
-    }
-
-
-    private static void populateJobTitles() {
-        // Populate job titles from predefined list
-        jobTitles.addAll(Arrays.asList(
-            "Software Engineer", "Frontend Developer", "Backend Developer", "Full Stack Developer",
-            "Data Analyst", "Data Scientist", "System Administrator", "Network Engineer", "DevOps Engineer",
-            "Technical Support Specialist", "IT Manager", "Chief Technology Officer (CTO)", "HR Specialist",
-            "Recruiter", "Training & Development Specialist", "HR Manager", "Office Administrator",
-            "Administrative Assistant", "Chief People Officer (CPO)", "Executive Assistant", "Office Manager",
-            "Receptionist", "Finance Manager", "Accountant", "Payroll Specialist", "Financial Analyst",
-            "Chief Financial Officer (CFO)", "Budget Analyst", "Bookkeeper", "Credit Analyst", "Internal Auditor",
-            "Marketing Specialist", "Digital Marketing Manager", "Content Writer", "Sales Representative",
-            "Sales Manager", "Business Development Manager", "Social Media Manager", "Market Research Analyst",
-            "Public Relations Specialist", "Customer Relationship Manager", "Operations Manager", "Project Manager",
-            "Product Manager", "Logistics Coordinator", "Supply Chain Manager", "Procurement Specialist",
-            "Team Leader", "Operations Analyst", "Chief Operating Officer (COO)", "Security Manager"
-        ));
     }
     
+    private void populateJobTitles() {
+        SwingWorker<Void, String> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                jobTitles.clear(); 
+                String selectJobTitlesSQL = "SELECT fld_job_title FROM tbl_job_titles"; 
+                try (PreparedStatement pstmt = connection.prepareStatement(selectJobTitlesSQL);
+                     ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        String jobTitle = rs.getString("fld_job_title");
+                        publish(jobTitle); 
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error fetching job titles: " + ex.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(List<String> chunks) {
+                jobTitles.addAll(chunks); 
+                comboBoxJobTitle.setModel(new DefaultComboBoxModel<>(jobTitles.toArray(new String[0])));
+            }
+        };
+        worker.execute(); 
+    }
+
+    
     private void initializeDepartmentComboBox() {
-        List<Department> departments = getDepartments(); // Fetch the list of departments
-        DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>(); // Create a new model
+        List<Department> departments = getDepartments(); 
+        DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>(); 
 
-        for (Department dept : departments) {
-            model.addElement(dept); // Add Department object directly
+        for (Department department : departments) {
+            model.addElement(department); 
         }
-            comboBoxDepartment.setModel(model); // Set the model to the comboBoxDepartment
-
+        comboBoxDepartment.setModel(model); 
     }
 
     
     private List<Department> getDepartments() {
-        // Replace with actual data fetching logic
-        return List.of(
-                new Department(1, "Engineering & IT Department"),
-                new Department(2, "Human Resources (HR) & Administration Department"),
-                new Department(3, "Finance & Accounting Department"),
-                new Department(4, "Sales & Marketing Department"),
-                new Department(5, "Operations & Management Department")
-        );
+        List<Department> departments = new ArrayList<>();
+        String selectDepartmentsSQL = "SELECT fld_department_id, fld_department_name FROM tbl_department"; 
+        try (PreparedStatement pstmt = connection.prepareStatement(selectDepartmentsSQL);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("fld_department_id"); 
+                String name = rs.getString("fld_department_name"); 
+                departments.add(new Department(id, name));
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error fetching departments: " + ex.getMessage());
+        }
+        return departments;
     }
-   
+
     public int getSelectedDepartmentId() {
         Department selectedDepartment = (Department) comboBoxDepartment.getSelectedItem();
         if (selectedDepartment != null) {
-            int departmentId = selectedDepartment.getId(); // Correct method to get ID
-            // Now you can use departmentId as needed
+            return selectedDepartment.getId(); 
         }
-        return -1;
+        return -1; 
     }
 
+
     private void initializeRoleComboBox() {
-        List<Role> roles = getRoles(); // Fetch the list of roles
-        DefaultComboBoxModel<Role> model = new DefaultComboBoxModel<>(); // Create a new model
+        List<Role> roles = getRoles(); 
+        DefaultComboBoxModel<Role> model = new DefaultComboBoxModel<>(); 
 
         for (Role role : roles) {
-            model.addElement(role); // Add Role object directly
+            model.addElement(role); 
         }
-        comboBoxRole.setModel(model); // Set the model to the comboBoxRole
+        comboBoxRole.setModel(model); 
     }
 
 
     private List<Role> getRoles() {
         List<Role> roles = new ArrayList<>();
-        String selectRolesSQL = "SELECT fld_role_id, fld_role_name FROM tbl_roles"; // Update column names
+        String selectRolesSQL = "SELECT fld_role_id, fld_role_name FROM tbl_roles"; 
         try (PreparedStatement pstmt = connection.prepareStatement(selectRolesSQL);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                int roleId = rs.getInt("fld_role_id"); // Use fld_role_id
-                String roleName = rs.getString("fld_role_name"); // Use fld_role_name
+                int roleId = rs.getInt("fld_role_id"); 
+                String roleName = rs.getString("fld_role_name"); 
                 roles.add(new Role(roleId, roleName));
             }
         } catch (SQLException ex) {
@@ -198,7 +228,7 @@ public final class SignUp extends javax.swing.JFrame {
     public int getSelectedRoleId() {
     Role selectedRole = (Role) comboBoxRole.getSelectedItem();
     if (selectedRole != null) {
-        return selectedRole.getRoleId(); // Return the role ID
+        return selectedRole.getRoleId(); 
     }
     return -1; 
 }
