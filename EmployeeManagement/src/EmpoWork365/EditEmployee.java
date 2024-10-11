@@ -12,15 +12,15 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -33,35 +33,37 @@ import javax.swing.SwingWorker;
  *
  * @author jenal
  */
-public final class SignUp extends javax.swing.JFrame {
+public final class EditEmployee extends javax.swing.JFrame {
     private Connection connection;    
     private static final List<JobTitle> jobTitles = new ArrayList<>();
     private String imageLocation;
     private boolean imageSelected = false;
-    
+    private int employeeId; 
+    private String imagePath; 
     
 
     /**
      * Creates new form SignUp
      */
-    public SignUp() {
+    public EditEmployee() {
         initComponents();
-        setTitle("Sign Up");
+        this.employeeId = -1;
+        this.imagePath = "";
+        setTitle("Edit Employee");
         initializeConnection();
         initializeRoleComboBox(); 
-        setupComboBoxes();
         setupJobTitleComboBox();
+        populateGenderComboBox();
         initializeDepartmentComboBox();
-        addEnterKeyListener(comboBoxGender);
-        addEnterKeyListener(comboBoxJobTitle);
-        addEnterKeyListener(comboBoxDepartment);
-        addEnterKeyListener(comboBoxRole);
+
+        loadEmployeeData();
+        setImageLabel(imagePath);
 
     }
-
-        
-    private void setupComboBoxes() {
-        populateGenderComboBox();
+    
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId; // Store the ID
+        loadEmployeeData();
     }
 
     private void initializeConnection() {
@@ -73,7 +75,7 @@ public final class SignUp extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Failed to connect to database.", "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-        
+
     private void populateGenderComboBox() {
         SwingWorker<Void, String> worker = new SwingWorker<>() {
             @Override
@@ -83,14 +85,12 @@ public final class SignUp extends javax.swing.JFrame {
 
                 try (PreparedStatement pstmt = connection.prepareStatement(selectGenderSQL);
                      ResultSet rs = pstmt.executeQuery()) {
-
                     while (rs.next()) {
                         String gender = rs.getString("fld_gender");
                         if (gender != null && !gender.isEmpty()) {
                             genderList.add(gender);
                         }
                     }
-
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Error fetching gender values: " + ex.getMessage());
                 }
@@ -101,7 +101,7 @@ public final class SignUp extends javax.swing.JFrame {
         };
         worker.execute();
     }
- 
+    
     private void setupJobTitleComboBox() {
         List<JobTitle> jobTitlesList = getJobTitles(); // Fetch job titles
         jobTitles.addAll(jobTitlesList);  // Store the fetched job titles for filtering
@@ -142,7 +142,7 @@ public final class SignUp extends javax.swing.JFrame {
                         jobTitleTextField.setText(matchedJobTitle.getTitle());
                     } else {
                         // Show a message indicating the input is invalid
-                        JOptionPane.showMessageDialog(SignUp.this, 
+                        JOptionPane.showMessageDialog(EditEmployee.this, 
                             "Please select a valid job title from the list.", 
                             "Invalid Input", 
                             JOptionPane.WARNING_MESSAGE);
@@ -156,18 +156,16 @@ public final class SignUp extends javax.swing.JFrame {
         });
     }
 
-        
+            
     private void filterJobTitles(JComboBox<JobTitle> comboBox, String input) {
        DefaultComboBoxModel<JobTitle> model = (DefaultComboBoxModel<JobTitle>) comboBox.getModel();
        model.removeAllElements();
 
-       // If the input is empty, just add all job titles back to the model
        if (input.isEmpty()) {
            for (JobTitle jobTitle : jobTitles) {
                model.addElement(jobTitle);
            }
        } else {
-           // Loop through the list of job titles and filter
            for (JobTitle jobTitle : jobTitles) {
                if (jobTitle.getTitle().toLowerCase().contains(input.toLowerCase())) {
                    model.addElement(jobTitle);
@@ -175,17 +173,14 @@ public final class SignUp extends javax.swing.JFrame {
            }
        }
 
-       // Show or hide the popup based on the filtered model
        if (model.getSize() > 0) {
            comboBox.showPopup();
        } else {
            comboBox.hidePopup();
        }
-
-       // Set the editor's item to the current input
        comboBox.getEditor().setItem(input);
    }
-
+    
     private List<JobTitle> getJobTitles() {
         List<JobTitle> jobTitlesList = new ArrayList<>();
         String selectJobTitlesSQL = "SELECT fld_job_title_id, fld_job_title FROM tbl_job_titles"; 
@@ -201,19 +196,8 @@ public final class SignUp extends javax.swing.JFrame {
         }
         return jobTitlesList;
     }
-    
-    private int getJobTitleId() {
-        Object selectedItem = comboBoxJobTitle.getSelectedItem();
-
-        if (selectedItem instanceof JobTitle selectedJobTitle) {
-            return selectedJobTitle.getId(); 
-        }
-
-        return -1; 
-    }
-
-    
-    private void initializeDepartmentComboBox() {
+        
+   private void initializeDepartmentComboBox() {
         List<Department> departments = getDepartments(); 
         DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>(); 
 
@@ -221,12 +205,11 @@ public final class SignUp extends javax.swing.JFrame {
             model.addElement(department); 
         }
         comboBoxDepartment.setModel(model); 
-        
         addEnterKeyListener(comboBoxDepartment); 
-
     }
 
-    private List<Department> getDepartments() {
+    
+     private List<Department> getDepartments() {
         List<Department> departments = new ArrayList<>();
         String selectDepartmentsSQL = "SELECT fld_department_id, fld_department_name FROM tbl_department"; 
         try (PreparedStatement pstmt = connection.prepareStatement(selectDepartmentsSQL);
@@ -250,8 +233,7 @@ public final class SignUp extends javax.swing.JFrame {
         return -1; 
     }
 
-
-    private void initializeRoleComboBox() {
+   private void initializeRoleComboBox() {
         List<Role> roles = getRoles(); 
         DefaultComboBoxModel<Role> model = new DefaultComboBoxModel<>(); 
 
@@ -261,7 +243,6 @@ public final class SignUp extends javax.swing.JFrame {
         comboBoxRole.setModel(model); 
         addEnterKeyListener(comboBoxRole); 
     }
-
 
     private List<Role> getRoles() {
         List<Role> roles = new ArrayList<>();
@@ -278,7 +259,6 @@ public final class SignUp extends javax.swing.JFrame {
         }
         return roles;
     }
-
     
     public int getSelectedRoleId() {
         Role selectedRole = (Role) comboBoxRole.getSelectedItem();
@@ -287,34 +267,70 @@ public final class SignUp extends javax.swing.JFrame {
         }
         return -1; 
     }
-    
+
     private void addEnterKeyListener(JComboBox<?> comboBox) {
         comboBox.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    // Get the current item from the editor
                     Object selectedItem = comboBox.getEditor().getItem();
-
-                    // Check if the selected item is valid
                     if (selectedItem != null && !selectedItem.toString().isEmpty()) {
-                        // Set the selected item to the combo box
                         comboBox.setSelectedItem(selectedItem);
-
-                        // Update the editor component to reflect the selection
                         comboBox.getEditor().setItem(selectedItem);
                     }
-
-                    // Hide the popup if it is open
                     comboBox.hidePopup();
-
-                    // Optional: Request focus back to the JComboBox
                     comboBox.requestFocusInWindow();
                 }
             }
         });
     }
+    
+    private void setImageLabel(String imagePath) {
+        if (imagePath != null && !imagePath.isEmpty()) {
+            displayImage(imagePath); // Call the displayImage method to set the image
+        }
+    }
 
+    
+    private void loadEmployeeData() {
+        String selectEmployeeSQL = "SELECT u.fld_first_name, u.fld_last_name, u.fld_email, u.fld_password, "
+                                  + "u.fld_gender, e.fld_job_title_id, jt.fld_job_title, "
+                                  + "e.fld_department_id, u.fld_role_id, u.fld_image_path, "
+                                  + "d.fld_department_name, r.fld_role_name "
+                                  + "FROM tbl_employees e "
+                                  + "JOIN tbl_users u ON e.fld_user_id = u.fld_user_id "
+                                  + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                                  + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id "
+                                  + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                                  + "WHERE e.fld_employee_id = ?"; 
+
+        try (PreparedStatement pstmt = connection.prepareStatement(selectEmployeeSQL)) {
+            pstmt.setInt(1, employeeId);
+            ResultSet rs = pstmt.executeQuery(); 
+
+            if (rs.next()) { 
+                String firstNameFromDB = rs.getString("fld_first_name");
+                String lastNameFromDB = rs.getString("fld_last_name");
+                firstName.setText(firstNameFromDB); 
+                lastName.setText(lastNameFromDB); 
+                eMail.setText(rs.getString("fld_email")); 
+                passWord.setText(rs.getString("fld_password")); 
+
+                comboBoxGender.setSelectedItem(rs.getString("fld_gender"));
+
+                comboBoxJobTitle.setSelectedItem(new JobTitle(rs.getInt("fld_job_title_id"), rs.getString("fld_job_title")));
+
+                comboBoxDepartment.setSelectedItem(new Department(rs.getInt("fld_department_id"), rs.getString("fld_department_name")));
+
+                comboBoxRole.setSelectedItem(new Role(rs.getInt("fld_role_id"), rs.getString("fld_role_name")));
+
+                String imagePath = rs.getString("fld_image_path");
+                setImageLabel(imagePath); 
+            } 
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading employee data: " + e.getMessage());
+        }
+    }
 
 
     /**
@@ -328,10 +344,8 @@ public final class SignUp extends javax.swing.JFrame {
 
         jPanel3 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        btnSignIn = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        btnCreateAccount = new javax.swing.JButton();
+        btnConfirmEdit = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         firstName = new javax.swing.JTextField();
@@ -353,6 +367,8 @@ public final class SignUp extends javax.swing.JFrame {
         eMail = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         passWord = new javax.swing.JPasswordField();
+        btnClear = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -362,37 +378,19 @@ public final class SignUp extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(8, 127, 127));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Have Account?");
-
-        btnSignIn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnSignIn.setForeground(new java.awt.Color(255, 255, 255));
-        btnSignIn.setText("SIGN IN");
-        btnSignIn.setBorder(null);
-        btnSignIn.setBorderPainted(false);
-        btnSignIn.setContentAreaFilled(false);
-        btnSignIn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnSignIn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnSignIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSignInActionPerformed(evt);
-            }
-        });
-
         jLabel2.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 204, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("SIGN UP");
+        jLabel2.setText("EDIT EMPLOYEE DETAILS");
 
-        btnCreateAccount.setBackground(new java.awt.Color(185, 230, 230));
-        btnCreateAccount.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        btnCreateAccount.setForeground(new java.awt.Color(65, 126, 118));
-        btnCreateAccount.setText("CREATE ACCOUNT");
-        btnCreateAccount.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnCreateAccount.addActionListener(new java.awt.event.ActionListener() {
+        btnConfirmEdit.setBackground(new java.awt.Color(185, 230, 230));
+        btnConfirmEdit.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnConfirmEdit.setForeground(new java.awt.Color(65, 126, 118));
+        btnConfirmEdit.setText("CONFIRM");
+        btnConfirmEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnConfirmEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCreateAccountActionPerformed(evt);
+                btnConfirmEditActionPerformed(evt);
             }
         });
 
@@ -447,11 +445,6 @@ public final class SignUp extends javax.swing.JFrame {
         jLabel9.setText("Job Title");
 
         comboBoxJobTitle.setBackground(new java.awt.Color(229, 255, 237));
-        comboBoxJobTitle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboBoxJobTitleActionPerformed(evt);
-            }
-        });
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
@@ -534,6 +527,7 @@ public final class SignUp extends javax.swing.JFrame {
         );
 
         jPanel4.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButton2.setText("Add Image");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -542,6 +536,7 @@ public final class SignUp extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
+        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 126, -1, -1));
 
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -549,9 +544,12 @@ public final class SignUp extends javax.swing.JFrame {
         imageLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 140, 120));
 
+        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 0, -1, -1));
+
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Email");
+        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 165, 121, -1));
 
         eMail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         eMail.setForeground(new java.awt.Color(153, 204, 188));
@@ -569,10 +567,12 @@ public final class SignUp extends javax.swing.JFrame {
                 ActionPerformed(evt);
             }
         });
+        jPanel4.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 191, 246, 45));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Password");
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 248, 121, -1));
 
         passWord.setForeground(new java.awt.Color(153, 204, 188));
         passWord.setText("Password");
@@ -584,97 +584,64 @@ public final class SignUp extends javax.swing.JFrame {
                 passWordFocusLost(evt);
             }
         });
-        passWord.addActionListener(new java.awt.event.ActionListener() {
+        jPanel4.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 246, 45));
+
+        btnClear.setBackground(new java.awt.Color(71, 146, 146));
+        btnClear.setForeground(new java.awt.Color(255, 255, 255));
+        btnClear.setText("Clear All");
+        btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passWordActionPerformed(evt);
+                btnClearActionPerformed(evt);
             }
         });
+        jPanel4.add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(138, 370, 100, -1));
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(eMail, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(passWord, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addComponent(jButton2))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel8)
-                .addGap(6, 6, 6)
-                .addComponent(eMail, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel7)
-                .addGap(12, 12, 12)
-                .addComponent(passWord, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
+        btnCancel.setBackground(new java.awt.Color(185, 230, 230));
+        btnCancel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnCancel.setForeground(new java.awt.Color(65, 126, 118));
+        btnCancel.setText("CANCEL");
+        btnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(88, 88, 88)
+                .addComponent(btnConfirmEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(87, 87, 87))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(65, 65, 65)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(286, 286, 286)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(50, 50, 50))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel3)
-                        .addGap(6, 6, 6)
-                        .addComponent(btnSignIn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnCreateAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(241, 241, 241))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                .addComponent(btnCreateAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(btnSignIn, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(30, 30, 30))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnConfirmEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(76, 76, 76))
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -702,7 +669,7 @@ public final class SignUp extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(25, 25, 25)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
@@ -735,62 +702,37 @@ public final class SignUp extends javax.swing.JFrame {
 
     private void passWordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusLost
         if (String.valueOf(passWord.getPassword()).isEmpty()) {
-            passWord.setEchoChar((char)0);
-            passWord.setText("Password");
-            passWord.setForeground(new Color(205,186,136));
+            passWord.setEchoChar((char) 0); 
+            passWord.setText("Password"); 
+            passWord.setForeground(new Color(205, 186, 136)); 
         }
     }//GEN-LAST:event_passWordFocusLost
 
-    private void passWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passWordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_passWordActionPerformed
+    private void btnConfirmEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmEditActionPerformed
+        String email = eMail.getText();
 
-    private void btnCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateAccountActionPerformed
-        String firstNameInput = firstName.getText().trim();
-        String lastNameInput = lastName.getText().trim();
-        String emailInput = eMail.getText().trim();
-        String passwordInput = new String(passWord.getPassword()).trim();
-        String genderInput = (String) comboBoxGender.getSelectedItem();
-
-        Department selectedDepartment = (Department) comboBoxDepartment.getSelectedItem(); 
-        int departmentId = selectedDepartment != null ? selectedDepartment.getId() : -1; 
-        Role selectedRole = (Role) comboBoxRole.getSelectedItem(); 
-        int roleId = selectedRole != null ? selectedRole.getRoleId() : -1; 
-        String imagePath = addImageToFolder(); 
-
-        String dateOfEmployment = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); 
-
-        if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty() || passwordInput.isEmpty() || imagePath == null) {
-            JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
-            return;
+        // Check for duplicate email
+        if (isEmailDuplicate(email, employeeId)) { // Pass the current employee ID to exclude it from the check
+            JOptionPane.showMessageDialog(this, "This email is already in use by another user. Please use a different email.", "Duplicate Email", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method to prevent further actions
         }
+    
+        String updateUserSQL = "UPDATE tbl_users SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, fld_password = ?, fld_gender = ? WHERE fld_user_id = ?"; 
+       try (PreparedStatement pstmt = connection.prepareStatement(updateUserSQL)) {
+           pstmt.setString(1, firstName.getText()); 
+           pstmt.setString(2, lastName.getText());  
+           pstmt.setString(3, eMail.getText());   
+           pstmt.setString(4, String.valueOf(passWord.getPassword())); 
+           pstmt.setString(5, (String) comboBoxGender.getSelectedItem()); 
+           pstmt.setInt(6, getUserIdFromEmployeeId(employeeId)); 
 
-        // Use the method to get the job title ID directly
-        int jobTitleId = getJobTitleId(); 
-
-        if (jobTitleId == -1) {
-            JOptionPane.showMessageDialog(this, "Invalid job title selected.");
-            return;
-        }
-
-        SignUpMethod signUpMethod = new SignUpMethod();
-        boolean accountCreated = signUpMethod.createAccount(firstNameInput, lastNameInput, emailInput, passwordInput, 
-                                                            genderInput, jobTitleId, departmentId, roleId, 
-                                                            dateOfEmployment, imagePath);
-
-        if (accountCreated) {
-            JOptionPane.showMessageDialog(this, "Account created successfully!");
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Error creating account. Please try again.");
-        }
-    }//GEN-LAST:event_btnCreateAccountActionPerformed
-
-    private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
-        LoginForm signIn = new LoginForm();
-        signIn.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnSignInActionPerformed
+           pstmt.executeUpdate(); 
+           JOptionPane.showMessageDialog(this, "Employee updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+           this.dispose();
+       } catch (SQLException e) {
+           JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage());
+       }
+    }//GEN-LAST:event_btnConfirmEditActionPerformed
 
     private void firstNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusGained
         if (firstName.getText().equals("Enter First Name")) {
@@ -825,7 +767,22 @@ public final class SignUp extends javax.swing.JFrame {
     }//GEN-LAST:event_ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        selectImage();
+        JFileChooser fileChooser = new JFileChooser(); 
+        fileChooser.setDialogTitle("Select Employee Image");
+
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif"));
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile(); 
+            imageLocation = selectedFile.getAbsolutePath(); 
+            imageSelected = true;
+
+            displayImage(imageLocation);
+
+            updateEmployeeImageInDatabase(imageLocation, employeeId);
+
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void comboBoxDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxDepartmentActionPerformed
@@ -836,10 +793,78 @@ public final class SignUp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxGenderActionPerformed
 
-    private void comboBoxJobTitleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxJobTitleActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboBoxJobTitleActionPerformed
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
 
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        clearFields();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    
+    private boolean isEmailDuplicate(String email, int currentEmployeeId) {
+        String selectEmailSQL = "SELECT COUNT(*) FROM tbl_users WHERE fld_email = ? AND fld_user_id != ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(selectEmailSQL)) {
+            pstmt.setString(1, email);
+            pstmt.setInt(2, currentEmployeeId); 
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0; 
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error checking email: " + ex.getMessage());
+        }
+        return false; 
+    }
+
+    private int getUserIdFromEmployeeId(int employeeId) {
+        String query = "SELECT fld_user_id FROM tbl_employees WHERE fld_employee_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, employeeId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("fld_user_id");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error retrieving user ID: " + e.getMessage());
+        }
+        return -1; 
+    }
+
+    private void updateEmployeeImageInDatabase(String imagePath, int employeeId) {
+        String updateImageSQL = "UPDATE tbl_employees SET fld_image_path = ? WHERE fld_employee_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(updateImageSQL)) {
+            pstmt.setString(1, imagePath);
+            pstmt.setInt(2, employeeId);
+            pstmt.executeUpdate(); 
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error updating employee image: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    
+    private void displayImage(String imagePath) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(imagePath));
+            if (img != null) {
+                int width = 100; 
+                int height = 100; 
+                Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(scaledImg));
+            } else {
+                throw new IOException("Failed to load image: " + imagePath);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error displaying image: " + e.getMessage());
+            // Optionally set a default image or icon
+            imageLabel.setIcon(new ImageIcon("path/to/default/image.png"));
+        }
+    }
+
+    
     public void selectImage() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg", "gif"));
@@ -852,20 +877,7 @@ public final class SignUp extends javax.swing.JFrame {
             displayImage(imageLocation); 
         }
     }
-    
-     private void displayImage(String imagePath) {
-        if (imageLocation != null) {
-            ImageIcon originalIcon = new ImageIcon(imageLocation);
-            Image originalImage = originalIcon.getImage();
-            
-            int width = 100;
-            int height = 100;
-            
-            Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            ImageIcon scaledIcon = new ImageIcon(scaledImage);
-            imageLabel.setIcon(scaledIcon);
-        }
-    }
+
     
     private String addImageToFolder() {
         if (!imageSelected) {
@@ -900,6 +912,30 @@ public final class SignUp extends javax.swing.JFrame {
         }
     }
     
+    private void updateImage(File selectedFile) {
+        try {
+            File destinationFile = new File("path/to/destination/" + selectedFile.getName()); // Update with actual destination path
+            Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            ImageIcon icon = new ImageIcon(destinationFile.getAbsolutePath());
+            Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Adjust size as needed
+            imageLabel.setIcon(new ImageIcon(img));
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error updating image: " + e.getMessage());
+        }
+    }
+
+    private void clearFields() {
+        firstName.setText("");
+        lastName.setText("");
+        eMail.setText("");
+        passWord.setText("");
+        comboBoxGender.setSelectedIndex(-1);
+        comboBoxJobTitle.setSelectedIndex(-1);
+        comboBoxDepartment.setSelectedIndex(-1);
+        comboBoxRole.setSelectedIndex(-1);
+        imageLabel.setIcon(null); 
+        imagePath = ""; 
+    }
     
     
     
@@ -925,27 +961,29 @@ public final class SignUp extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SignUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SignUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SignUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SignUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SignUp().setVisible(true);
+                new EditEmployee().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCreateAccount;
-    private javax.swing.JButton btnSignIn;
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnConfirmEdit;
     private javax.swing.JComboBox<Department> comboBoxDepartment;
     private javax.swing.JComboBox<String> comboBoxGender;
     private javax.swing.JComboBox<JobTitle> comboBoxJobTitle;
@@ -958,7 +996,6 @@ public final class SignUp extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

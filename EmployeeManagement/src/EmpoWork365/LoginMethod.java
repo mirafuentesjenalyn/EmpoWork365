@@ -12,7 +12,7 @@ public class LoginMethod {
 
         // SQL query to check the user credentials and fetch additional details
         String query = "SELECT fld_user_id, fld_password, fld_first_name, fld_last_name, " +
-                       "fld_job_title, fld_image_path, fld_gender, fld_department_id, fld_role_id " +
+                       "fld_job_title_id, fld_image_path, fld_gender, fld_department_id, fld_role_id " +
                        "FROM tbl_users WHERE fld_email = ?";
 
         try (Connection conn = callConnector.createConnection();
@@ -27,17 +27,18 @@ public class LoginMethod {
                 String storedPassword = rs.getString("fld_password");  // Ensure this is hashed in production
                 String firstName = rs.getString("fld_first_name");
                 String lastName = rs.getString("fld_last_name");
-                String jobTitle = rs.getString("fld_job_title");
                 String imagePath = rs.getString("fld_image_path");
                 String gender = rs.getString("fld_gender");
                 int roleId = rs.getInt("fld_role_id");
                 int departmentId = rs.getInt("fld_department_id");
+                int jobTitleId = rs.getInt("fld_job_title_id"); // Get job title ID
 
                 // Check if the entered password matches the stored password
                 if (password.equals(storedPassword)) { // Ensure to hash the password in production
                     // User is authenticated, create UserAuthenticate object with user details
                     loggedInUser = new UserAuthenticate(firstName, lastName, email, storedPassword, 
-                                                         gender, jobTitle, 
+                                                         gender, 
+                                                         getJobTitleName(jobTitleId), // Retrieve job title name using ID
                                                          getDepartmentName(departmentId), 
                                                          getRoleName(roleId), imagePath);
                 }
@@ -88,5 +89,25 @@ public class LoginMethod {
         }
         
         return roleName;
+    }
+
+    private String getJobTitleName(int jobTitleId) {
+        String jobTitleName = null;
+        String query = "SELECT fld_job_title FROM tbl_job_titles WHERE fld_job_title_id = ?";
+        
+        try (Connection conn = new sqlConnector().createConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+             
+            stmt.setInt(1, jobTitleId);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                jobTitleName = rs.getString("fld_job_title");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error fetching job title name: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        return jobTitleName;
     }
 }

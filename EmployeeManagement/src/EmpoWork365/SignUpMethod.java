@@ -14,15 +14,15 @@ public class SignUpMethod {
     }
 
     public boolean createAccount(String firstName, String lastName, String email, String password, 
-                                 String gender, String jobTitle, int departmentId, int roleId, 
+                                 String gender, int jobTitleId, int departmentId, int roleId, 
                                  String dateOfEmployment, String imagePath) {
         // SQL query for inserting a new user into tbl_users
         String insertUserQuery = "INSERT INTO tbl_users (fld_first_name, fld_last_name, fld_email, fld_password, "
-                + "fld_gender, fld_job_title, fld_department_id, fld_role_id, fld_date_of_employment, fld_image_path) "
+                + "fld_gender, fld_job_title_id, fld_department_id, fld_role_id, fld_date_of_employment, fld_image_path) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // SQL query for inserting a new employee into tbl_employees
-        String insertEmployeeQuery = "INSERT INTO tbl_employees (fld_user_id, fld_job_title, "
+        String insertEmployeeQuery = "INSERT INTO tbl_employees (fld_user_id, fld_job_title_id, "
                 + "fld_department_id, fld_role_id, fld_date_of_employment, fld_employee_salary, fld_image_path) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -37,7 +37,7 @@ public class SignUpMethod {
             userStmt.setString(3, email);
             userStmt.setString(4, password);
             userStmt.setString(5, gender);
-            userStmt.setString(6, jobTitle);
+            userStmt.setInt(6, jobTitleId); // Use jobTitleId as an integer
             userStmt.setInt(7, departmentId);
             userStmt.setInt(8, roleId);
             userStmt.setString(9, dateOfEmployment);
@@ -57,13 +57,13 @@ public class SignUpMethod {
 
                 // Insert into `tbl_employees`
                 employeeStmt.setInt(1, generatedUserId); // Set `fld_user_id` in `tbl_employees`
-                employeeStmt.setString(2, jobTitle);
+                employeeStmt.setInt(2, jobTitleId); // Use jobTitleId here as well
                 employeeStmt.setInt(3, departmentId);
                 employeeStmt.setInt(4, roleId);
                 employeeStmt.setString(5, dateOfEmployment);
                 
-                // Retrieve salary based on the job title from tbl_job_titles
-                double salary = getJobTitleSalary(conn, jobTitle, departmentId);
+                // Retrieve salary based on the job title ID
+                double salary = getJobTitleSalary(conn, jobTitleId); // Use job title ID directly
                 employeeStmt.setDouble(6, salary); // Use the retrieved salary
                 employeeStmt.setString(7, imagePath);
 
@@ -84,11 +84,11 @@ public class SignUpMethod {
         }
     }
 
-    private double getJobTitleSalary(Connection conn, String jobTitle, int departmentId) {
-        String salaryQuery = "SELECT fld_salary FROM tbl_job_titles WHERE fld_job_title = ? AND fld_department_id = ?";
+    // Updated method to retrieve the salary using job title ID
+    private double getJobTitleSalary(Connection conn, int jobTitleId) {
+        String salaryQuery = "SELECT fld_salary FROM tbl_job_titles WHERE fld_job_title_id = ?";
         try (PreparedStatement salaryStmt = conn.prepareStatement(salaryQuery)) {
-            salaryStmt.setString(1, jobTitle);
-            salaryStmt.setInt(2, departmentId);
+            salaryStmt.setInt(1, jobTitleId); // Use setInt for jobTitleId
             ResultSet resultSet = salaryStmt.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getDouble("fld_salary");

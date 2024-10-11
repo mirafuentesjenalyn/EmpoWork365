@@ -1,12 +1,5 @@
 package EmpoWork365;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- *
- * @author jenal
- */
 public class EmployeeSearch {
     private String firstname;
     private String lastname;
@@ -14,7 +7,10 @@ public class EmployeeSearch {
     private String jobtitle;
     private String departmentName;
 
-    // Constructor
+    // No-argument constructor
+    public EmployeeSearch() {}
+
+    // Constructor with parameters
     public EmployeeSearch(String firstname, String lastname, String email, String jobtitle, String departmentName) {
         this.firstname = firstname;
         this.lastname = lastname;
@@ -47,17 +43,5 @@ public class EmployeeSearch {
     @Override
     public String toString() {
         return firstname + " " + lastname;
-    }
-
-    // Static method to search employees by full name
-    public static List<EmployeeSearch> searchEmployeeMethod(List<EmployeeSearch> employees, String fullName) {
-        List<EmployeeSearch> results = new ArrayList<>();
-        for (EmployeeSearch employee : employees) {
-            String employeeFullName = employee.getFirstname() + " " + employee.getLastname();
-            if (employeeFullName.toLowerCase().contains(fullName.toLowerCase())) {
-                results.add(employee);
-            }
-        }
-        return results;
     }
 }

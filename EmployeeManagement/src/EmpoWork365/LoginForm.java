@@ -119,6 +119,7 @@ public class LoginForm extends javax.swing.JFrame {
         btnLogin.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         btnLogin.setForeground(new java.awt.Color(65, 126, 118));
         btnLogin.setText("LOGIN");
+        btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
