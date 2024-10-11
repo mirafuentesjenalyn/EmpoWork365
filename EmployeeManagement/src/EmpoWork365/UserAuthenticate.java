@@ -3,6 +3,7 @@ package EmpoWork365;
 import java.util.regex.Pattern;
 
 public class UserAuthenticate {
+    private int id;
     private String firstname; 
     private String lastname;
     private String email;
@@ -16,7 +17,7 @@ public class UserAuthenticate {
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
 
     // Constructor
-    public UserAuthenticate(String firstname, String lastname, String email, String password, 
+    public UserAuthenticate(int id, String firstname, String lastname, String email, String password, 
                             String gender, String jobtitle, String departmentName, 
                             String roleName, String imagepath) {
         if (firstname == null || lastname == null || email == null || password == null) {
@@ -25,7 +26,7 @@ public class UserAuthenticate {
         if (!isValidEmail(email)) {
             throw new IllegalArgumentException("Invalid email format");
         }
-
+        this.id = id; 
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -48,6 +49,10 @@ public class UserAuthenticate {
     }
 
     // Getters
+    public int getId() {
+        return id; 
+    }
+    
     public String getFirstname() {
         return firstname;
     }
@@ -61,7 +66,7 @@ public class UserAuthenticate {
     }
 
     public String getPassword() {
-        return password; // Consider returning hashed password or nothing
+        return password;
     }
 
     public String getGender() {

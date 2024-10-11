@@ -709,29 +709,21 @@ public final class EditEmployee extends javax.swing.JFrame {
     }//GEN-LAST:event_passWordFocusLost
 
     private void btnConfirmEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmEditActionPerformed
-        String email = eMail.getText();
-
-        // Check for duplicate email
-        if (isEmailDuplicate(email, employeeId)) { // Pass the current employee ID to exclude it from the check
-            JOptionPane.showMessageDialog(this, "This email is already in use by another user. Please use a different email.", "Duplicate Email", JOptionPane.ERROR_MESSAGE);
-            return; // Exit the method to prevent further actions
-        }
-    
         String updateUserSQL = "UPDATE tbl_users SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, fld_password = ?, fld_gender = ? WHERE fld_user_id = ?"; 
-       try (PreparedStatement pstmt = connection.prepareStatement(updateUserSQL)) {
-           pstmt.setString(1, firstName.getText()); 
-           pstmt.setString(2, lastName.getText());  
-           pstmt.setString(3, eMail.getText());   
-           pstmt.setString(4, String.valueOf(passWord.getPassword())); 
-           pstmt.setString(5, (String) comboBoxGender.getSelectedItem()); 
-           pstmt.setInt(6, getUserIdFromEmployeeId(employeeId)); 
+        try (PreparedStatement pstmt = connection.prepareStatement(updateUserSQL)) {
+            pstmt.setString(1, firstName.getText()); 
+            pstmt.setString(2, lastName.getText());  
+            pstmt.setString(3, eMail.getText());   
+            pstmt.setString(4, String.valueOf(passWord.getPassword())); 
+            pstmt.setString(5, (String) comboBoxGender.getSelectedItem()); 
+            pstmt.setInt(6, getUserIdFromEmployeeId(employeeId)); 
 
-           pstmt.executeUpdate(); 
-           JOptionPane.showMessageDialog(this, "Employee updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-           this.dispose();
-       } catch (SQLException e) {
-           JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage());
-       }
+            pstmt.executeUpdate(); 
+            JOptionPane.showMessageDialog(this, "Employee updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnConfirmEditActionPerformed
 
     private void firstNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusGained
@@ -800,24 +792,6 @@ public final class EditEmployee extends javax.swing.JFrame {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         clearFields();
     }//GEN-LAST:event_btnClearActionPerformed
-
-    
-    private boolean isEmailDuplicate(String email, int currentEmployeeId) {
-        String selectEmailSQL = "SELECT COUNT(*) FROM tbl_users WHERE fld_email = ? AND fld_user_id != ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(selectEmailSQL)) {
-            pstmt.setString(1, email);
-            pstmt.setInt(2, currentEmployeeId); 
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0; 
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error checking email: " + ex.getMessage());
-        }
-        return false; 
-    }
 
     private int getUserIdFromEmployeeId(int employeeId) {
         String query = "SELECT fld_user_id FROM tbl_employees WHERE fld_employee_id = ?";

@@ -49,8 +49,8 @@ public final class SignUp extends javax.swing.JFrame {
         setTitle("Sign Up");
         initializeConnection();
         initializeRoleComboBox(); 
-        setupComboBoxes();
         setupJobTitleComboBox();
+        populateGenderComboBox();
         initializeDepartmentComboBox();
         addEnterKeyListener(comboBoxGender);
         addEnterKeyListener(comboBoxJobTitle);
@@ -60,9 +60,6 @@ public final class SignUp extends javax.swing.JFrame {
     }
 
         
-    private void setupComboBoxes() {
-        populateGenderComboBox();
-    }
 
     private void initializeConnection() {
         sqlConnector dbConnector = new sqlConnector(); 
@@ -75,99 +72,77 @@ public final class SignUp extends javax.swing.JFrame {
     }
         
     private void populateGenderComboBox() {
-        SwingWorker<Void, String> worker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() {
-                String selectGenderSQL = "SELECT DISTINCT fld_gender FROM tbl_users"; // Adjust table/field as needed
-                List<String> genderList = new ArrayList<>();
-
-                try (PreparedStatement pstmt = connection.prepareStatement(selectGenderSQL);
-                     ResultSet rs = pstmt.executeQuery()) {
-
-                    while (rs.next()) {
-                        String gender = rs.getString("fld_gender");
-                        if (gender != null && !gender.isEmpty()) {
-                            genderList.add(gender);
-                        }
-                    }
-
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, "Error fetching gender values: " + ex.getMessage());
-                }
-
-                comboBoxGender.setModel(new DefaultComboBoxModel<>(genderList.toArray(new String[0])));
-                return null;
-            }
-        };
-        worker.execute();
+        String[] genderOptions = {"Male", "Female", "Other"};
+        comboBoxGender.setModel(new DefaultComboBoxModel<>(genderOptions));
     }
- 
+
     private void setupJobTitleComboBox() {
-        List<JobTitle> jobTitlesList = getJobTitles(); // Fetch job titles
-        jobTitles.addAll(jobTitlesList);  // Store the fetched job titles for filtering
-        DefaultComboBoxModel<JobTitle> model = new DefaultComboBoxModel<>();
+       jobTitles.clear(); 
 
-        for (JobTitle jobTitle : jobTitles) {
-            model.addElement(jobTitle);
-        }
+       List<JobTitle> jobTitlesList = getJobTitles(); 
+       jobTitles.addAll(jobTitlesList);  
 
-        comboBoxJobTitle.setModel(model);
-        comboBoxJobTitle.setEditable(true);
+       DefaultComboBoxModel<JobTitle> model = (DefaultComboBoxModel<JobTitle>) comboBoxJobTitle.getModel();
+       model.removeAllElements(); 
 
-        JTextField jobTitleTextField = (JTextField) comboBoxJobTitle.getEditor().getEditorComponent();
-        jobTitleTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                String input = jobTitleTextField.getText();
-                filterJobTitles(comboBoxJobTitle, input);
-                comboBoxJobTitle.getEditor().setItem(input);
-                jobTitleTextField.setCaretPosition(input.length());
-            }
+       for (JobTitle jobTitle : jobTitles) {
+           model.addElement(jobTitle);
+       }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String selectedItem = jobTitleTextField.getText();
-                    JobTitle matchedJobTitle = null;
+       comboBoxJobTitle.setModel(model);
+       comboBoxJobTitle.setEditable(true);
 
-                    for (JobTitle jobTitle : jobTitles) {
-                        if (jobTitle.getTitle().equalsIgnoreCase(selectedItem)) {
-                            matchedJobTitle = jobTitle;
-                            break;
-                        }
-                    }
+       JTextField jobTitleTextField = (JTextField) comboBoxJobTitle.getEditor().getEditorComponent();
+       jobTitleTextField.addKeyListener(new KeyAdapter() {
+           @Override
+           public void keyReleased(KeyEvent e) {
+               String input = jobTitleTextField.getText();
+               filterJobTitles(comboBoxJobTitle, input);
+               comboBoxJobTitle.getEditor().setItem(input);
+               jobTitleTextField.setCaretPosition(input.length());
+           }
 
-                    if (matchedJobTitle != null) {
-                        comboBoxJobTitle.setSelectedItem(matchedJobTitle);
-                        jobTitleTextField.setText(matchedJobTitle.getTitle());
-                    } else {
-                        // Show a message indicating the input is invalid
-                        JOptionPane.showMessageDialog(SignUp.this, 
-                            "Please select a valid job title from the list.", 
-                            "Invalid Input", 
-                            JOptionPane.WARNING_MESSAGE);
-                        jobTitleTextField.setText(""); // Clear the field
-                    }
+           @Override
+           public void keyPressed(KeyEvent e) {
+               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                   String selectedItem = jobTitleTextField.getText();
+                   JobTitle matchedJobTitle = null;
 
-                    comboBoxJobTitle.hidePopup();
-                    comboBoxJobTitle.requestFocusInWindow();
-                }
-            }
-        });
-    }
+                   for (JobTitle jobTitle : jobTitles) {
+                       if (jobTitle.getTitle().equalsIgnoreCase(selectedItem)) {
+                           matchedJobTitle = jobTitle;
+                           break;
+                       }
+                   }
+
+                   if (matchedJobTitle != null) {
+                       comboBoxJobTitle.setSelectedItem(matchedJobTitle);
+                       jobTitleTextField.setText(matchedJobTitle.getTitle());
+                   } else {
+                       JOptionPane.showMessageDialog(SignUp.this, 
+                           "Please select a valid job title from the list.", 
+                           "Invalid Input", 
+                           JOptionPane.WARNING_MESSAGE);
+                       jobTitleTextField.setText(""); 
+                   }
+
+                   comboBoxJobTitle.hidePopup();
+                   comboBoxJobTitle.requestFocusInWindow();
+               }
+           }
+       });
+   }
 
         
     private void filterJobTitles(JComboBox<JobTitle> comboBox, String input) {
        DefaultComboBoxModel<JobTitle> model = (DefaultComboBoxModel<JobTitle>) comboBox.getModel();
        model.removeAllElements();
 
-       // If the input is empty, just add all job titles back to the model
        if (input.isEmpty()) {
            for (JobTitle jobTitle : jobTitles) {
                model.addElement(jobTitle);
            }
        } else {
-           // Loop through the list of job titles and filter
            for (JobTitle jobTitle : jobTitles) {
                if (jobTitle.getTitle().toLowerCase().contains(input.toLowerCase())) {
                    model.addElement(jobTitle);
@@ -175,14 +150,11 @@ public final class SignUp extends javax.swing.JFrame {
            }
        }
 
-       // Show or hide the popup based on the filtered model
        if (model.getSize() > 0) {
            comboBox.showPopup();
        } else {
            comboBox.hidePopup();
        }
-
-       // Set the editor's item to the current input
        comboBox.getEditor().setItem(input);
    }
 
@@ -745,6 +717,21 @@ public final class SignUp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_passWordActionPerformed
 
+    private boolean isEmailDuplicate(String email) {
+        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_users WHERE fld_email = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSQL)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; 
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking email duplication: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false; 
+    }
+
+    
     private void btnCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateAccountActionPerformed
         String firstNameInput = firstName.getText().trim();
         String lastNameInput = lastName.getText().trim();
@@ -760,6 +747,10 @@ public final class SignUp extends javax.swing.JFrame {
 
         String dateOfEmployment = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); 
 
+        if (isEmailDuplicate(emailInput)) {
+            JOptionPane.showMessageDialog(this, "This email is already in use by another user. Please use a different email.", "Duplicate Email", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || emailInput.isEmpty() || passwordInput.isEmpty() || imagePath == null) {
             JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
             return;
@@ -840,19 +831,29 @@ public final class SignUp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxJobTitleActionPerformed
 
-    public void selectImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg", "gif"));
     
-        int response = fileChooser.showOpenDialog(null);
-        if (response == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            imageLocation = selectedFile.getAbsolutePath();
-            imageSelected = true;
-            displayImage(imageLocation); 
-        }
+    private void resetImageSelection() {
+        imageLocation = null;
+        imageSelected = false;
+        imageLabel.setIcon(null);  
     }
+
     
+    public void selectImage() {
+       JFileChooser fileChooser = new JFileChooser();
+       fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg", "gif"));
+
+       int response = fileChooser.showOpenDialog(null);
+       if (response == JFileChooser.APPROVE_OPTION) {
+           File selectedFile = fileChooser.getSelectedFile();
+           imageLocation = selectedFile.getAbsolutePath();
+           imageSelected = true;
+           displayImage(imageLocation);
+       } else {
+           resetImageSelection(); 
+       }
+    }
+
      private void displayImage(String imagePath) {
         if (imageLocation != null) {
             ImageIcon originalIcon = new ImageIcon(imageLocation);
@@ -868,38 +869,40 @@ public final class SignUp extends javax.swing.JFrame {
     }
     
     private String addImageToFolder() {
-        if (!imageSelected) {
-            JOptionPane.showMessageDialog(this, "Please select an image first.");
-            return null;
-        }
+       if (!imageSelected) {
+           JOptionPane.showMessageDialog(this, "Please select an image first.");
+           return null;
+       }
 
-        String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
-        String fileExtension = imageLocation.substring(imageLocation.lastIndexOf(".")).toLowerCase();
-        boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
-        if (!isImage) {
-            JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png, gif, bmp).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-    
-        String destinationFolder = "src/Users/";
-        String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
-        String destinationPath = destinationFolder + newFileName;
+       String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
+       String fileExtension = imageLocation.substring(imageLocation.lastIndexOf(".")).toLowerCase();
+       boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
 
-        File sourceFile = new File(imageLocation);
-        File destinationFile = new File(destinationPath);
+       if (!isImage) {
+           JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
+           resetImageSelection(); 
+           return null;
+       }
 
-        try {
-            destinationFile.getParentFile().mkdirs();
+       String destinationFolder = "src/Users/";
+       String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
+       String destinationPath = destinationFolder + newFileName;
 
-            Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return destinationPath;
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error adding image: " + e.getMessage());
-            return null;
-        }
-    }
-    
+       File sourceFile = new File(imageLocation);
+       File destinationFile = new File(destinationPath);
+
+       try {
+           destinationFile.getParentFile().mkdirs(); 
+           Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+           return destinationPath; 
+       } catch (IOException e) {
+           e.printStackTrace();
+           JOptionPane.showMessageDialog(this, "Error adding image: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+           resetImageSelection(); 
+           return null;
+       }
+   }
+
     
     
     

@@ -7,9 +7,6 @@ public class EmployeeSearch {
     private String jobtitle;
     private String departmentName;
 
-    // No-argument constructor
-    public EmployeeSearch() {}
-
     // Constructor with parameters
     public EmployeeSearch(String firstname, String lastname, String email, String jobtitle, String departmentName) {
         this.firstname = firstname;

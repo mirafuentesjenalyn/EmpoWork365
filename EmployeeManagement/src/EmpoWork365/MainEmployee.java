@@ -24,57 +24,57 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author jenal
  */
-public class Main extends javax.swing.JFrame {
+public class MainEmployee extends javax.swing.JFrame {
     private UserAuthenticate loggedInUser;
     private Connection connection;
+    private boolean hasClockedIn = false;
+    private boolean hasClockedOut = false;
+
     
     /**
      * Creates new form Login
      */
-    public Main() {
+    public MainEmployee() {
         initComponents();
        
         addButtonHoverEffect(btnHome);
-        addButtonHoverEffect(btnEmpMan);
         addButtonHoverEffect(btnAttSum);
         addButtonHoverEffect(btnPayroll);
         
-        try {
-              sqlConnector connector = new sqlConnector();
-              this.connection = connector.createConnection(); 
-              loadEmployeeData();
-          } catch (SQLException e) {
-              JOptionPane.showMessageDialog(this, "Failed to connect to the database: " + e.getMessage());
+       try {
+            sqlConnector connector = new sqlConnector();
+            this.connection = connector.createConnection();
+            loadEmployeeData();
+            checkAttendanceStatus(); // Check attendance status at startup
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to connect to the database: " + e.getMessage());
         }
-        
-        searchNameTxt.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                performSearch();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                performSearch();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                performSearch();
-            }
-        });
-
-        
-        searchNameTxt.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    performSearch(); // Trigger search on Enter key press
-                }
-            }
-        });
     }
     
+    public void setAuthenticatedUser(UserAuthenticate authenticatedUser) {
+        setUserDetails(authenticatedUser); 
+        checkAttendanceStatus(); 
+    }
+    
+    
+    public void setUserDetails(UserAuthenticate authenticatedUser) {
+        this.loggedInUser = authenticatedUser; 
+
+        if (loggedInUser != null) {
+            fullName.setText(loggedInUser.getFirstname().toUpperCase() + " " + loggedInUser.getLastname().toUpperCase());
+            userWelcome.setText(loggedInUser.getFirstname());
+            userJobTitle.setText(loggedInUser.getJobtitle());
+            userRole.setText(loggedInUser.getRoleName());
+            ImageIcon userImage = resizeImage(loggedInUser.getImagepath(), 100, 100);
+            userImageIcon.setIcon(userImage);
+
+            // Now that the user is authenticated, check the attendance status
+            checkAttendanceStatus();
+        } else {
+            JOptionPane.showMessageDialog(this, "User is not authenticated.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     
     private void loadEmployeeData() {
         try {
@@ -93,7 +93,7 @@ public class Main extends javax.swing.JFrame {
                 return false; 
             }
         };
-        jTable1.setModel(nonEditableModel);
+        jTable2.setModel(nonEditableModel);
     }
       
     private Vector<String> getColumnNames(DefaultTableModel model) {
@@ -103,9 +103,6 @@ public class Main extends javax.swing.JFrame {
         }
         return columnNames;
     }
-
-   
-   
 
     private void addButtonHoverEffect(javax.swing.JButton button) {
         button.setOpaque(true);
@@ -132,34 +129,25 @@ public class Main extends javax.swing.JFrame {
         return new ImageIcon(resizedImage);
     }
     
-    public void setAuthenticatedUser(UserAuthenticate authenticatedUser) {
-        setUserDetails(authenticatedUser); 
-    }
-
-    public void setUserDetails(UserAuthenticate authenticatedUser) {
-        this.loggedInUser = authenticatedUser; 
-
-        if (loggedInUser != null) {
-            fullName.setText(loggedInUser.getFirstname().toUpperCase() + " " + loggedInUser.getLastname().toUpperCase());
-            userWelcome.setText(loggedInUser.getFirstname());
-            userJobTitle.setText(loggedInUser.getJobtitle());
-            userRole.setText(loggedInUser.getRoleName());
-            ImageIcon userImage = resizeImage(loggedInUser.getImagepath(), 100, 100);
-            userImageIcon.setIcon(userImage);
-        }
-    }
 
 
-    public void setLoggedInUser(UserAuthenticate authenticatedUser) {
-        this.loggedInUser = authenticatedUser; 
+
+
+    public void setLoggedInUser(UserAuthenticate user) {
+        this.loggedInUser = user; 
     }
     
-    public void performSearch() {
-        String searchTerm = searchNameTxt.getText().trim();
-        if (searchTerm.isEmpty() || searchTerm.equals("Search")) {
-            loadEmployeeData();
-        } else {
-            searchAndDisplayEmployees(searchTerm); 
+    private void checkAttendanceStatus() {
+        if (loggedInUser == null) {
+            return; 
+        }
+
+        try {
+            AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+            hasClockedIn = attendanceMethod.hasClockedIn(loggedInUser.getId());
+            hasClockedOut = attendanceMethod.hasClockedOut(loggedInUser.getId());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking attendance status: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -180,7 +168,6 @@ public class Main extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         btnHome = new javax.swing.JButton();
-        btnEmpMan = new javax.swing.JButton();
         btnAttSum = new javax.swing.JButton();
         btnPayroll = new javax.swing.JButton();
         fullName = new javax.swing.JLabel();
@@ -195,20 +182,8 @@ public class Main extends javax.swing.JFrame {
         userJobTitle = new javax.swing.JLabel();
         userRole = new javax.swing.JLabel();
         logout = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        employeeManagement = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        searchBar = new javax.swing.JPanel();
-        btnAdd = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
-        searchNameTxt = new javax.swing.JTextField();
-        searchBarEmployeeName = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        btnDelete = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
+        btnTimeIn = new javax.swing.JButton();
+        btnTimeOut = new javax.swing.JButton();
         trackingAttendance = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -274,19 +249,6 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        btnEmpMan.setBackground(new java.awt.Color(102, 102, 102));
-        btnEmpMan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnEmpMan.setForeground(new java.awt.Color(255, 255, 255));
-        btnEmpMan.setText("Employee Management");
-        btnEmpMan.setContentAreaFilled(false);
-        btnEmpMan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnEmpMan.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnEmpMan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEmpManActionPerformed(evt);
-            }
-        });
-
         btnAttSum.setBackground(new java.awt.Color(102, 102, 102));
         btnAttSum.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnAttSum.setForeground(new java.awt.Color(255, 255, 255));
@@ -318,8 +280,7 @@ public class Main extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(btnPayroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnAttSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnEmpMan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnAttSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
             .addComponent(btnHome, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
@@ -328,12 +289,10 @@ public class Main extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(btnHome)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEmpMan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAttSum)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPayroll)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 204, 210, -1));
@@ -423,9 +382,19 @@ public class Main extends javax.swing.JFrame {
                 .addGap(22, 22, 22))
         );
 
-        jButton5.setText("time in");
+        btnTimeIn.setText("time in");
+        btnTimeIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimeInActionPerformed(evt);
+            }
+        });
 
-        jButton6.setText("time out");
+        btnTimeOut.setText("time out");
+        btnTimeOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimeOutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout homeLayout = new javax.swing.GroupLayout(home);
         home.setLayout(homeLayout);
@@ -439,9 +408,9 @@ public class Main extends javax.swing.JFrame {
                 .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(homeLayout.createSequentialGroup()
                         .addGap(154, 154, 154)
-                        .addComponent(jButton5)
+                        .addComponent(btnTimeIn)
                         .addGap(141, 141, 141)
-                        .addComponent(jButton6))
+                        .addComponent(btnTimeOut))
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(611, Short.MAX_VALUE))
         );
@@ -454,190 +423,12 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(jButton4)
                 .addGap(54, 54, 54)
                 .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
+                    .addComponent(btnTimeIn)
+                    .addComponent(btnTimeOut))
                 .addContainerGap(513, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab1", home);
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Employee Management");
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "Name", "Email", "Gender", "Job Title", "Department", "Date of Employment"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMinWidth(30);
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(30);
-            jTable1.getColumnModel().getColumn(3).setMinWidth(70);
-            jTable1.getColumnModel().getColumn(3).setMaxWidth(70);
-        }
-
-        btnAdd.setBackground(new java.awt.Color(8, 127, 127));
-        btnAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
-        btnAdd.setText("Add");
-        btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
-
-        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(1, 113, 132)));
-
-        searchNameTxt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        searchNameTxt.setForeground(new java.awt.Color(0, 102, 102));
-        searchNameTxt.setText("Search");
-        searchNameTxt.setBorder(null);
-        searchNameTxt.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                searchNameTxtFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                searchNameTxtFocusLost(evt);
-            }
-        });
-        searchNameTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchNameTxtActionPerformed(evt);
-            }
-        });
-
-        searchBarEmployeeName.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/search.png"))); // NOI18N
-        searchBarEmployeeName.setBorder(null);
-        searchBarEmployeeName.setContentAreaFilled(false);
-        searchBarEmployeeName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        searchBarEmployeeName.setFocusPainted(false);
-        searchBarEmployeeName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchBarEmployeeNameActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(searchNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(searchBarEmployeeName)
-                .addContainerGap())
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchBarEmployeeName))
-                .addGap(54, 54, 54))
-        );
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel5.setText("Name:");
-
-        btnDelete.setBackground(new java.awt.Color(255, 102, 102));
-        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnDelete.setForeground(new java.awt.Color(255, 255, 255));
-        btnDelete.setText("Delete");
-        btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
-
-        btnEdit.setText("Edit");
-        btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout searchBarLayout = new javax.swing.GroupLayout(searchBar);
-        searchBar.setLayout(searchBarLayout);
-        searchBarLayout.setHorizontalGroup(
-            searchBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchBarLayout.createSequentialGroup()
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
-                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(285, Short.MAX_VALUE))
-        );
-        searchBarLayout.setVerticalGroup(
-            searchBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchBarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(searchBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, searchBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(searchBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(searchBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(17, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout employeeManagementLayout = new javax.swing.GroupLayout(employeeManagement);
-        employeeManagement.setLayout(employeeManagementLayout);
-        employeeManagementLayout.setHorizontalGroup(
-            employeeManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(employeeManagementLayout.createSequentialGroup()
-                .addGroup(employeeManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(employeeManagementLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(employeeManagementLayout.createSequentialGroup()
-                        .addGap(268, 268, 268)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 787, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 437, Short.MAX_VALUE))
-        );
-        employeeManagementLayout.setVerticalGroup(
-            employeeManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(employeeManagementLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(190, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("tab2", employeeManagement);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -645,13 +436,13 @@ public class Main extends javax.swing.JFrame {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out"
+                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out", "Status"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
@@ -665,21 +456,23 @@ public class Main extends javax.swing.JFrame {
         trackingAttendanceLayout.setHorizontalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1392, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addGap(273, 273, 273)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(trackingAttendanceLayout.createSequentialGroup()
+                        .addGap(273, 273, 273)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(trackingAttendanceLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 772, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(620, Short.MAX_VALUE))
         );
         trackingAttendanceLayout.setVerticalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(287, Short.MAX_VALUE))
+                .addContainerGap(293, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab3", trackingAttendance);
@@ -975,26 +768,16 @@ public class Main extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnHomeActionPerformed
 
-    private void btnEmpManActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmpManActionPerformed
-        jTabbedPane1.setSelectedIndex(1);
-        
-        
-    }//GEN-LAST:event_btnEmpManActionPerformed
-
     private void btnAttSumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAttSumActionPerformed
-        jTabbedPane1.setSelectedIndex(2);
+        jTabbedPane1.setSelectedIndex(1);
         
     }//GEN-LAST:event_btnAttSumActionPerformed
 
     private void btnPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayrollActionPerformed
-        jTabbedPane1.setSelectedIndex(3);
+        jTabbedPane1.setSelectedIndex(2);
        
        
     }//GEN-LAST:event_btnPayrollActionPerformed
-
-    private void searchNameTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchNameTxtActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchNameTxtActionPerformed
 
     private void logoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutMouseClicked
         int response = JOptionPane.showConfirmDialog(this, 
@@ -1021,85 +804,37 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void searchNameTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchNameTxtFocusGained
-        if (searchNameTxt.getText().equals("Search")) {
-            searchNameTxt.setText("");
-            searchNameTxt.setForeground(new Color(142,122,69));
-        } 
-    }//GEN-LAST:event_searchNameTxtFocusGained
+    private void btnTimeInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimeInActionPerformed
+        if (!hasClockedIn) {
+             try {
+                 AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+                 attendanceMethod.recordTimeIn(loggedInUser.getId()); 
+                 hasClockedIn = true; 
+                 JOptionPane.showMessageDialog(this, "Time In recorded: " + new java.util.Date(), "Success", JOptionPane.INFORMATION_MESSAGE);
+             } catch (SQLException e) {
+                 JOptionPane.showMessageDialog(this, "Error recording Time In: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+             }
+         } else {
+             JOptionPane.showMessageDialog(this, "You have already clocked in.", "Info", JOptionPane.INFORMATION_MESSAGE);
+         }
+    }//GEN-LAST:event_btnTimeInActionPerformed
 
-    private void searchNameTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchNameTxtFocusLost
-        if (searchNameTxt.getText().isEmpty()) {
-            searchNameTxt.setText("Search");
-            searchNameTxt.setForeground(new Color(205,186,136));
-        }
-    }//GEN-LAST:event_searchNameTxtFocusLost
-
-    private void searchBarEmployeeNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarEmployeeNameActionPerformed
-            performSearch();
-
-    }//GEN-LAST:event_searchBarEmployeeNameActionPerformed
-
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        int selectedRow = jTable1.getSelectedRow();
-        if (selectedRow != -1) {
-            int employeeId = (Integer) jTable1.getValueAt(selectedRow, 0); 
-            int response = JOptionPane.showConfirmDialog(this, 
-                "Are you sure you want to delete this employee?", 
-                "Confirm Delete", 
-                JOptionPane.YES_NO_OPTION);
-
-            if (response == JOptionPane.YES_OPTION) {
-                EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-                if (employeeMethod.deleteEmployeeById(employeeId)) {
-                    JOptionPane.showMessageDialog(this, "Employee deleted successfully.");
-                    loadEmployeeData(); 
-                } else {
-                    JOptionPane.showMessageDialog(this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+    private void btnTimeOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimeOutActionPerformed
+        if (!hasClockedOut) {
+            try {
+                AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+                attendanceMethod.recordTimeOut(loggedInUser.getId()); // Pass user ID or relevant info
+                hasClockedOut = true; // Mark as clocked out
+                JOptionPane.showMessageDialog(this, "Time Out recorded: " + new java.util.Date(), "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error recording Time Out: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Please select an employee to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You have already clocked out.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
-    }//GEN-LAST:event_btnDeleteActionPerformed
+    }//GEN-LAST:event_btnTimeOutActionPerformed
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        SignUp signUp = new SignUp();
-        signUp.setVisible(true);
-    }//GEN-LAST:event_btnAddActionPerformed
-
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        int selectedRow = jTable1.getSelectedRow();
-
-        if (selectedRow != -1) {
-            int employeeId = (int) jTable1.getValueAt(selectedRow, 0); 
-
-            EditEmployee editForm = new EditEmployee();
-            editForm.setEmployeeId(employeeId); 
-            editForm.setVisible(true); 
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select an employee to edit.");
-        }
-    }//GEN-LAST:event_btnEditActionPerformed
-
-    public void searchAndDisplayEmployees(String searchTerm) {
-        EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-        List<EmployeeSearch> employeeList = employeeMethod.searchEmployeeMethod(searchTerm);
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"Full Name", "Email", "Job Title", "Department"}, 0);
-        
-        for (EmployeeSearch employee : employeeList) {
-            String fullName = employee.getFirstname() + " " + employee.getLastname();
-            model.addRow(new Object[]{
-                fullName,
-                employee.getEmail(),
-                employee.getJobtitle(),
-                employee.getDepartmentName()
-            });
-        }
-
-        jTable1.setModel(model); // Update the table with search results
-    }
-
+    
     
     /**
      * @param args the command line arguments
@@ -1118,53 +853,35 @@ public class Main extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainEmployee.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                new MainEmployee().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAttSum;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnEdit;
-    private javax.swing.JButton btnEmpMan;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnPayroll;
-    private javax.swing.JPanel employeeManagement;
+    private javax.swing.JButton btnTimeIn;
+    private javax.swing.JButton btnTimeOut;
     private javax.swing.JLabel fullName;
     private javax.swing.JPanel home;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1176,14 +893,12 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1192,11 +907,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField12;
@@ -1217,9 +929,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField9;
     private javax.swing.JLabel logout;
     private javax.swing.JPanel managePayroll;
-    private javax.swing.JPanel searchBar;
-    private javax.swing.JButton searchBarEmployeeName;
-    private javax.swing.JTextField searchNameTxt;
     private javax.swing.JPanel sideBar;
     private javax.swing.JPanel trackingAttendance;
     private javax.swing.JLabel userImageIcon;

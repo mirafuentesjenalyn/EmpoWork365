@@ -10,7 +10,6 @@ public class LoginMethod {
         UserAuthenticate loggedInUser = null;
         sqlConnector callConnector = new sqlConnector();
 
-        // SQL query to check the user credentials and fetch additional details
         String query = "SELECT fld_user_id, fld_password, fld_first_name, fld_last_name, " +
                        "fld_job_title_id, fld_image_path, fld_gender, fld_department_id, fld_role_id " +
                        "FROM tbl_users WHERE fld_email = ?";
@@ -18,27 +17,24 @@ public class LoginMethod {
         try (Connection conn = callConnector.createConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            // Set the email for the query
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Retrieve stored password and other details from the result set
-                String storedPassword = rs.getString("fld_password");  // Ensure this is hashed in production
+                int userId = rs.getInt("fld_user_id"); 
+                String storedPassword = rs.getString("fld_password");  
                 String firstName = rs.getString("fld_first_name");
                 String lastName = rs.getString("fld_last_name");
                 String imagePath = rs.getString("fld_image_path");
                 String gender = rs.getString("fld_gender");
                 int roleId = rs.getInt("fld_role_id");
                 int departmentId = rs.getInt("fld_department_id");
-                int jobTitleId = rs.getInt("fld_job_title_id"); // Get job title ID
+                int jobTitleId = rs.getInt("fld_job_title_id"); 
 
-                // Check if the entered password matches the stored password
-                if (password.equals(storedPassword)) { // Ensure to hash the password in production
-                    // User is authenticated, create UserAuthenticate object with user details
-                    loggedInUser = new UserAuthenticate(firstName, lastName, email, storedPassword, 
-                                                         gender, 
-                                                         getJobTitleName(jobTitleId), // Retrieve job title name using ID
+                if (password.equals(storedPassword)) { 
+                    loggedInUser = new UserAuthenticate(userId, firstName, lastName, email, 
+                                                         storedPassword, gender, 
+                                                         getJobTitleName(jobTitleId), 
                                                          getDepartmentName(departmentId), 
                                                          getRoleName(roleId), imagePath);
                 }
@@ -46,10 +42,9 @@ public class LoginMethod {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        // Return UserAuthenticate object if authentication is successful, null otherwise
         return loggedInUser;
     }
+
 
     private String getDepartmentName(int departmentId) {
         String departmentName = null;

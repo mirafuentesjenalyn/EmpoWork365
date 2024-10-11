@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 public class LoginForm extends javax.swing.JFrame {
 
     /**
-     * Creates new form Main
+     * Creates new form MainAdmin
      */
     public LoginForm() {
         initComponents();
@@ -225,7 +225,7 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_passWordActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        LoginMethod loginMethod = new LoginMethod(); 
+        LoginMethod loginMethod = new LoginMethod();
 
         String email = eMail.getText().trim(); 
         String password = new String(passWord.getPassword());
@@ -238,9 +238,28 @@ public class LoginForm extends javax.swing.JFrame {
         UserAuthenticate authenticatedUser = loginMethod.authenticate(email, password); 
 
         if (authenticatedUser != null) {
-            Main homeForm = new Main();
-            homeForm.setAuthenticatedUser(authenticatedUser); 
-            homeForm.setVisible(true); 
+            String roleName = authenticatedUser.getRoleName();
+
+            if (null == roleName) {
+                JOptionPane.showMessageDialog(this, "Invalid role.");
+                return;
+            } else switch (roleName) {
+                case "Admin" -> {
+                    MainAdmin adminForm = new MainAdmin();
+                    adminForm.setAuthenticatedUser(authenticatedUser);
+                    adminForm.setVisible(true);
+                }
+                case "Employee", "Department Manager", "HR Manager" -> {
+                    MainEmployee employeeForm = new MainEmployee();
+                    employeeForm.setAuthenticatedUser(authenticatedUser);
+                    employeeForm.setVisible(true);
+                }
+                default -> {
+                    JOptionPane.showMessageDialog(this, "Invalid role.");
+                    return;
+                }
+            }
+
             this.dispose(); 
         } else {
             JOptionPane.showMessageDialog(this, "Invalid email or password.");
