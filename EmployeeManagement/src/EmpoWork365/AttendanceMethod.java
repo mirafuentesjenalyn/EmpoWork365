@@ -1,74 +1,106 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package EmpoWork365;
 
-/**
- *
- * @author jenal
- */
-
+import java.sql.Timestamp; 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class AttendanceMethod {
-    private Connection connection;
+    private final Connection connection;
+    private static final LocalTime CLOCK_IN_TIME = LocalTime.of(8, 0); // 8:00 AM
+    private static final LocalTime CLOCK_OUT_TIME = LocalTime.of(17, 0); // 5:00 PM
+    private static final LocalTime ABSENT_CUTOFF_TIME = LocalTime.of(9, 0); // 9:00 AM
 
+    
     public AttendanceMethod(Connection connection) {
         this.connection = connection;
     }
 
-    // Record time in for the user
-    public void recordTimeIn(int userId) throws SQLException {
-        String query = "INSERT INTO tbl_attendance (fld_employee_id, fld_time_in) VALUES (?, NOW())";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-        }
-    }
+    public void clockIn(int employeeId) throws SQLException {
+        String status;
 
-    // Record time out for the user
-    public void recordTimeOut(int userId) throws SQLException {
-        String query = "UPDATE tbl_attendance SET fld_time_out = NOW() WHERE fld_employee_id = ? AND fld_time_out IS NULL";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-        }
-    }
-
-    // Check if the user has already clocked in for today
-    public boolean hasClockedIn(int userId) throws SQLException {
-        String sql = "SELECT fld_time_in FROM tbl_attendance WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE()";
+        LocalTime currentTime = LocalTime.now();
         
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                return rs.next(); // Returns true if there's a record for today
+        if (currentTime.isAfter(CLOCK_IN_TIME) && currentTime.isBefore(ABSENT_CUTOFF_TIME)) {
+            status = "Late"; // If current time is after 8:00 AM but before 9:00 AM
+        } else if (currentTime.isAfter(ABSENT_CUTOFF_TIME)) {
+            status = "Absent"; // If current time is after 9:00 AM
+        } else {
+            status = "Present"; // If current time is before or at 8:00 AM
+        }
+
+        String sql = "INSERT INTO tbl_attendance (fld_employee_id, fld_attendance_date, fld_time_in, fld_status) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, employeeId);
+            preparedStatement.setDate(2, java.sql.Date.valueOf(LocalDate.now())); 
+            preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis())); 
+            preparedStatement.setString(4, status); 
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Clock-in failed, no rows affected.");
             }
         }
     }
+   
+    public void clockOut(int employeeId) throws SQLException {
+        String status;
 
-    // Check if the user has already clocked out for today
-    public boolean hasClockedOut(int userId) throws SQLException {
-        String sql = "SELECT fld_time_out FROM tbl_attendance WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE()";
-        
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                return rs.next(); // Returns true if there's a record for today
+        LocalTime currentTime = LocalTime.now();
+
+        if (currentTime.isAfter(CLOCK_OUT_TIME)) {
+            status = "Overtime"; // If current time is after 5:00 PM
+        } else {
+            status = "Present"; // If current time is before or at 5:00 PM
+        }
+
+        String sql = "UPDATE tbl_attendance SET fld_time_out = ?, fld_status = ? WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE() AND fld_time_out IS NULL";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setTimestamp(1, new Timestamp(System.currentTimeMillis())); 
+            preparedStatement.setString(2, status); 
+            preparedStatement.setInt(3, employeeId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Clock-out failed, no rows affected or already clocked out today.");
             }
         }
     }
-
-    // Reset attendance for yesterday
-    public void resetAttendanceForYesterday() throws SQLException {
-        String sql = "UPDATE tbl_attendance SET fld_time_in = NULL, fld_time_out = NULL WHERE DATE(fld_time_in) = CURDATE() - INTERVAL 1 DAY";
-        
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.executeUpdate();
-        }
+     
+    public void recordTimeIn(int employeeId) throws SQLException {
+        clockIn(employeeId); 
     }
+
+    public void recordTimeOut(int employeeId) throws SQLException {
+        clockOut(employeeId); 
+    }
+
+    public boolean hasClockedIn(int employeeId) {
+        String sql = "SELECT COUNT(*) FROM tbl_attendance WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE()";
+        return executeCountQuery(sql, employeeId) > 0;
+    }
+
+    public boolean hasClockedOut(int employeeId) {
+        String sql = "SELECT COUNT(*) FROM tbl_attendance WHERE fld_employee_id = ? AND DATE(fld_time_out) = CURDATE()";
+        return executeCountQuery(sql, employeeId) > 0;
+    }
+
+    private int executeCountQuery(String sql, Object... params) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                pstmt.setObject(i + 1, params[i]);
+            }
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
 }

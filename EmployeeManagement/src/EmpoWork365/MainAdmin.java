@@ -43,6 +43,7 @@ public class MainAdmin extends javax.swing.JFrame {
               sqlConnector connector = new sqlConnector();
               this.connection = connector.createConnection(); 
               loadEmployeeData();
+              getAttendanceData();
           } catch (SQLException e) {
               JOptionPane.showMessageDialog(this, "Failed to connect to the database: " + e.getMessage());
         }
@@ -75,12 +76,22 @@ public class MainAdmin extends javax.swing.JFrame {
         });
     }
     
-    
     private void loadEmployeeData() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
             DefaultTableModel model = employeeMethod.getEmployeeData();
             setTableModel(model);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load employee data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+          
+    private void getAttendanceData() {
+        try {
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            DefaultTableModel model = employeeMethod.getAttendanceData();
+            setTableAttendance(model);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Failed to load employee data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -95,7 +106,18 @@ public class MainAdmin extends javax.swing.JFrame {
         };
         jTable1.setModel(nonEditableModel);
     }
-      
+    
+    private void setTableAttendance(DefaultTableModel model) {
+        DefaultTableModel nonEditableModel = new DefaultTableModel(model.getDataVector(), getColumnNames(model)) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; 
+            }
+        };
+        jTable2.setModel(nonEditableModel);
+    }
+    
+    
     private Vector<String> getColumnNames(DefaultTableModel model) {
         Vector<String> columnNames = new Vector<>();
         for (int i = 0; i < model.getColumnCount(); i++) {
@@ -157,7 +179,7 @@ public class MainAdmin extends javax.swing.JFrame {
     public void performSearch() {
         String searchTerm = searchNameTxt.getText().trim();
         if (searchTerm.isEmpty() || searchTerm.equals("Search")) {
-            loadEmployeeData();
+//            loadEmployeeData();
         } else {
             searchAndDisplayEmployees(searchTerm); 
         }
@@ -186,6 +208,7 @@ public class MainAdmin extends javax.swing.JFrame {
         fullName = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         userImageIcon = new javax.swing.JLabel();
+        logout = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         home = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
@@ -194,9 +217,6 @@ public class MainAdmin extends javax.swing.JFrame {
         userWelcome = new javax.swing.JLabel();
         userJobTitle = new javax.swing.JLabel();
         userRole = new javax.swing.JLabel();
-        logout = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
         employeeManagement = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -303,7 +323,7 @@ public class MainAdmin extends javax.swing.JFrame {
         btnPayroll.setBackground(new java.awt.Color(102, 102, 102));
         btnPayroll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPayroll.setForeground(new java.awt.Color(255, 255, 255));
-        btnPayroll.setText("Manage Payroll");
+        btnPayroll.setText("Payroll Management");
         btnPayroll.setContentAreaFilled(false);
         btnPayroll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPayroll.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -354,6 +374,15 @@ public class MainAdmin extends javax.swing.JFrame {
 
         jPanel3.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 150, -1));
 
+        logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logout.png"))); // NOI18N
+        logout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logoutMouseClicked(evt);
+            }
+        });
+        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 680, -1, -1));
+
         sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
 
         jButton4.setText("Generate Reports");
@@ -377,14 +406,6 @@ public class MainAdmin extends javax.swing.JFrame {
         userRole.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         userRole.setText("Role");
 
-        logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logout.png"))); // NOI18N
-        logout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        logout.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                logoutMouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -402,30 +423,21 @@ public class MainAdmin extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(userWelcome, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(userJobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 383, Short.MAX_VALUE)
-                        .addComponent(logout)
-                        .addGap(14, 14, 14))))
+                        .addGap(14, 447, Short.MAX_VALUE))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(userWelcome))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userJobTitle))
-                    .addComponent(logout))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(userWelcome))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(userJobTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(userRole)
                 .addGap(22, 22, 22))
         );
-
-        jButton5.setText("time in");
-
-        jButton6.setText("time out");
 
         javax.swing.GroupLayout homeLayout = new javax.swing.GroupLayout(home);
         home.setLayout(homeLayout);
@@ -436,13 +448,7 @@ public class MainAdmin extends javax.swing.JFrame {
                 .addComponent(jButton4)
                 .addGap(30, 30, 30))
             .addGroup(homeLayout.createSequentialGroup()
-                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(homeLayout.createSequentialGroup()
-                        .addGap(154, 154, 154)
-                        .addComponent(jButton5)
-                        .addGap(141, 141, 141)
-                        .addComponent(jButton6))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(611, Short.MAX_VALUE))
         );
         homeLayout.setVerticalGroup(
@@ -452,11 +458,7 @@ public class MainAdmin extends javax.swing.JFrame {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(jButton4)
-                .addGap(54, 54, 54)
-                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addContainerGap(513, Short.MAX_VALUE))
+                .addContainerGap(594, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab1", home);
@@ -645,13 +647,13 @@ public class MainAdmin extends javax.swing.JFrame {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out"
+                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out", "Status", "Date"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
@@ -665,28 +667,28 @@ public class MainAdmin extends javax.swing.JFrame {
         trackingAttendanceLayout.setHorizontalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1392, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(trackingAttendanceLayout.createSequentialGroup()
                 .addGap(273, 273, 273)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(trackingAttendanceLayout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 783, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 615, Short.MAX_VALUE))
         );
         trackingAttendanceLayout.setVerticalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(287, Short.MAX_VALUE))
+                .addContainerGap(293, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab3", trackingAttendance);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Manage Payroll");
+        jLabel4.setText("Payroll Management");
 
         jTextField2.setText(" Employee ID");
 
@@ -996,27 +998,6 @@ public class MainAdmin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchNameTxtActionPerformed
 
-    private void logoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutMouseClicked
-        int response = JOptionPane.showConfirmDialog(this, 
-                                                         "Are you sure you want to log out?", 
-                                                         "Confirm Logout", 
-                                                         JOptionPane.YES_NO_OPTION, 
-                                                         JOptionPane.QUESTION_MESSAGE);
-
-            if (response == JOptionPane.YES_OPTION) {
-                try {
-                    LoginForm callLoginForm = new LoginForm();
-                    callLoginForm.setVisible(true); 
-                    this.dispose(); 
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, 
-                                                  "Error occurred while logging out: " + e.getMessage(), 
-                                                  "Error", 
-                                                  JOptionPane.ERROR_MESSAGE);
-                }
-            }
-    }//GEN-LAST:event_logoutMouseClicked
-
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -1051,9 +1032,11 @@ public class MainAdmin extends javax.swing.JFrame {
 
             if (response == JOptionPane.YES_OPTION) {
                 EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+
+                // Now directly delete from tbl_employees
                 if (employeeMethod.deleteEmployeeById(employeeId)) {
                     JOptionPane.showMessageDialog(this, "Employee deleted successfully.");
-                    loadEmployeeData(); 
+//                    loadEmployeeData(); 
                 } else {
                     JOptionPane.showMessageDialog(this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1082,12 +1065,33 @@ public class MainAdmin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
+    private void logoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutMouseClicked
+        int response = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to log out?",
+            "Confirm Logout",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            try {
+                LoginForm callLoginForm = new LoginForm();
+                callLoginForm.setVisible(true);
+                this.dispose();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Error occurred while logging out: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_logoutMouseClicked
+
     public void searchAndDisplayEmployees(String searchTerm) {
         EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-        List<EmployeeSearch> employeeList = employeeMethod.searchEmployeeMethod(searchTerm);
+        List<Employee> employeeList = employeeMethod.searchEmployeeMethod(searchTerm);
         DefaultTableModel model = new DefaultTableModel(new Object[]{"Full Name", "Email", "Job Title", "Department"}, 0);
         
-        for (EmployeeSearch employee : employeeList) {
+        for (Employee employee : employeeList) {
             String fullName = employee.getFirstname() + " " + employee.getLastname();
             model.addRow(new Object[]{
                 fullName,
@@ -1149,8 +1153,6 @@ public class MainAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel fullName;
     private javax.swing.JPanel home;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

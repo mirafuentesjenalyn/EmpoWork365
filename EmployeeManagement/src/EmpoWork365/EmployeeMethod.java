@@ -4,7 +4,10 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,13 +28,12 @@ public class EmployeeMethod {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         String query = "SELECT e.fld_employee_id, "
-                     + "CONCAT(u.fld_first_name, ' ', u.fld_last_name) AS full_name, "
-                     + "u.fld_email, u.fld_gender, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                     + "e.fld_email, e.fld_gender, "
                      + "jt.fld_job_title, " 
                      + "d.fld_department_name, "
                      + "e.fld_date_of_employment "
                      + "FROM tbl_employees e "
-                     + "INNER JOIN tbl_users u ON e.fld_user_id = u.fld_user_id "
                      + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
                      + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id;";
 
@@ -44,7 +46,7 @@ public class EmployeeMethod {
                     resultSet.getString("full_name"),
                     resultSet.getString("fld_email"),
                     resultSet.getString("fld_gender"),
-                    resultSet.getString("fld_job_title"), // Use job title directly from resultSet
+                    resultSet.getString("fld_job_title"),
                     resultSet.getString("fld_department_name"),
                     resultSet.getDate("fld_date_of_employment")
                 };
@@ -57,23 +59,22 @@ public class EmployeeMethod {
         return model; 
     }
     
-    public List<EmployeeSearch> searchEmployeeMethod(String searchTerm) {
-        List<EmployeeSearch> employeeList = new ArrayList<>();
+    public List<Employee> searchEmployeeMethod(String searchTerm) {
+        List<Employee> employeeList = new ArrayList<>();
 
         String sql = "SELECT e.fld_employee_id, "
-                     + "u.fld_first_name, "
-                     + "u.fld_last_name, "
-                     + "u.fld_email, "
+                     + "e.fld_first_name, "
+                     + "e.fld_last_name, "
+                     + "e.fld_email, "
                      + "jt.fld_job_title, " 
                      + "d.fld_department_name "
-                     + "FROM tbl_users u "
-                     + "JOIN tbl_employees e ON u.fld_user_id = e.fld_user_id "
+                     + "FROM tbl_employees e "
                      + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
                      + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
-                     + "WHERE LOWER(CONCAT(u.fld_first_name, ' ', u.fld_last_name)) LIKE ? "
-                     + "OR LOWER(u.fld_first_name) LIKE ? "
-                     + "OR LOWER(u.fld_last_name) LIKE ? "
-                     + "OR LOWER(u.fld_email) LIKE ?";
+                     + "WHERE LOWER(CONCAT(e.fld_first_name, ' ', e.fld_last_name)) LIKE ? "
+                     + "OR LOWER(e.fld_first_name) LIKE ? "
+                     + "OR LOWER(e.fld_last_name) LIKE ? "
+                     + "OR LOWER(e.fld_email) LIKE ?";
 
         String searchPattern = "%" + searchTerm.toLowerCase() + "%";
 
@@ -85,12 +86,12 @@ public class EmployeeMethod {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    EmployeeSearch employee = new EmployeeSearch(
-                        rs.getString("fld_first_name"),  // First Name
-                        rs.getString("fld_last_name"),   // Last Name
-                        rs.getString("fld_email"),        // Email
-                        rs.getString("fld_job_title"),    // Job Title
-                        rs.getString("fld_department_name") // Department Name
+                    Employee employee = new Employee(
+                        rs.getString("fld_first_name"), 
+                        rs.getString("fld_last_name"),   
+                        rs.getString("fld_email"),        
+                        rs.getString("fld_job_title"),   
+                        rs.getString("fld_department_name") 
                     );
                     employeeList.add(employee);
                 }
@@ -102,58 +103,110 @@ public class EmployeeMethod {
         return employeeList;
     }
 
-
     public boolean deleteEmployeeById(int employeeId) {
-        String deletePayrollSQL = "DELETE FROM tbl_payroll WHERE fld_employee_id = ?";
-        String deleteAttendanceSQL = "DELETE FROM tbl_attendance WHERE fld_employee_id = ?";
         String deleteEmployeeSQL = "DELETE FROM tbl_employees WHERE fld_employee_id = ?";
-        String deleteUserSQL = "DELETE FROM tbl_users WHERE fld_user_id = (SELECT fld_user_id FROM tbl_employees WHERE fld_employee_id = ?)";
 
-        try {
-            connection.setAutoCommit(false);
-
-            try (PreparedStatement payrollStmt = connection.prepareStatement(deletePayrollSQL)) {
-                payrollStmt.setInt(1, employeeId);
-                payrollStmt.executeUpdate();
-            }
-
-            try (PreparedStatement attendanceStmt = connection.prepareStatement(deleteAttendanceSQL)) {
-                attendanceStmt.setInt(1, employeeId);
-                attendanceStmt.executeUpdate();
-            }
-
-            try (PreparedStatement employeeStmt = connection.prepareStatement(deleteEmployeeSQL)) {
-                employeeStmt.setInt(1, employeeId);
-                int employeeRowsAffected = employeeStmt.executeUpdate();
-
-                try (PreparedStatement userStmt = connection.prepareStatement(deleteUserSQL)) {
-                    userStmt.setInt(1, employeeId);
-                    userStmt.executeUpdate();
-                }
-
-                if (employeeRowsAffected > 0) {
-                    connection.commit();
-                    return true;
-                }
-            }
-
-            connection.rollback();
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteEmployeeSQL)) {
+            pstmt.setInt(1, employeeId);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0; 
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle exception
-            try {
-                connection.rollback(); // Rollback in case of an error
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
+            e.printStackTrace(); 
+            return false; 
+        }
+    }
+    
+    public DefaultTableModel getAttendanceData() throws SQLException {
+       String[] columnNames = {
+           "Employee ID", "Full Name", "Job Title", "Department", 
+           "Time In", "Time Out", "Status", "Date"
+       };
+
+       DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+       String query = "SELECT e.fld_employee_id, "
+                    + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                    + "jt.fld_job_title, "
+                    + "d.fld_department_name, "
+                    + "a.fld_time_in, a.fld_time_out, a.fld_status, a.fld_attendance_date "
+                    + "FROM tbl_attendance a "
+                    + "INNER JOIN tbl_employees e ON a.fld_employee_id = e.fld_employee_id "
+                    + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                    + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id";
+
+       try (PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+            
+           while (resultSet.next()) {
+               Object[] row = {
+                   resultSet.getInt("fld_employee_id"),
+                   resultSet.getString("full_name"),
+                   resultSet.getString("fld_job_title"),
+                   resultSet.getString("fld_department_name"),
+                   timeFormat.format(resultSet.getTimestamp("fld_time_in")),
+                   timeFormat.format(resultSet.getTimestamp("fld_time_out")),
+                   resultSet.getString("fld_status"),
+                   dateFormat.format(resultSet.getDate("fld_attendance_date"))
+               };
+               model.addRow(row);
+           }
+       } catch (SQLException e) {
+           throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
+       }
+
+       return model; 
+   }
+    
+    public DefaultTableModel getAttendanceDataById(int employeeId) throws SQLException {
+        String[] columnNames = {
+            "Employee ID", "Full Name", "Time In", "Time Out", "Status", "Date"
+        };
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT e.fld_employee_id, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                     + "a.fld_time_in, a.fld_time_out, a.fld_status, a.fld_attendance_date "
+                     + "FROM tbl_attendance a "
+                     + "INNER JOIN tbl_employees e ON a.fld_employee_id = e.fld_employee_id "
+                     + "WHERE e.fld_employee_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+
+                while (resultSet.next()) {
+                    Object[] row = {
+                        resultSet.getInt("fld_employee_id"),
+                        resultSet.getString("full_name"),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
+                        resultSet.getString("fld_status"),
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat)
+                    };
+                    model.addRow(row);
+                }
             }
-        } finally {
-            // Reset auto-commit to true after the transaction
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
         }
 
-        return false; 
+        return model;
     }
-}
+
+    // Helper method to format timestamps
+    private String formatTimestamp(Timestamp timestamp, SimpleDateFormat timeFormat) {
+        return (timestamp != null) ? timeFormat.format(timestamp) : "N/A"; // Return "N/A" if timestamp is null
+    }
+
+    // Helper method to format dates
+    private String formatDate(Date date, SimpleDateFormat dateFormat) {
+        return (date != null) ? dateFormat.format(date) : "N/A"; // Return "N/A" if date is null
+    }
+
+    }

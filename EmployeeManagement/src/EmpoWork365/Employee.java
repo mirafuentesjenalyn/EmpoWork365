@@ -1,6 +1,6 @@
 package EmpoWork365;
 
-public class EmployeeSearch {
+public class Employee {
     private String firstname;
     private String lastname;
     private String email;
@@ -8,7 +8,7 @@ public class EmployeeSearch {
     private String departmentName;
 
     // Constructor with parameters
-    public EmployeeSearch(String firstname, String lastname, String email, String jobtitle, String departmentName) {
+    public Employee(String firstname, String lastname, String email, String jobtitle, String departmentName) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;

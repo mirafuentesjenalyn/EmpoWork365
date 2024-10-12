@@ -718,7 +718,7 @@ public final class SignUp extends javax.swing.JFrame {
     }//GEN-LAST:event_passWordActionPerformed
 
     private boolean isEmailDuplicate(String email) {
-        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_users WHERE fld_email = ?";
+        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSQL)) {
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
@@ -756,7 +756,6 @@ public final class SignUp extends javax.swing.JFrame {
             return;
         }
 
-        // Use the method to get the job title ID directly
         int jobTitleId = getJobTitleId(); 
 
         if (jobTitleId == -1) {

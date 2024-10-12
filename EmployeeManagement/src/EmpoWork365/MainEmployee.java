@@ -7,18 +7,17 @@ package EmpoWork365;
 import java.sql.Connection;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,16 +35,13 @@ public class MainEmployee extends javax.swing.JFrame {
      */
     public MainEmployee() {
         initComponents();
-       
         addButtonHoverEffect(btnHome);
         addButtonHoverEffect(btnAttSum);
         addButtonHoverEffect(btnPayroll);
         
-       try {
+        try {
             sqlConnector connector = new sqlConnector();
             this.connection = connector.createConnection();
-            loadEmployeeData();
-            checkAttendanceStatus(); // Check attendance status at startup
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Failed to connect to the database: " + e.getMessage());
         }
@@ -53,6 +49,7 @@ public class MainEmployee extends javax.swing.JFrame {
     
     public void setAuthenticatedUser(UserAuthenticate authenticatedUser) {
         setUserDetails(authenticatedUser); 
+        loadEmployeeAttendanceById();
         checkAttendanceStatus(); 
     }
     
@@ -67,24 +64,27 @@ public class MainEmployee extends javax.swing.JFrame {
             userRole.setText(loggedInUser.getRoleName());
             ImageIcon userImage = resizeImage(loggedInUser.getImagepath(), 100, 100);
             userImageIcon.setIcon(userImage);
-
-            // Now that the user is authenticated, check the attendance status
-            checkAttendanceStatus();
         } else {
             JOptionPane.showMessageDialog(this, "User is not authenticated.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     
-    private void loadEmployeeData() {
+    private void loadEmployeeAttendanceById() {
+        if (loggedInUser == null) {
+            return;
+        }
+
         try {
+            int employeeId = loggedInUser.getId();
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-            DefaultTableModel model = employeeMethod.getEmployeeData();
+            DefaultTableModel model = employeeMethod.getAttendanceDataById(employeeId);
             setTableModel(model);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Failed to load employee data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to load employee attendance data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     
     private void setTableModel(DefaultTableModel model) {
         DefaultTableModel nonEditableModel = new DefaultTableModel(model.getDataVector(), getColumnNames(model)) {
@@ -128,31 +128,27 @@ public class MainEmployee extends javax.swing.JFrame {
 
         return new ImageIcon(resizedImage);
     }
-    
-
-
-
-
+   
     public void setLoggedInUser(UserAuthenticate user) {
         this.loggedInUser = user; 
     }
-    
+
+
     private void checkAttendanceStatus() {
         if (loggedInUser == null) {
-            return; 
+            return;
         }
-
-        try {
-            AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
-            hasClockedIn = attendanceMethod.hasClockedIn(loggedInUser.getId());
-            hasClockedOut = attendanceMethod.hasClockedOut(loggedInUser.getId());
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error checking attendance status: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+        hasClockedIn = attendanceMethod.hasClockedIn(loggedInUser.getId());
+        hasClockedOut = attendanceMethod.hasClockedOut(loggedInUser.getId());
+        updateAttendanceButtons(); 
     }
 
+    private void updateAttendanceButtons() {
+           btnTimeIn.setEnabled(!hasClockedIn); 
+           btnTimeOut.setEnabled(hasClockedIn && !hasClockedOut);
+    }
 
-    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -173,6 +169,7 @@ public class MainEmployee extends javax.swing.JFrame {
         fullName = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         userImageIcon = new javax.swing.JLabel();
+        logout = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         home = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
@@ -181,7 +178,6 @@ public class MainEmployee extends javax.swing.JFrame {
         userWelcome = new javax.swing.JLabel();
         userJobTitle = new javax.swing.JLabel();
         userRole = new javax.swing.JLabel();
-        logout = new javax.swing.JLabel();
         btnTimeIn = new javax.swing.JButton();
         btnTimeOut = new javax.swing.JButton();
         trackingAttendance = new javax.swing.JPanel();
@@ -265,7 +261,7 @@ public class MainEmployee extends javax.swing.JFrame {
         btnPayroll.setBackground(new java.awt.Color(102, 102, 102));
         btnPayroll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPayroll.setForeground(new java.awt.Color(255, 255, 255));
-        btnPayroll.setText("Manage Payroll");
+        btnPayroll.setText("Access Payroll");
         btnPayroll.setContentAreaFilled(false);
         btnPayroll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPayroll.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -313,6 +309,15 @@ public class MainEmployee extends javax.swing.JFrame {
 
         jPanel3.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 150, -1));
 
+        logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logout.png"))); // NOI18N
+        logout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logoutMouseClicked(evt);
+            }
+        });
+        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 680, -1, -1));
+
         sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
 
         jButton4.setText("Generate Reports");
@@ -336,14 +341,6 @@ public class MainEmployee extends javax.swing.JFrame {
         userRole.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         userRole.setText("Role");
 
-        logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logout.png"))); // NOI18N
-        logout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        logout.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                logoutMouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -361,22 +358,17 @@ public class MainEmployee extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(userWelcome, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(userJobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 383, Short.MAX_VALUE)
-                        .addComponent(logout)
-                        .addGap(14, 14, 14))))
+                        .addGap(14, 447, Short.MAX_VALUE))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(userWelcome))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userJobTitle))
-                    .addComponent(logout))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(userWelcome))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(userJobTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(userRole)
                 .addGap(22, 22, 22))
@@ -436,13 +428,13 @@ public class MainEmployee extends javax.swing.JFrame {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out", "Status"
+                "ID", "Name", "Time-In", "Time-Out", "Status", "Date"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
@@ -479,7 +471,7 @@ public class MainEmployee extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Manage Payroll");
+        jLabel4.setText("Access Payroll");
 
         jTextField2.setText(" Employee ID");
 
@@ -598,52 +590,50 @@ public class MainEmployee extends javax.swing.JFrame {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, managePayrollLayout.createSequentialGroup()
-                                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(managePayrollLayout.createSequentialGroup()
-                                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField18, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, managePayrollLayout.createSequentialGroup()
-                                        .addGap(48, 48, 48)
-                                        .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, managePayrollLayout.createSequentialGroup()
-                                                .addComponent(jLabel12)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jTextField6))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, managePayrollLayout.createSequentialGroup()
-                                                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jTextField7)
-                                                    .addComponent(jTextField8)))))
-                                    .addGroup(managePayrollLayout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(managePayrollLayout.createSequentialGroup()
-                                                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jTextField19, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(managePayrollLayout.createSequentialGroup()
-                                                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                    .addComponent(jTextField9)
-                                                    .addComponent(jTextField16)
-                                                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                                .addGap(355, 355, 355)))))
-                .addGap(368, 368, 368))
+                                        .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jTextField18, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(managePayrollLayout.createSequentialGroup()
+                                    .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(managePayrollLayout.createSequentialGroup()
+                                            .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel22, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, managePayrollLayout.createSequentialGroup()
+                                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(15, 15, 15)))
+                                    .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jTextField9)
+                                        .addComponent(jTextField16)
+                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(managePayrollLayout.createSequentialGroup()
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGap(265, 265, 265))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, managePayrollLayout.createSequentialGroup()
+                                    .addGap(48, 48, 48)
+                                    .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(managePayrollLayout.createSequentialGroup()
+                                            .addComponent(jLabel12)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jTextField6))
+                                        .addGroup(managePayrollLayout.createSequentialGroup()
+                                            .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(jTextField7)
+                                                .addComponent(jTextField8)))))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, managePayrollLayout.createSequentialGroup()
+                                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jTextField19, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(966, Short.MAX_VALUE))
             .addGroup(managePayrollLayout.createSequentialGroup()
                 .addGap(274, 274, 274)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(935, Short.MAX_VALUE))
         );
         managePayrollLayout.setVerticalGroup(
             managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -674,15 +664,15 @@ public class MainEmployee extends javax.swing.JFrame {
                                 .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(33, 33, 33))
                             .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                         .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                         .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(19, 19, 19)
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(jTextField18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(7, 7, 7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -696,7 +686,7 @@ public class MainEmployee extends javax.swing.JFrame {
                         .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(7, 7, 7)
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel23)
                     .addComponent(jTextField19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -805,36 +795,60 @@ public class MainEmployee extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void btnTimeInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimeInActionPerformed
+        if (loggedInUser == null) {
+            JOptionPane.showMessageDialog(this, "User is not authenticated. Please log in again.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
         if (!hasClockedIn) {
-             try {
-                 AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
-                 attendanceMethod.recordTimeIn(loggedInUser.getId()); 
-                 hasClockedIn = true; 
-                 JOptionPane.showMessageDialog(this, "Time In recorded: " + new java.util.Date(), "Success", JOptionPane.INFORMATION_MESSAGE);
-             } catch (SQLException e) {
-                 JOptionPane.showMessageDialog(this, "Error recording Time In: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-             }
-         } else {
-             JOptionPane.showMessageDialog(this, "You have already clocked in.", "Info", JOptionPane.INFORMATION_MESSAGE);
-         }
+            recordTimeIn(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "You have already clocked in.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnTimeInActionPerformed
 
     private void btnTimeOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimeOutActionPerformed
+        if (loggedInUser == null) {
+            JOptionPane.showMessageDialog(this, "User is not authenticated. Please log in again.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
         if (!hasClockedOut) {
-            try {
-                AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
-                attendanceMethod.recordTimeOut(loggedInUser.getId()); // Pass user ID or relevant info
-                hasClockedOut = true; // Mark as clocked out
-                JOptionPane.showMessageDialog(this, "Time Out recorded: " + new java.util.Date(), "Success", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error recording Time Out: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            recordTimeOut(); 
         } else {
             JOptionPane.showMessageDialog(this, "You have already clocked out.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnTimeOutActionPerformed
 
-    
+    public void recordTimeIn() {
+       try {
+           AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+           attendanceMethod.recordTimeIn(loggedInUser.getId()); 
+           hasClockedIn = true;
+
+           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+           String formattedTimeIn = sdf.format(new java.util.Date());
+
+           JOptionPane.showMessageDialog(this, "Time In recorded: " + formattedTimeIn, "Success", JOptionPane.INFORMATION_MESSAGE);
+           updateAttendanceButtons(); 
+       } catch (SQLException e) {
+           JOptionPane.showMessageDialog(this, "Error recording Time In: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+       }
+   }
+
+   public void recordTimeOut() {
+       try {
+           AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+           attendanceMethod.recordTimeOut(loggedInUser.getId()); 
+           hasClockedOut = true;
+
+           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+           String formattedTimeIn = sdf.format(new java.util.Date());
+
+           JOptionPane.showMessageDialog(this, "Time Out recorded: " + formattedTimeIn, "Success", JOptionPane.INFORMATION_MESSAGE);
+           updateAttendanceButtons(); 
+       } catch (SQLException e) {
+           JOptionPane.showMessageDialog(this, "Error recording Time Out: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+       }
+    }
     
     /**
      * @param args the command line arguments

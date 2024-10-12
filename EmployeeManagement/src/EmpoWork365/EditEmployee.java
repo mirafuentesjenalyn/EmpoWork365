@@ -80,7 +80,7 @@ public final class EditEmployee extends javax.swing.JFrame {
         SwingWorker<Void, String> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {
-                String selectGenderSQL = "SELECT DISTINCT fld_gender FROM tbl_users"; // Adjust table/field as needed
+                String selectGenderSQL = "SELECT DISTINCT fld_gender FROM tbl_employees"; // Adjust table/field as needed
                 List<String> genderList = new ArrayList<>();
 
                 try (PreparedStatement pstmt = connection.prepareStatement(selectGenderSQL);
@@ -293,12 +293,11 @@ public final class EditEmployee extends javax.swing.JFrame {
 
     
     private void loadEmployeeData() {
-        String selectEmployeeSQL = "SELECT u.fld_first_name, u.fld_last_name, u.fld_email, u.fld_password, "
-                                  + "u.fld_gender, e.fld_job_title_id, jt.fld_job_title, "
-                                  + "e.fld_department_id, u.fld_role_id, u.fld_image_path, "
+        String selectEmployeeSQL = "SELECT e.fld_first_name, e.fld_last_name, e.fld_email, e.fld_password, "
+                                  + "e.fld_gender, e.fld_job_title_id, jt.fld_job_title, "
+                                  + "e.fld_department_id, e.fld_role_id, e.fld_image_path, "
                                   + "d.fld_department_name, r.fld_role_name "
                                   + "FROM tbl_employees e "
-                                  + "JOIN tbl_users u ON e.fld_user_id = u.fld_user_id "
                                   + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
                                   + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id "
                                   + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
@@ -330,6 +329,43 @@ public final class EditEmployee extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error loading employee data: " + e.getMessage());
         }
+    }
+    
+    private boolean isEmailDuplicate(String email, int employeeId) {
+        String query = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ? AND fld_employee_id <> ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            pstmt.setInt(2, employeeId); 
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                if (rs.getInt(1) > 0) {
+                    JOptionPane.showMessageDialog(this, "Error: This email is already in use by another employee.");
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking for duplicate email: " + e.getMessage());
+        }
+        return false; 
+    }
+
+    private boolean isDataUnchanged() {
+        String query = "SELECT fld_first_name, fld_last_name, fld_email, fld_password, fld_gender FROM tbl_employees WHERE fld_employee_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, getUserIdFromEmployeeId(employeeId));
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return (firstName.getText().equals(rs.getString("fld_first_name")) &&
+                        lastName.getText().equals(rs.getString("fld_last_name")) &&
+                        eMail.getText().equals(rs.getString("fld_email")) &&
+                        String.valueOf(passWord.getPassword()).equals(rs.getString("fld_password")) &&
+                        comboBoxGender.getSelectedItem().equals(rs.getString("fld_gender")));
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking unchanged data: " + e.getMessage());
+        }
+        return false;
     }
 
 
@@ -409,6 +445,11 @@ public final class EditEmployee extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 firstNameFocusLost(evt);
+            }
+        });
+        firstName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                firstNameActionPerformed(evt);
             }
         });
 
@@ -681,14 +722,14 @@ public final class EditEmployee extends javax.swing.JFrame {
     private void lastNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusGained
         if (lastName.getText().equals("Enter Last Name")) {
             lastName.setText("");
-            lastName.setForeground(new Color(142,122,69));
+            lastName.setForeground(new Color(17,94,94));
         }
     }//GEN-LAST:event_lastNameFocusGained
 
     private void lastNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusLost
         if (lastName.getText().isEmpty()) {
             lastName.setText("Enter Last Name");
-            lastName.setForeground(new Color(205,186,136));
+            lastName.setForeground(new Color(153,204,188));
         }
     }//GEN-LAST:event_lastNameFocusLost
 
@@ -696,7 +737,7 @@ public final class EditEmployee extends javax.swing.JFrame {
         if (String.valueOf(passWord.getPassword()).equals("Password")) {
             passWord.setText("");
             passWord.setEchoChar('*');
-            passWord.setForeground(new Color(142,122,69));
+            passWord.setForeground(new Color(17,94,94));
         }
     }//GEN-LAST:event_passWordFocusGained
 
@@ -704,53 +745,72 @@ public final class EditEmployee extends javax.swing.JFrame {
         if (String.valueOf(passWord.getPassword()).isEmpty()) {
             passWord.setEchoChar((char) 0); 
             passWord.setText("Password"); 
-            passWord.setForeground(new Color(205, 186, 136)); 
+            passWord.setForeground(new Color(153,204,188)); 
         }
     }//GEN-LAST:event_passWordFocusLost
 
     private void btnConfirmEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmEditActionPerformed
-        String updateUserSQL = "UPDATE tbl_users SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, fld_password = ?, fld_gender = ? WHERE fld_user_id = ?"; 
-        try (PreparedStatement pstmt = connection.prepareStatement(updateUserSQL)) {
-            pstmt.setString(1, firstName.getText()); 
-            pstmt.setString(2, lastName.getText());  
-            pstmt.setString(3, eMail.getText());   
-            pstmt.setString(4, String.valueOf(passWord.getPassword())); 
-            pstmt.setString(5, (String) comboBoxGender.getSelectedItem()); 
-            pstmt.setInt(6, getUserIdFromEmployeeId(employeeId)); 
+        String email = eMail.getText();
 
-            pstmt.executeUpdate(); 
-            JOptionPane.showMessageDialog(this, "Employee updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
+        if (firstName.getText().trim().isEmpty() || lastName.getText().trim().isEmpty() || 
+           email.trim().isEmpty() || String.valueOf(passWord.getPassword()).trim().isEmpty() ||
+           comboBoxGender.getSelectedItem() == null) {
+           JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Empty Fields", JOptionPane.WARNING_MESSAGE);
+           return;
+        }
+
+        if (isEmailDuplicate(email, employeeId)) {
+           JOptionPane.showMessageDialog(this, "This email is already associated with another employee.", "Duplicate Email", JOptionPane.ERROR_MESSAGE);
+           return;
+        }
+
+        if (isDataUnchanged()) {
+           JOptionPane.showMessageDialog(this, "No changes detected. Please modify the fields before saving.", "No Changes", JOptionPane.WARNING_MESSAGE);
+           return;
+        }
+
+        String updateUserSQL = "UPDATE tbl_employees SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, fld_password = ?, fld_gender = ? WHERE fld_employee_id = ?"; 
+        try (PreparedStatement pstmt = connection.prepareStatement(updateUserSQL)) {
+           pstmt.setString(1, firstName.getText()); 
+           pstmt.setString(2, lastName.getText());  
+           pstmt.setString(3, email);   
+           pstmt.setString(4, String.valueOf(passWord.getPassword())); 
+           pstmt.setString(5, (String) comboBoxGender.getSelectedItem()); 
+           pstmt.setInt(6, getUserIdFromEmployeeId(employeeId)); 
+
+           pstmt.executeUpdate(); 
+           JOptionPane.showMessageDialog(this, "Employee updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+           this.dispose();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage());
+           JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage());
         }
     }//GEN-LAST:event_btnConfirmEditActionPerformed
 
     private void firstNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusGained
         if (firstName.getText().equals("Enter First Name")) {
             firstName.setText("");
-            firstName.setForeground(new Color(142,122,69));
+            firstName.setForeground(new Color(17,94,94));
         }
     }//GEN-LAST:event_firstNameFocusGained
 
     private void firstNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusLost
         if (firstName.getText().isEmpty()) {
             firstName.setText("Enter First Name");
-            firstName.setForeground(new Color(205,186,136));
+            firstName.setForeground(new Color(153,204,188));
         }
     }//GEN-LAST:event_firstNameFocusLost
 
     private void eMailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusGained
         if (eMail.getText().equals("Enter Email")) {
             eMail.setText("");
-            eMail.setForeground(new Color(142,122,69));
+            eMail.setForeground(new Color(17,94,94));
         }
     }//GEN-LAST:event_eMailFocusGained
 
     private void eMailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusLost
         if (eMail.getText().isEmpty()) {
             eMail.setText("Enter Email");
-            eMail.setForeground(new Color(205,186,136));
+            eMail.setForeground(new Color(153,204,188));
         }
     }//GEN-LAST:event_eMailFocusLost
 
@@ -793,16 +853,20 @@ public final class EditEmployee extends javax.swing.JFrame {
         clearFields();
     }//GEN-LAST:event_btnClearActionPerformed
 
+    private void firstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_firstNameActionPerformed
+
     private int getUserIdFromEmployeeId(int employeeId) {
-        String query = "SELECT fld_user_id FROM tbl_employees WHERE fld_employee_id = ?";
+        String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_employee_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, employeeId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt("fld_user_id");
+                return rs.getInt("fld_employee_id");
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error retrieving user ID: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error retrieving employee ID: " + e.getMessage());
         }
         return -1; 
     }

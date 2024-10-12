@@ -10,9 +10,10 @@ public class LoginMethod {
         UserAuthenticate loggedInUser = null;
         sqlConnector callConnector = new sqlConnector();
 
-        String query = "SELECT fld_user_id, fld_password, fld_first_name, fld_last_name, " +
+        // Update the query to select from tbl_employees
+        String query = "SELECT fld_employee_id, fld_password, fld_first_name, fld_last_name, " +
                        "fld_job_title_id, fld_image_path, fld_gender, fld_department_id, fld_role_id " +
-                       "FROM tbl_users WHERE fld_email = ?";
+                       "FROM tbl_employees WHERE fld_email = ?";
 
         try (Connection conn = callConnector.createConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -21,7 +22,7 @@ public class LoginMethod {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                int userId = rs.getInt("fld_user_id"); 
+                int employeeId = rs.getInt("fld_employee_id"); 
                 String storedPassword = rs.getString("fld_password");  
                 String firstName = rs.getString("fld_first_name");
                 String lastName = rs.getString("fld_last_name");
@@ -32,7 +33,7 @@ public class LoginMethod {
                 int jobTitleId = rs.getInt("fld_job_title_id"); 
 
                 if (password.equals(storedPassword)) { 
-                    loggedInUser = new UserAuthenticate(userId, firstName, lastName, email, 
+                    loggedInUser = new UserAuthenticate(employeeId, firstName, lastName, email, 
                                                          storedPassword, gender, 
                                                          getJobTitleName(jobTitleId), 
                                                          getDepartmentName(departmentId), 
@@ -44,7 +45,6 @@ public class LoginMethod {
         }
         return loggedInUser;
     }
-
 
     private String getDepartmentName(int departmentId) {
         String departmentName = null;
