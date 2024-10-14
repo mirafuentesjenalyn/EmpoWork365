@@ -34,21 +34,28 @@ import javax.swing.SwingWorker;
  * @author jenal
  */
 public final class EditEmployee extends javax.swing.JFrame {
+    private final MainAdmin mainAdmin;
     private Connection connection;    
     private static final List<JobTitle> jobTitles = new ArrayList<>();
+    private String currentUserEmail;
     private String imageLocation;
-    private boolean imageSelected = false;
     private int employeeId; 
     private String imagePath; 
+    private boolean isAdminContext;
+    private int currentUserId;
     
-
     /**
      * Creates new form SignUp
+     * @param mainAdmin
+     * @param isAdminContext
+     * @param currentUserId
      */
-    public EditEmployee() {
+    public EditEmployee(MainAdmin mainAdmin, boolean isAdminContext, int currentUserId) {
+        this.mainAdmin = mainAdmin;
+            this.isAdminContext = isAdminContext;
+                this.currentUserId = currentUserId;
         initComponents();
         this.employeeId = -1;
-        this.imagePath = "";
         setTitle("Edit Employee");
         initializeConnection();
         initializeRoleComboBox(); 
@@ -60,9 +67,28 @@ public final class EditEmployee extends javax.swing.JFrame {
         setImageLabel(imagePath);
 
     }
+    public void setUserDetails(String firstname, String lastname, String gender, 
+                               String jobtitle, String departmentName, 
+                               String roleName, String email, 
+                               String password, String imagepath) {
+        firstName.setText(firstname);
+        lastName.setText(lastname);
+        comboBoxGender.setSelectedItem(gender);
+        comboBoxJobTitle.setSelectedItem(jobtitle);
+        comboBoxDepartment.setSelectedItem(departmentName);
+        comboBoxRole.setSelectedItem(roleName);
+        eMail.setText(email);
+        passWord.setText(password); 
+        this.imagePath = imagepath; 
+        setImageLabel(imagepath); 
+        
+        currentUserEmail = email;
+    }
+    
+    
     
     public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId; // Store the ID
+        this.employeeId = employeeId; 
         loadEmployeeData();
     }
 
@@ -71,7 +97,6 @@ public final class EditEmployee extends javax.swing.JFrame {
         try {
             connection = dbConnector.createConnection(); 
         } catch (SQLException e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to connect to database.", "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -95,7 +120,7 @@ public final class EditEmployee extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Error fetching gender values: " + ex.getMessage());
                 }
 
-                comboBoxGender.setModel(new DefaultComboBoxModel<>(genderList.toArray(new String[0])));
+                comboBoxGender.setModel(new DefaultComboBoxModel<>(genderList.toArray(String[]::new)));
                 return null;
             }
         };
@@ -103,8 +128,8 @@ public final class EditEmployee extends javax.swing.JFrame {
     }
     
     private void setupJobTitleComboBox() {
-        List<JobTitle> jobTitlesList = getJobTitles(); // Fetch job titles
-        jobTitles.addAll(jobTitlesList);  // Store the fetched job titles for filtering
+        List<JobTitle> jobTitlesList = getJobTitles(); 
+        jobTitles.addAll(jobTitlesList);  
         DefaultComboBoxModel<JobTitle> model = new DefaultComboBoxModel<>();
 
         for (JobTitle jobTitle : jobTitles) {
@@ -195,6 +220,33 @@ public final class EditEmployee extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error fetching job titles: " + ex.getMessage());
         }
         return jobTitlesList;
+    }
+    
+    public int getSelectedJobTitleId() {
+        Object selectedItem = comboBoxJobTitle.getSelectedItem();
+
+        if (selectedItem instanceof JobTitle) {
+            return ((JobTitle) selectedItem).getId(); // Valid JobTitle object
+        } else {
+            // Handle the case when the selected item is a String (e.g., manual input)
+            String inputJobTitle = selectedItem.toString();
+            JobTitle matchedJobTitle = null;
+
+            for (JobTitle jobTitle : jobTitles) {
+                if (jobTitle.getTitle().equalsIgnoreCase(inputJobTitle)) {
+                    matchedJobTitle = jobTitle;
+                    break;
+                }
+            }
+
+            if (matchedJobTitle != null) {
+                return matchedJobTitle.getId();  // Return matched job title ID
+            } else {
+                // If no match is found, show a warning message and return an invalid ID
+                JOptionPane.showMessageDialog(this, "Please select a valid job title.", "Invalid Job Title", JOptionPane.WARNING_MESSAGE);
+                return -1;  // Invalid job title ID
+            }
+        }
     }
         
    private void initializeDepartmentComboBox() {
@@ -287,11 +339,10 @@ public final class EditEmployee extends javax.swing.JFrame {
     
     private void setImageLabel(String imagePath) {
         if (imagePath != null && !imagePath.isEmpty()) {
-            displayImage(imagePath); // Call the displayImage method to set the image
+            displayImage(imagePath); 
         }
     }
 
-    
     private void loadEmployeeData() {
         String selectEmployeeSQL = "SELECT e.fld_first_name, e.fld_last_name, e.fld_email, e.fld_password, "
                                   + "e.fld_gender, e.fld_job_title_id, jt.fld_job_title, "
@@ -321,9 +372,16 @@ public final class EditEmployee extends javax.swing.JFrame {
 
                 comboBoxDepartment.setSelectedItem(new Department(rs.getInt("fld_department_id"), rs.getString("fld_department_name")));
 
-                comboBoxRole.setSelectedItem(new Role(rs.getInt("fld_role_id"), rs.getString("fld_role_name")));
-
+                int roleId = rs.getInt("fld_role_id");
+                for (int i = 0; i < comboBoxRole.getItemCount(); i++) {
+                    Role role = (Role) comboBoxRole.getItemAt(i);
+                    if (role.getRoleId() == roleId) {
+                        comboBoxRole.setSelectedItem(role);
+                        break;
+                    }
+                }
                 String imagePath = rs.getString("fld_image_path");
+                this.imageLocation = imagePath;
                 setImageLabel(imagePath); 
             } 
         } catch (SQLException e) {
@@ -331,43 +389,89 @@ public final class EditEmployee extends javax.swing.JFrame {
         }
     }
     
-    private boolean isEmailDuplicate(String email, int employeeId) {
-        String query = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ? AND fld_employee_id <> ?";
+    private boolean isEmailDuplicateForEmployee(String email, int employeeId) {
+        String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_email = ? AND fld_employee_id != ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, email);
             pstmt.setInt(2, employeeId); 
-
             ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                if (rs.getInt(1) > 0) {
-                    JOptionPane.showMessageDialog(this, "Error: This email is already in use by another employee.");
-                    return true;
-                }
-            }
+            return rs.next(); 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error checking for duplicate email: " + e.getMessage());
-        }
-        return false; 
-    }
-
-    private boolean isDataUnchanged() {
-        String query = "SELECT fld_first_name, fld_last_name, fld_email, fld_password, fld_gender FROM tbl_employees WHERE fld_employee_id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setInt(1, getUserIdFromEmployeeId(employeeId));
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return (firstName.getText().equals(rs.getString("fld_first_name")) &&
-                        lastName.getText().equals(rs.getString("fld_last_name")) &&
-                        eMail.getText().equals(rs.getString("fld_email")) &&
-                        String.valueOf(passWord.getPassword()).equals(rs.getString("fld_password")) &&
-                        comboBoxGender.getSelectedItem().equals(rs.getString("fld_gender")));
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error checking unchanged data: " + e.getMessage());
         }
         return false;
     }
 
+    private boolean isEmailDuplicateForLoggedInUser(String email, int currentUserId) {
+        if (email.equals(currentUserEmail)) {
+            return false;
+        }
+
+        String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_email = ? AND fld_employee_id != ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            pstmt.setInt(2, currentUserId); 
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); 
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking for duplicate email: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private boolean isDataUnchanged(int targetEmployeeId) {
+        String query = "SELECT fld_first_name, fld_last_name, fld_email, fld_password, fld_gender, "
+                     + "fld_job_title_id, fld_department_id, fld_role_id, fld_image_path FROM tbl_employees WHERE fld_employee_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, targetEmployeeId); 
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String dbFirstName = rs.getString("fld_first_name");
+                String dbLastName = rs.getString("fld_last_name");
+                String dbEmail = rs.getString("fld_email");
+                String dbPassword = rs.getString("fld_password");
+                String dbGender = rs.getString("fld_gender");
+                int dbJobTitleId = rs.getInt("fld_job_title_id");
+                int dbDepartmentId = rs.getInt("fld_department_id");
+                int dbRoleId = rs.getInt("fld_role_id");
+                String dbImagePath = rs.getString("fld_image_path");
+                
+                boolean unchanged = (
+                    firstName.getText().equals(dbFirstName) &&
+                    lastName.getText().equals(dbLastName) &&
+                    eMail.getText().equals(dbEmail) &&
+                    String.valueOf(passWord.getPassword()).equals(dbPassword) &&
+                    comboBoxGender.getSelectedItem() != null &&
+                    comboBoxGender.getSelectedItem().toString().equals(dbGender) &&
+                    comboBoxJobTitle.getSelectedItem() != null &&
+                    ((JobTitle) comboBoxJobTitle.getSelectedItem()).getId() == dbJobTitleId &&
+                    comboBoxDepartment.getSelectedItem() != null &&
+                    ((Department) comboBoxDepartment.getSelectedItem()).getId() == dbDepartmentId &&
+                    comboBoxRole.getSelectedItem() != null &&
+                    ((Role) comboBoxRole.getSelectedItem()).getRoleId() == dbRoleId &&
+                    (dbImagePath != null && dbImagePath.equals(imageLocation)) || (dbImagePath == null && imageLocation == null)
+                );
+                return unchanged;
+            }
+        } catch (SQLException e) {
+        }
+        return false; 
+    }
+
+    private void handleFocusGained(JTextField field, String placeholder) {
+    if (field.getText().equals(placeholder)) {
+        field.setText("");
+        field.setForeground(new Color(17, 94, 94));
+    }
+}
+
+    private void handleFocusLost(JTextField field, String placeholder) {
+        if (field.getText().isEmpty()) {
+            field.setText(placeholder);
+            field.setForeground(new Color(153, 204, 188));
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -417,7 +521,7 @@ public final class EditEmployee extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 204, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("EDIT EMPLOYEE DETAILS");
+        jLabel2.setText("EDIT PERSONAL DETAILS");
 
         btnConfirmEdit.setBackground(new java.awt.Color(185, 230, 230));
         btnConfirmEdit.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
@@ -447,11 +551,6 @@ public final class EditEmployee extends javax.swing.JFrame {
                 firstNameFocusLost(evt);
             }
         });
-        firstName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                firstNameActionPerformed(evt);
-            }
-        });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
@@ -471,11 +570,6 @@ public final class EditEmployee extends javax.swing.JFrame {
 
         comboBoxGender.setBackground(new java.awt.Color(229, 255, 237));
         comboBoxGender.setToolTipText("");
-        comboBoxGender.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboBoxGenderActionPerformed(evt);
-            }
-        });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
@@ -492,11 +586,6 @@ public final class EditEmployee extends javax.swing.JFrame {
         jLabel10.setText("Department");
 
         comboBoxDepartment.setBackground(new java.awt.Color(229, 255, 237));
-        comboBoxDepartment.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboBoxDepartmentActionPerformed(evt);
-            }
-        });
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
@@ -720,17 +809,11 @@ public final class EditEmployee extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void lastNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusGained
-        if (lastName.getText().equals("Enter Last Name")) {
-            lastName.setText("");
-            lastName.setForeground(new Color(17,94,94));
-        }
+        handleFocusGained(lastName, "Enter Last Name");
     }//GEN-LAST:event_lastNameFocusGained
 
     private void lastNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusLost
-        if (lastName.getText().isEmpty()) {
-            lastName.setText("Enter Last Name");
-            lastName.setForeground(new Color(153,204,188));
-        }
+          handleFocusLost(lastName, "Enter Last Name");
     }//GEN-LAST:event_lastNameFocusLost
 
     private void passWordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusGained
@@ -745,44 +828,91 @@ public final class EditEmployee extends javax.swing.JFrame {
         if (String.valueOf(passWord.getPassword()).isEmpty()) {
             passWord.setEchoChar((char) 0); 
             passWord.setText("Password"); 
-            passWord.setForeground(new Color(153,204,188)); 
+            passWord.setForeground(new Color(153, 204, 188)); 
+        } else {
+            passWord.setEchoChar('*'); 
         }
     }//GEN-LAST:event_passWordFocusLost
 
     private void btnConfirmEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmEditActionPerformed
         String email = eMail.getText();
 
+        // Check for empty fields
         if (firstName.getText().trim().isEmpty() || lastName.getText().trim().isEmpty() || 
-           email.trim().isEmpty() || String.valueOf(passWord.getPassword()).trim().isEmpty() ||
-           comboBoxGender.getSelectedItem() == null) {
-           JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Empty Fields", JOptionPane.WARNING_MESSAGE);
-           return;
+            email.trim().isEmpty() || String.valueOf(passWord.getPassword()).trim().isEmpty() ||
+            comboBoxGender.getSelectedItem() == null ||
+            comboBoxJobTitle.getSelectedItem() == null || 
+            comboBoxDepartment.getSelectedItem() == null || 
+            comboBoxRole.getSelectedItem() == null) { 
+            JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Empty Fields", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        if (isEmailDuplicate(email, employeeId)) {
-           JOptionPane.showMessageDialog(this, "This email is already associated with another employee.", "Duplicate Email", JOptionPane.ERROR_MESSAGE);
-           return;
+        // Check for email duplication based on context
+        if (isAdminContext) {
+            if (isEmailDuplicateForEmployee(email, employeeId)) {
+                JOptionPane.showMessageDialog(this, "Email already exists. Please use a different email.");
+                return; 
+            }
+        } else {
+            // Use the currentUserId to check for duplication for the logged-in user
+            if (isEmailDuplicateForLoggedInUser(email, currentUserId)) {
+                JOptionPane.showMessageDialog(this, "Email already exists. Please use a different email.");
+                return; 
+            }
         }
 
-        if (isDataUnchanged()) {
-           JOptionPane.showMessageDialog(this, "No changes detected. Please modify the fields before saving.", "No Changes", JOptionPane.WARNING_MESSAGE);
-           return;
+        // Check for unchanged data
+        if (isDataUnchanged(isAdminContext ? employeeId : currentUserId)) {
+            JOptionPane.showMessageDialog(this, "No changes detected. Please modify the fields before saving.", "No Changes", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        String updateUserSQL = "UPDATE tbl_employees SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, fld_password = ?, fld_gender = ? WHERE fld_employee_id = ?"; 
-        try (PreparedStatement pstmt = connection.prepareStatement(updateUserSQL)) {
-           pstmt.setString(1, firstName.getText()); 
-           pstmt.setString(2, lastName.getText());  
-           pstmt.setString(3, email);   
-           pstmt.setString(4, String.valueOf(passWord.getPassword())); 
-           pstmt.setString(5, (String) comboBoxGender.getSelectedItem()); 
-           pstmt.setInt(6, getUserIdFromEmployeeId(employeeId)); 
+        // Prepare SQL statement based on context
+        String updateEmployeeSQL;
+        int targetEmployeeId;
 
-           pstmt.executeUpdate(); 
-           JOptionPane.showMessageDialog(this, "Employee updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-           this.dispose();
+        if (isAdminContext) {
+            // Updating another employee as admin
+            updateEmployeeSQL = "UPDATE tbl_employees SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, "
+                              + "fld_password = ?, fld_gender = ?, fld_job_title_id = ?, fld_department_id = ?, "
+                              + "fld_role_id = ?, fld_image_path = ? WHERE fld_employee_id = ?";
+            targetEmployeeId = employeeId;  // Use the selected employee's ID
+        } else {
+            // Updating the logged-in user
+            updateEmployeeSQL = "UPDATE tbl_employees SET fld_first_name = ?, fld_last_name = ?, fld_email = ?, "
+                              + "fld_password = ?, fld_gender = ?, fld_job_title_id = ?, fld_department_id = ?, "
+                              + "fld_role_id = ?, fld_image_path = ? WHERE fld_employee_id = ?";
+            targetEmployeeId = currentUserId;  // Use the current logged-in user's ID
+        }
+
+        // Execute the update
+        try (PreparedStatement pstmt = connection.prepareStatement(updateEmployeeSQL)) {
+            pstmt.setString(1, firstName.getText()); 
+            pstmt.setString(2, lastName.getText());  
+            pstmt.setString(3, email);   
+            pstmt.setString(4, String.valueOf(passWord.getPassword()));
+            pstmt.setString(5, comboBoxGender.getSelectedItem().toString());
+            pstmt.setInt(6, getSelectedJobTitleId());
+            pstmt.setInt(7, getSelectedDepartmentId());
+            pstmt.setInt(8, getSelectedRoleId()); 
+            pstmt.setString(9, imageLocation);
+            pstmt.setInt(10, targetEmployeeId);  // Use the appropriate ID
+
+            int updatedRows = pstmt.executeUpdate();
+            if (updatedRows > 0) {
+                JOptionPane.showMessageDialog(this, "Employee updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                // Refresh employee data in MainAdmin if needed
+                if (mainAdmin != null && isAdminContext) {
+                    mainAdmin.loadEmployeeData(); // Reload employee data in MainAdmin
+                }
+                dispose(); // Close the EditEmployee window
+            } else {
+                JOptionPane.showMessageDialog(this, "No employee found to update.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (SQLException e) {
-           JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error updating employee: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnConfirmEditActionPerformed
 
@@ -828,7 +958,6 @@ public final class EditEmployee extends javax.swing.JFrame {
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile(); 
             imageLocation = selectedFile.getAbsolutePath(); 
-            imageSelected = true;
 
             displayImage(imageLocation);
 
@@ -836,14 +965,6 @@ public final class EditEmployee extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void comboBoxDepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxDepartmentActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboBoxDepartmentActionPerformed
-
-    private void comboBoxGenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxGenderActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboBoxGenderActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
@@ -853,23 +974,19 @@ public final class EditEmployee extends javax.swing.JFrame {
         clearFields();
     }//GEN-LAST:event_btnClearActionPerformed
 
-    private void firstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_firstNameActionPerformed
-
-    private int getUserIdFromEmployeeId(int employeeId) {
-        String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_employee_id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setInt(1, employeeId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("fld_employee_id");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error retrieving employee ID: " + e.getMessage());
-        }
-        return -1; 
-    }
+//    private int getUserIdFromEmployeeId(int employeeId) {
+//        String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_employee_id = ?";
+//        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+//            pstmt.setInt(1, employeeId);
+//            ResultSet rs = pstmt.executeQuery();
+//            if (rs.next()) {
+//                return rs.getInt("fld_employee_id");
+//            }
+//        } catch (SQLException e) {
+//            JOptionPane.showMessageDialog(this, "Error retrieving employee ID: " + e.getMessage());
+//        }
+//        return -1; 
+//    }
 
     private void updateEmployeeImageInDatabase(String imagePath, int employeeId) {
         String updateImageSQL = "UPDATE tbl_employees SET fld_image_path = ? WHERE fld_employee_id = ?";
@@ -897,7 +1014,6 @@ public final class EditEmployee extends javax.swing.JFrame {
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error displaying image: " + e.getMessage());
-            // Optionally set a default image or icon
             imageLabel.setIcon(new ImageIcon("path/to/default/image.png"));
         }
     }
@@ -911,56 +1027,55 @@ public final class EditEmployee extends javax.swing.JFrame {
         if (response == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             imageLocation = selectedFile.getAbsolutePath();
-            imageSelected = true;
             displayImage(imageLocation); 
         }
     }
 
     
-    private String addImageToFolder() {
-        if (!imageSelected) {
-            JOptionPane.showMessageDialog(this, "Please select an image first.");
-            return null;
-        }
-
-        String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
-        String fileExtension = imageLocation.substring(imageLocation.lastIndexOf(".")).toLowerCase();
-        boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
-        if (!isImage) {
-            JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png, gif, bmp).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-    
-        String destinationFolder = "src/Users/";
-        String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
-        String destinationPath = destinationFolder + newFileName;
-
-        File sourceFile = new File(imageLocation);
-        File destinationFile = new File(destinationPath);
-
-        try {
-            destinationFile.getParentFile().mkdirs();
-
-            Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return destinationPath;
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error adding image: " + e.getMessage());
-            return null;
-        }
-    }
-    
-    private void updateImage(File selectedFile) {
-        try {
-            File destinationFile = new File("path/to/destination/" + selectedFile.getName()); // Update with actual destination path
-            Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            ImageIcon icon = new ImageIcon(destinationFile.getAbsolutePath());
-            Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Adjust size as needed
-            imageLabel.setIcon(new ImageIcon(img));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error updating image: " + e.getMessage());
-        }
-    }
+//    private String addImageToFolder() {
+//        if (!imageSelected) {
+//            JOptionPane.showMessageDialog(this, "Please select an image first.");
+//            return null;
+//        }
+//
+//        String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
+//        String fileExtension = imageLocation.substring(imageLocation.lastIndexOf(".")).toLowerCase();
+//        boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
+//        if (!isImage) {
+//            JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png, gif, bmp).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
+//            return null;
+//        }
+//    
+//        String destinationFolder = "src/Users/";
+//        String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
+//        String destinationPath = destinationFolder + newFileName;
+//
+//        File sourceFile = new File(imageLocation);
+//        File destinationFile = new File(destinationPath);
+//
+//        try {
+//            destinationFile.getParentFile().mkdirs();
+//
+//            Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//            return destinationPath;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, "Error adding image: " + e.getMessage());
+//            return null;
+//        }
+//    }
+//    
+//    private void updateImage(File selectedFile) {
+//        try {
+//            File destinationFile = new File("path/to/destination/" + selectedFile.getName()); // Update with actual destination path
+//            Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//            ImageIcon icon = new ImageIcon(destinationFile.getAbsolutePath());
+//            Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Adjust size as needed
+//            imageLabel.setIcon(new ImageIcon(img));
+//        } catch (IOException e) {
+//            JOptionPane.showMessageDialog(this, "Error updating image: " + e.getMessage());
+//        }
+//    }
 
     private void clearFields() {
         firstName.setText("");
@@ -1013,7 +1128,10 @@ public final class EditEmployee extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new EditEmployee().setVisible(true);
+                          boolean isAdminContext = true; // Set based on your logic
+            int currentUserId = 1; 
+                MainAdmin mainAdmin = new MainAdmin(); 
+                new EditEmployee(mainAdmin, isAdminContext, currentUserId).setVisible(true);
             }
         });
     }

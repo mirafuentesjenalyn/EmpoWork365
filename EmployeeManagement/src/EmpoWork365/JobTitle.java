@@ -1,22 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package EmpoWork365;
 
-/**
- *
- * @author jenal
- */
+import java.util.Objects;
+
 public class JobTitle {
     private int id;
     private String title;
 
+    // Constructor
     public JobTitle(int id, String title) {
         this.id = id;
         this.title = title;
     }
 
+    // Getters
     public int getId() {
         return id;
     }
@@ -27,6 +23,19 @@ public class JobTitle {
 
     @Override
     public String toString() {
-        return title; // This ensures the combo box displays the title
+        return title;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false; 
+        JobTitle jobTitle = (JobTitle) obj; 
+        return id == jobTitle.id; 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); 
     }
 }

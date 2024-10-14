@@ -24,10 +24,10 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author jenal
  */
-public class MainAdmin extends javax.swing.JFrame {
+public final class MainAdmin extends javax.swing.JFrame {
     private UserAuthenticate loggedInUser;
     private Connection connection;
-    
+    public static MainAdmin instance;
     /**
      * Creates new form Login
      */
@@ -70,13 +70,13 @@ public class MainAdmin extends javax.swing.JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    performSearch(); // Trigger search on Enter key press
+                    performSearch();
                 }
             }
         });
     }
     
-    private void loadEmployeeData() {
+    public void loadEmployeeData() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
             DefaultTableModel model = employeeMethod.getEmployeeData();
@@ -85,8 +85,7 @@ public class MainAdmin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Failed to load employee data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-          
+       
     private void getAttendanceData() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
@@ -126,9 +125,6 @@ public class MainAdmin extends javax.swing.JFrame {
         return columnNames;
     }
 
-   
-   
-
     private void addButtonHoverEffect(javax.swing.JButton button) {
         button.setOpaque(true);
         button.setBackground(new Color(8,127,127));
@@ -164,10 +160,16 @@ public class MainAdmin extends javax.swing.JFrame {
         if (loggedInUser != null) {
             fullName.setText(loggedInUser.getFirstname().toUpperCase() + " " + loggedInUser.getLastname().toUpperCase());
             userWelcome.setText(loggedInUser.getFirstname());
-            userJobTitle.setText(loggedInUser.getJobtitle());
-            userRole.setText(loggedInUser.getRoleName());
+            userJobTitle.setText(loggedInUser.getJobtitle().toUpperCase());
+            userRole.setText(loggedInUser.getRoleName().toUpperCase() + " PROFILE");
+            employeeIdLabel.setText(String.valueOf(loggedInUser.getId()));
             ImageIcon userImage = resizeImage(loggedInUser.getImagepath(), 100, 100);
             userImageIcon.setIcon(userImage);
+            firstNameLabel.setText(loggedInUser.getFirstname().toUpperCase());
+            lastNameLabel.setText(loggedInUser.getLastname().toUpperCase());
+            genderLabel.setText(loggedInUser.getGender().toUpperCase());
+            emailLabel.setText(loggedInUser.getEmail().toUpperCase());
+            departmentLabel.setText(loggedInUser.getDepartmentName().toUpperCase());
         }
     }
 
@@ -179,14 +181,13 @@ public class MainAdmin extends javax.swing.JFrame {
     public void performSearch() {
         String searchTerm = searchNameTxt.getText().trim();
         if (searchTerm.isEmpty() || searchTerm.equals("Search")) {
-//            loadEmployeeData();
+        loadEmployeeData();
         } else {
             searchAndDisplayEmployees(searchTerm); 
         }
     }
 
 
-    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -211,11 +212,25 @@ public class MainAdmin extends javax.swing.JFrame {
         logout = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         home = new javax.swing.JPanel();
-        jButton4 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         userWelcome = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        employeeIdLabel = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel24 = new javax.swing.JLabel();
+        firstNameLabel = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        lastNameLabel = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        emailLabel = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
         userJobTitle = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        departmentLabel = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        genderLabel = new javax.swing.JLabel();
+        btnEditProfile = new javax.swing.JButton();
         userRole = new javax.swing.JLabel();
         employeeManagement = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -385,80 +400,206 @@ public class MainAdmin extends javax.swing.JFrame {
 
         sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
 
-        jButton4.setText("Generate Reports");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        home.setBackground(new java.awt.Color(255, 249, 249));
 
         jPanel4.setBackground(new java.awt.Color(218, 248, 240));
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(48, 77, 71));
         jLabel1.setText("Hi,");
 
         userWelcome.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        userWelcome.setForeground(new java.awt.Color(48, 77, 71));
         userWelcome.setText("user");
 
-        userJobTitle.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        userJobTitle.setText("Job Title");
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(15, 86, 86));
+        jLabel6.setText("EMPLOYEE ID:");
 
-        userRole.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        userRole.setText("Role");
+        employeeIdLabel.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
+        employeeIdLabel.setForeground(new java.awt.Color(15, 86, 86));
+        employeeIdLabel.setText("Number");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(48, 48, 48)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(userWelcome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(userWelcome, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(userJobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(14, 447, Short.MAX_VALUE))))
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(employeeIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(406, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
+                .addGap(45, 45, 45)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(userWelcome))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(userJobTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(userRole)
-                .addGap(22, 22, 22))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(employeeIdLabel))
+                .addGap(32, 32, 32))
         );
+
+        jPanel7.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel24.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel24.setText("FIRST NAME");
+
+        firstNameLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        firstNameLabel.setText("FIRST NAME");
+
+        jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel26.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel26.setText("LAST NAME");
+
+        lastNameLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lastNameLabel.setText("LAST NAME");
+
+        jLabel27.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel27.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel27.setText("EMAIL");
+
+        emailLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        emailLabel.setText("EMAIL");
+
+        jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel28.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel28.setText("POSITION");
+
+        userJobTitle.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        userJobTitle.setText("JOB TITLE");
+
+        jLabel29.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel29.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel29.setText("DEPARTMENT");
+
+        departmentLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        departmentLabel.setText("DEPARTMENT");
+
+        jLabel33.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel33.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel33.setText("GENDER");
+
+        genderLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        genderLabel.setText("GENDER");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel29, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(firstNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(userJobTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(genderLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(emailLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lastNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(departmentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)))
+                .addContainerGap(29, Short.MAX_VALUE))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(firstNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lastNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(genderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(emailLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(userJobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(departmentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
+        btnEditProfile.setBackground(new java.awt.Color(8, 127, 127));
+        btnEditProfile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnEditProfile.setForeground(new java.awt.Color(255, 255, 255));
+        btnEditProfile.setText("EDIT PROFILE");
+        btnEditProfile.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditProfile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditProfileActionPerformed(evt);
+            }
+        });
+
+        userRole.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        userRole.setForeground(new java.awt.Color(9, 53, 53));
+        userRole.setText("Role");
 
         javax.swing.GroupLayout homeLayout = new javax.swing.GroupLayout(home);
         home.setLayout(homeLayout);
         homeLayout.setHorizontalGroup(
             homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, homeLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton4)
-                .addGap(30, 30, 30))
             .addGroup(homeLayout.createSequentialGroup()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(611, Short.MAX_VALUE))
+                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(homeLayout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, homeLayout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(636, Short.MAX_VALUE))
         );
         homeLayout.setVerticalGroup(
             homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(homeLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(jButton4)
-                .addContainerGap(594, Short.MAX_VALUE))
+                .addGap(30, 30, 30)
+                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(userRole))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(227, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab1", home);
@@ -518,11 +659,6 @@ public class MainAdmin extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 searchNameTxtFocusLost(evt);
-            }
-        });
-        searchNameTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchNameTxtActionPerformed(evt);
             }
         });
 
@@ -625,7 +761,7 @@ public class MainAdmin extends javax.swing.JFrame {
                         .addGap(268, 268, 268)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 787, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 437, Short.MAX_VALUE))
+                .addGap(0, 458, Short.MAX_VALUE))
         );
         employeeManagementLayout.setVerticalGroup(
             employeeManagementLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -647,13 +783,13 @@ public class MainAdmin extends javax.swing.JFrame {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out", "Status", "Date"
+                "ID", "Name", "Job Title", "Department", "Time-In", "Time-Out", "Date"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
@@ -672,7 +808,7 @@ public class MainAdmin extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 783, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 615, Short.MAX_VALUE))
+                .addGap(0, 636, Short.MAX_VALUE))
         );
         trackingAttendanceLayout.setVerticalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -942,7 +1078,7 @@ public class MainAdmin extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1612, Short.MAX_VALUE)
+            .addGap(0, 1633, Short.MAX_VALUE)
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel5Layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -974,33 +1110,19 @@ public class MainAdmin extends javax.swing.JFrame {
     
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         jTabbedPane1.setSelectedIndex(0);
-        
     }//GEN-LAST:event_btnHomeActionPerformed
 
     private void btnEmpManActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmpManActionPerformed
-        jTabbedPane1.setSelectedIndex(1);
-        
-        
+        jTabbedPane1.setSelectedIndex(1); 
     }//GEN-LAST:event_btnEmpManActionPerformed
 
     private void btnAttSumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAttSumActionPerformed
         jTabbedPane1.setSelectedIndex(2);
-        
     }//GEN-LAST:event_btnAttSumActionPerformed
 
     private void btnPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayrollActionPerformed
         jTabbedPane1.setSelectedIndex(3);
-       
-       
     }//GEN-LAST:event_btnPayrollActionPerformed
-
-    private void searchNameTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchNameTxtActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchNameTxtActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void searchNameTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchNameTxtFocusGained
         if (searchNameTxt.getText().equals("Search")) {
@@ -1018,7 +1140,6 @@ public class MainAdmin extends javax.swing.JFrame {
 
     private void searchBarEmployeeNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarEmployeeNameActionPerformed
             performSearch();
-
     }//GEN-LAST:event_searchBarEmployeeNameActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -1033,10 +1154,9 @@ public class MainAdmin extends javax.swing.JFrame {
             if (response == JOptionPane.YES_OPTION) {
                 EmployeeMethod employeeMethod = new EmployeeMethod(connection);
 
-                // Now directly delete from tbl_employees
                 if (employeeMethod.deleteEmployeeById(employeeId)) {
                     JOptionPane.showMessageDialog(this, "Employee deleted successfully.");
-//                    loadEmployeeData(); 
+                    loadEmployeeData(); 
                 } else {
                     JOptionPane.showMessageDialog(this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1047,8 +1167,8 @@ public class MainAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        SignUp signUp = new SignUp();
-        signUp.setVisible(true);
+        AddAccount addAcccount = new AddAccount(this);
+        addAcccount.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -1057,9 +1177,11 @@ public class MainAdmin extends javax.swing.JFrame {
         if (selectedRow != -1) {
             int employeeId = (int) jTable1.getValueAt(selectedRow, 0); 
 
-            EditEmployee editForm = new EditEmployee();
+            boolean isAdminContext = true;
+            
+            EditEmployee editForm = new EditEmployee(this, isAdminContext, employeeId);
             editForm.setEmployeeId(employeeId); 
-            editForm.setVisible(true); 
+            editForm.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Please select an employee to edit.");
         }
@@ -1086,22 +1208,49 @@ public class MainAdmin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_logoutMouseClicked
 
+    private void btnEditProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProfileActionPerformed
+        int currentUserId = loggedInUser.getId();
+        boolean isAdminContext = false;
+        
+        EditEmployee editEmployee = new EditEmployee(this, isAdminContext, currentUserId);
+        editEmployee.setUserDetails(
+            loggedInUser.getFirstname(),
+            loggedInUser.getLastname(),
+            loggedInUser.getGender(),
+            loggedInUser.getJobtitle(),
+            loggedInUser.getDepartmentName(),
+            loggedInUser.getRoleName(),
+            loggedInUser.getEmail(),
+            loggedInUser.getPassword(),
+            loggedInUser.getImagepath()
+        );
+        editEmployee.setVisible(true);
+    }//GEN-LAST:event_btnEditProfileActionPerformed
+
     public void searchAndDisplayEmployees(String searchTerm) {
         EmployeeMethod employeeMethod = new EmployeeMethod(connection);
         List<Employee> employeeList = employeeMethod.searchEmployeeMethod(searchTerm);
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"Full Name", "Email", "Job Title", "Department"}, 0);
-        
+
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"Employee ID", "Full Name", "Email", "Gender", "Job Title", "Department", "Date of Employment"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         for (Employee employee : employeeList) {
             String fullName = employee.getFirstname() + " " + employee.getLastname();
             model.addRow(new Object[]{
+                employee.getEmployeeId(),
                 fullName,
                 employee.getEmail(),
+                employee.getGender(),
                 employee.getJobtitle(),
-                employee.getDepartmentName()
+                employee.getDepartmentName(),
+                employee.getDateOfEmployment()
             });
         }
-
-        jTable1.setModel(model); 
+        jTable1.setModel(model);
     }
 
     
@@ -1146,13 +1295,18 @@ public class MainAdmin extends javax.swing.JFrame {
     private javax.swing.JButton btnAttSum;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnEditProfile;
     private javax.swing.JButton btnEmpMan;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnPayroll;
+    private javax.swing.JLabel departmentLabel;
+    private javax.swing.JLabel emailLabel;
+    private javax.swing.JLabel employeeIdLabel;
     private javax.swing.JPanel employeeManagement;
+    private javax.swing.JLabel firstNameLabel;
     private javax.swing.JLabel fullName;
+    private javax.swing.JLabel genderLabel;
     private javax.swing.JPanel home;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1169,9 +1323,16 @@ public class MainAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1181,6 +1342,7 @@ public class MainAdmin extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -1203,6 +1365,7 @@ public class MainAdmin extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
+    private javax.swing.JLabel lastNameLabel;
     private javax.swing.JLabel logout;
     private javax.swing.JPanel managePayroll;
     private javax.swing.JPanel searchBar;

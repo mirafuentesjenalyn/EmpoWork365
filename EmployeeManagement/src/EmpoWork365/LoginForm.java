@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
  * @author jenal
  */
 public class LoginForm extends javax.swing.JFrame {
+    private static final String PASSWORD_PLACEHOLDER = "Password";
+
 
     /**
      * Creates new form MainAdmin
@@ -90,11 +92,6 @@ public class LoginForm extends javax.swing.JFrame {
                 eMailFocusLost(evt);
             }
         });
-        eMail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eMailActionPerformed(evt);
-            }
-        });
         jPanel2.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 79, 222, 45));
 
         passWord.setBackground(new java.awt.Color(229, 255, 237));
@@ -106,11 +103,6 @@ public class LoginForm extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 passWordFocusLost(evt);
-            }
-        });
-        passWord.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passWordActionPerformed(evt);
             }
         });
         jPanel2.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 136, 222, 45));
@@ -216,21 +208,13 @@ public class LoginForm extends javax.swing.JFrame {
         }
     }
     
-    private void eMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eMailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_eMailActionPerformed
-
-    private void passWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passWordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_passWordActionPerformed
-
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         LoginMethod loginMethod = new LoginMethod();
 
         String email = eMail.getText().trim(); 
         String password = new String(passWord.getPassword());
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (password.equals(PASSWORD_PLACEHOLDER) || email.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Email and password cannot be empty.");
             return;
         }
@@ -285,21 +269,21 @@ public class LoginForm extends javax.swing.JFrame {
             passWord.setText("");
             passWord.setEchoChar('*');
             passWord.setForeground(new Color(142,122,69));
+        } else {
         }
     }//GEN-LAST:event_passWordFocusGained
 
     private void passWordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusLost
         if (String.valueOf(passWord.getPassword()).isEmpty()) {
-            passWord.setEchoChar((char)0);
-            passWord.setText("Password");
-            passWord.setForeground(new Color(205,186,136));
+            passWord.setEchoChar((char) 0); 
+            passWord.setText("Password"); 
+            passWord.setForeground(new Color(205, 186, 136)); 
         }
     }//GEN-LAST:event_passWordFocusLost
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         SignUp signUp = new SignUp();
         signUp.setVisible(true);
-        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

@@ -30,6 +30,6 @@ public class Role {
     // Override toString() to return the department name
     @Override
     public String toString() {
-        return roleName; // or you can return "Department ID: " + id + ", Name: " + name;
+        return roleName; 
     }
 }
