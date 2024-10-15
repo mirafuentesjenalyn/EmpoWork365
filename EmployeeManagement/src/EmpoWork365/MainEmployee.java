@@ -20,17 +20,21 @@ import java.text.SimpleDateFormat;
  *
  * @author jenal
  */
-public class MainEmployee extends javax.swing.JFrame {
+public class MainEmployee extends javax.swing.JFrame implements UserUpdateListener {
     private UserAuthenticate loggedInUser;
+    private EditUserDetails editUserDetails;
     private Connection connection;
     private boolean hasClockedIn = false;
     private boolean hasClockedOut = false;
+    public static MainEmployee instance;
 
     
     /**
      * Creates new form Login
      */
     public MainEmployee() {
+        instance = this;
+
         initComponents();
         addButtonHoverEffect(btnHome);
         addButtonHoverEffect(btnAttSum);
@@ -44,16 +48,27 @@ public class MainEmployee extends javax.swing.JFrame {
         }
     }
     
-    public void setAuthenticatedUser(UserAuthenticate authenticatedUser) {
-        setUserDetails(authenticatedUser); 
-        loadEmployeeAttendanceById();
-        checkAttendanceStatus(); 
+    @Override
+    public void onUserUpdated(UserAuthenticate updatedUser) {
+        // Update the displayed user details
+        setUserDetails(updatedUser);
     }
-    
-    
-    public void setUserDetails(UserAuthenticate authenticatedUser) {
-        this.loggedInUser = authenticatedUser; 
+        
+    public void setAuthenticatedUser(UserAuthenticate loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        setUserDetails(loggedInUser); // Pass the logged-in user
+        loadEmployeeAttendanceById();
 
+    }
+        
+//    public void setAuthenticatedUser(UserAuthenticate authenticatedUser) {
+//        setUserDetails(authenticatedUser); 
+//        loadEmployeeAttendanceById();
+//        checkAttendanceStatus(); 
+//    }
+//    
+    
+    private void setUserDetails(UserAuthenticate user) {
         if (loggedInUser != null) {
             fullName.setText(loggedInUser.getFirstname().toUpperCase() + " " + loggedInUser.getLastname().toUpperCase());
             userWelcome.setText(loggedInUser.getFirstname());
@@ -359,7 +374,7 @@ public class MainEmployee extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(15, 86, 86));
-        jLabel6.setText("EMPLOYEE ID:");
+        jLabel6.setText("USER ID:");
 
         employeeIdLabel.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         employeeIdLabel.setForeground(new java.awt.Color(15, 86, 86));
@@ -572,7 +587,7 @@ public class MainEmployee extends javax.swing.JFrame {
                         .addComponent(btnTimeIn, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(579, Short.MAX_VALUE))
+                .addContainerGap(612, Short.MAX_VALUE))
         );
         homeLayout.setVerticalGroup(
             homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -997,21 +1012,12 @@ public class MainEmployee extends javax.swing.JFrame {
     }//GEN-LAST:event_btnTimeOutActionPerformed
 
     private void btnEditProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProfileActionPerformed
-        int currentUserId = loggedInUser.getId(); 
-        boolean isAdminContext = false;
-        EditEmployee editEmployee = new EditEmployee(null, isAdminContext, currentUserId);
-        editEmployee.setUserDetails(
-            loggedInUser.getFirstname(),
-            loggedInUser.getLastname(),
-            loggedInUser.getGender(),
-            loggedInUser.getJobtitle(),
-            loggedInUser.getDepartmentName(),
-            loggedInUser.getRoleName(),
-            loggedInUser.getEmail(),
-            loggedInUser.getPassword(),
-            loggedInUser.getImagepath()
-        );
-        editEmployee.setVisible(true);
+        if (editUserDetails == null) {
+            editUserDetails = new EditUserDetails(null, this);
+        }
+        editUserDetails.setUserUpdateListener(this); // Set the listener
+        editUserDetails.UpdateUserDetails(loggedInUser);
+        editUserDetails.setVisible(true);
     }//GEN-LAST:event_btnEditProfileActionPerformed
 
     public void recordTimeIn() {

@@ -102,4 +102,29 @@ public class UserAuthenticate {
                ", imagepath='" + imagepath + '\'' +
                '}';
     }
+    
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setImagepath(String imagepath) {
+        this.imagepath = imagepath;
+    }
+
 }

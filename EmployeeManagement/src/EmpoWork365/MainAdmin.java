@@ -24,8 +24,9 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author jenal
  */
-public final class MainAdmin extends javax.swing.JFrame {
+public final class MainAdmin extends javax.swing.JFrame implements UserUpdateListener{
     private UserAuthenticate loggedInUser;
+    private EditUserDetails editUserDetails;
     private Connection connection;
     public static MainAdmin instance;
     /**
@@ -33,7 +34,8 @@ public final class MainAdmin extends javax.swing.JFrame {
      */
     public MainAdmin() {
         initComponents();
-       
+        instance = this;
+        
         addButtonHoverEffect(btnHome);
         addButtonHoverEffect(btnEmpMan);
         addButtonHoverEffect(btnAttSum);
@@ -74,6 +76,17 @@ public final class MainAdmin extends javax.swing.JFrame {
                 }
             }
         });
+    }
+    
+        @Override
+        public void onUserUpdated(UserAuthenticate updatedUser) {
+            // Update the displayed user details
+            setUserDetails(updatedUser);
+        }
+        
+        public void setAuthenticatedUser(UserAuthenticate loggedInUser) {
+            this.loggedInUser = loggedInUser;
+        setUserDetails(loggedInUser); // Pass the logged-in user
     }
     
     public void loadEmployeeData() {
@@ -149,14 +162,9 @@ public final class MainAdmin extends javax.swing.JFrame {
 
         return new ImageIcon(resizedImage);
     }
-    
-    public void setAuthenticatedUser(UserAuthenticate authenticatedUser) {
-        setUserDetails(authenticatedUser); 
-    }
 
-    public void setUserDetails(UserAuthenticate authenticatedUser) {
-        this.loggedInUser = authenticatedUser; 
-
+       
+    private void setUserDetails(UserAuthenticate user) {
         if (loggedInUser != null) {
             fullName.setText(loggedInUser.getFirstname().toUpperCase() + " " + loggedInUser.getLastname().toUpperCase());
             userWelcome.setText(loggedInUser.getFirstname());
@@ -172,7 +180,6 @@ public final class MainAdmin extends javax.swing.JFrame {
             departmentLabel.setText(loggedInUser.getDepartmentName().toUpperCase());
         }
     }
-
 
     public void setLoggedInUser(UserAuthenticate authenticatedUser) {
         this.loggedInUser = authenticatedUser; 
@@ -414,7 +421,7 @@ public final class MainAdmin extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(15, 86, 86));
-        jLabel6.setText("EMPLOYEE ID:");
+        jLabel6.setText("USER ID:");
 
         employeeIdLabel.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         employeeIdLabel.setForeground(new java.awt.Color(15, 86, 86));
@@ -586,7 +593,7 @@ public final class MainAdmin extends javax.swing.JFrame {
                                 .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(636, Short.MAX_VALUE))
+                .addContainerGap(669, Short.MAX_VALUE))
         );
         homeLayout.setVerticalGroup(
             homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1179,8 +1186,7 @@ public final class MainAdmin extends javax.swing.JFrame {
 
             boolean isAdminContext = true;
             
-            EditEmployee editForm = new EditEmployee(this, isAdminContext, employeeId);
-            editForm.setEmployeeId(employeeId); 
+            EditEmployeeDetails editForm = new EditEmployeeDetails(this);
             editForm.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Please select an employee to edit.");
@@ -1209,22 +1215,12 @@ public final class MainAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutMouseClicked
 
     private void btnEditProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProfileActionPerformed
-        int currentUserId = loggedInUser.getId();
-        boolean isAdminContext = false;
-        
-        EditEmployee editEmployee = new EditEmployee(this, isAdminContext, currentUserId);
-        editEmployee.setUserDetails(
-            loggedInUser.getFirstname(),
-            loggedInUser.getLastname(),
-            loggedInUser.getGender(),
-            loggedInUser.getJobtitle(),
-            loggedInUser.getDepartmentName(),
-            loggedInUser.getRoleName(),
-            loggedInUser.getEmail(),
-            loggedInUser.getPassword(),
-            loggedInUser.getImagepath()
-        );
-        editEmployee.setVisible(true);
+        if (editUserDetails == null) {
+            editUserDetails = new EditUserDetails(this, null);
+        }
+        editUserDetails.setUserUpdateListener(this); 
+        editUserDetails.UpdateUserDetails(loggedInUser);
+        editUserDetails.setVisible(true);
     }//GEN-LAST:event_btnEditProfileActionPerformed
 
     public void searchAndDisplayEmployees(String searchTerm) {

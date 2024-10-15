@@ -1,13 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package EmpoWork365;
 
-/**
- *
- * @author jenal
- */
+import java.util.Objects;
+
 public class Role {
     private int roleId;
     private String roleName;
@@ -27,9 +21,21 @@ public class Role {
         return roleName;
     }
 
-    // Override toString() to return the department name
     @Override
     public String toString() {
-        return roleName; 
+        return roleName; // Display the role name in JComboBox
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Role role = (Role) obj;
+        return roleId == role.roleId; // Compare by role ID
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roleId); // Generate hash code based on role ID
     }
 }
