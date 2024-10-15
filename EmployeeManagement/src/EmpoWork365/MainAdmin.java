@@ -99,7 +99,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }
        
-    private void getAttendanceData() {
+    void getAttendanceData() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
             DefaultTableModel model = employeeMethod.getAttendanceData();
@@ -127,6 +127,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             }
         };
         jTable2.setModel(nonEditableModel);
+
     }
     
     
@@ -189,6 +190,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         String searchTerm = searchNameTxt.getText().trim();
         if (searchTerm.isEmpty() || searchTerm.equals("Search")) {
         loadEmployeeData();
+        getAttendanceData();
         } else {
             searchAndDisplayEmployees(searchTerm); 
         }
@@ -442,7 +444,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(employeeIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(406, Short.MAX_VALUE))
+                .addContainerGap(445, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -582,18 +584,18 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         homeLayout.setHorizontalGroup(
             homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(homeLayout.createSequentialGroup()
-                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(homeLayout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, homeLayout.createSequentialGroup()
-                                .addGap(16, 16, 16)
-                                .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(669, Short.MAX_VALUE))
+                .addGap(46, 46, 46)
+                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, homeLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(681, Short.MAX_VALUE))
+            .addGroup(homeLayout.createSequentialGroup()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         homeLayout.setVerticalGroup(
             homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1163,7 +1165,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
                 if (employeeMethod.deleteEmployeeById(employeeId)) {
                     JOptionPane.showMessageDialog(this, "Employee deleted successfully.");
-                    loadEmployeeData(); 
+                    loadEmployeeData();
+                    getAttendanceData();
                 } else {
                     JOptionPane.showMessageDialog(this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -1179,15 +1182,14 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        int selectedRow = jTable1.getSelectedRow();
+    int selectedRow = jTable1.getSelectedRow();
 
         if (selectedRow != -1) {
             int employeeId = (int) jTable1.getValueAt(selectedRow, 0); 
 
-            boolean isAdminContext = true;
-            
             EditEmployeeDetails editForm = new EditEmployeeDetails(this);
-            editForm.setVisible(true);
+            editForm.setEmployeeId(employeeId); 
+            editForm.setVisible(true); 
         } else {
             JOptionPane.showMessageDialog(this, "Please select an employee to edit.");
         }

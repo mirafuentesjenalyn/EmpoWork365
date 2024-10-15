@@ -29,10 +29,7 @@ import javax.swing.SwingWorker;
  */
 public final class EditUserDetails extends javax.swing.JFrame {
     private UserAuthenticate loggedInUser; 
-    private MainAdmin mainAdmin;
-    private final MainEmployee mainEmployee;
     private Connection connection;
-    private String currentUserEmail;
     private int userId;
     private String imagePath;
     private UserUpdateListener userUpdateListener; 
@@ -43,8 +40,6 @@ public final class EditUserDetails extends javax.swing.JFrame {
      * @param mainEmployee
      */
     public EditUserDetails(MainAdmin mainAdmin, MainEmployee mainEmployee) {
-        this.mainAdmin = mainAdmin;
-        this.mainEmployee = mainEmployee;
         this.userUpdateListener = mainAdmin;
         
         initComponents();
@@ -62,10 +57,8 @@ public final class EditUserDetails extends javax.swing.JFrame {
     }
         
     public void setMainAdmin(MainAdmin admin) {
-        this.mainAdmin = admin;
     }
 
-    // Instance method to set UserAuthenticate
     private void notifyUserUpdated() {
         if (userUpdateListener != null) {
             userUpdateListener.onUserUpdated(loggedInUser);
@@ -84,7 +77,7 @@ public final class EditUserDetails extends javax.swing.JFrame {
             imagePath = user.getImagepath();
             setImageLabel(imagePath);
             
-            currentUserEmail = user.getEmail();
+            user.getEmail();
             notifyUserUpdated(); 
         }
     }
@@ -210,63 +203,56 @@ private void saveChanges() {
         return false;
     }
 
- private boolean isDataUnchanged(int targetEmployeeId) {
-    String query = "SELECT fld_first_name, fld_last_name, fld_email, fld_password, fld_gender, fld_image_path "
-                 + "FROM tbl_employees WHERE fld_employee_id = ?";
-    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-        pstmt.setInt(1, targetEmployeeId); 
-        ResultSet rs = pstmt.executeQuery();
+    private boolean isDataUnchanged(int targetEmployeeId) {
+        String query = "SELECT fld_first_name, fld_last_name, fld_email, fld_password, fld_gender, fld_image_path "
+                     + "FROM tbl_employees WHERE fld_employee_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, targetEmployeeId); 
+            ResultSet rs = pstmt.executeQuery();
 
-        if (rs.next()) {
-            String originalFirstName = rs.getString("fld_first_name");
-            String originalLastName = rs.getString("fld_last_name");
-            String originalEmail = rs.getString("fld_email");
-            String originalPassword = rs.getString("fld_password");
-            String originalGender = rs.getString("fld_gender");
-            String originalImagePath = rs.getString("fld_image_path");
+            if (rs.next()) {
+                String originalFirstName = rs.getString("fld_first_name");
+                String originalLastName = rs.getString("fld_last_name");
+                String originalEmail = rs.getString("fld_email");
+                String originalPassword = rs.getString("fld_password");
+                String originalGender = rs.getString("fld_gender");
+                String originalImagePath = rs.getString("fld_image_path");
 
-            // Debugging output
-            System.out.println("Original First Name: " + originalFirstName + " | Current First Name: " + firstName.getText());
-            System.out.println("Original Last Name: " + originalLastName + " | Current Last Name: " + lastName.getText());
-            System.out.println("Original Email: " + originalEmail + " | Current Email: " + eMail.getText());
-            System.out.println("Original Password: " + originalPassword + " | Current Password: " + String.valueOf(passWord.getPassword()));
-            System.out.println("Original Gender: " + originalGender + " | Current Gender: " + comboBoxGender.getSelectedItem());
-            System.out.println("Original Image Path: " + originalImagePath + " | Current Image Path: " + imagePath);
+                // Debugging output
+                System.out.println("Original First Name: " + originalFirstName + " | Current First Name: " + firstName.getText());
+                System.out.println("Original Last Name: " + originalLastName + " | Current Last Name: " + lastName.getText());
+                System.out.println("Original Email: " + originalEmail + " | Current Email: " + eMail.getText());
+                System.out.println("Original Password: " + originalPassword + " | Current Password: " + String.valueOf(passWord.getPassword()));
+                System.out.println("Original Gender: " + originalGender + " | Current Gender: " + comboBoxGender.getSelectedItem());
+                System.out.println("Original Image Path: " + originalImagePath + " | Current Image Path: " + imagePath);
 
-            boolean isFirstNameChanged = !firstName.getText().equals(originalFirstName);
-            boolean isLastNameChanged = !lastName.getText().equals(originalLastName);
-            boolean isEmailChanged = !eMail.getText().equals(originalEmail);
-            boolean isPasswordChanged = !String.valueOf(passWord.getPassword()).equals(originalPassword);
-            boolean isGenderChanged = !comboBoxGender.getSelectedItem().toString().equals(originalGender);
+                boolean isFirstNameChanged = !firstName.getText().equals(originalFirstName);
+                boolean isLastNameChanged = !lastName.getText().equals(originalLastName);
+                boolean isEmailChanged = !eMail.getText().equals(originalEmail);
+                boolean isPasswordChanged = !String.valueOf(passWord.getPassword()).equals(originalPassword);
+                boolean isGenderChanged = !comboBoxGender.getSelectedItem().toString().equals(originalGender);
 
-            boolean isImagePathChanged = !originalImagePath.equals(imagePath);
+                boolean isImagePathChanged = !originalImagePath.equals(imagePath);
 
-            // Debug output for image change detection
-            System.out.println("Image Path Changed: " + isImagePathChanged);
-            System.out.println("isFirstNameChanged: " + isFirstNameChanged);
-            System.out.println("isLastNameChanged: " + isLastNameChanged);
-            System.out.println("isEmailChanged: " + isEmailChanged);
-            System.out.println("isPasswordChanged: " + isPasswordChanged);
-            System.out.println("isGenderChanged: " + isGenderChanged);
+                // Debug output for image change detection
+                System.out.println("Image Path Changed: " + isImagePathChanged);
+                System.out.println("isFirstNameChanged: " + isFirstNameChanged);
+                System.out.println("isLastNameChanged: " + isLastNameChanged);
+                System.out.println("isEmailChanged: " + isEmailChanged);
+                System.out.println("isPasswordChanged: " + isPasswordChanged);
+                System.out.println("isGenderChanged: " + isGenderChanged);
 
-            return !(isFirstNameChanged || isLastNameChanged || isEmailChanged || 
-                     isPasswordChanged || isGenderChanged || isImagePathChanged);
-        } else {
-            System.out.println("No employee found with ID: " + targetEmployeeId);
-            return false; 
+                return !(isFirstNameChanged || isLastNameChanged || isEmailChanged || 
+                         isPasswordChanged || isGenderChanged || isImagePathChanged);
+            } else {
+                System.out.println("No employee found with ID: " + targetEmployeeId);
+                return false; 
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking data: " + e.getMessage());
+            return true;
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error checking data: " + e.getMessage());
-        return true;
     }
-}
-
-
-
-
-
-
-
 
     private void handleFocusGained(JTextField field, String placeholder) {
     if (field.getText().equals(placeholder)) {
