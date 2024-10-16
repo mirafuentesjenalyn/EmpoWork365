@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 public class AttendanceMethod {
     private final Connection connection;
@@ -18,7 +17,7 @@ public class AttendanceMethod {
 
     public void clockIn(int employeeId) throws SQLException {
 
-        LocalTime currentTime = LocalTime.now();
+//        LocalTime currentTime = LocalTime.now();
 
         String sql = "INSERT INTO tbl_attendance (fld_employee_id, fld_attendance_date, fld_time_in) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -35,7 +34,7 @@ public class AttendanceMethod {
    
     public void clockOut(int employeeId) throws SQLException {
 
-        LocalTime currentTime = LocalTime.now();
+//        LocalTime currentTime = LocalTime.now();
 
         String sql = "UPDATE tbl_attendance SET fld_time_out = ? "
                 + "WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE() AND fld_time_out IS NULL";
@@ -83,4 +82,35 @@ public class AttendanceMethod {
         return 0;
     }
     
+    public double getTotalHoursWorkedInMonth(int employeeId, int month, int year) throws SQLException {
+        String sql = "SELECT fld_time_in, fld_time_out FROM tbl_attendance " +
+                     "WHERE fld_employee_id = ? AND MONTH(fld_attendance_date) = ? AND YEAR(fld_attendance_date) = ?";
+
+        double totalHours = 0.0;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, employeeId);
+            preparedStatement.setInt(2, month);
+            preparedStatement.setInt(3, year);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Timestamp timeIn = rs.getTimestamp("fld_time_in");
+                Timestamp timeOut = rs.getTimestamp("fld_time_out");
+
+                if (timeIn != null) {
+                    Timestamp endTime = (timeOut != null) ? timeOut : new Timestamp(System.currentTimeMillis());
+
+                    long durationInMillis = endTime.getTime() - timeIn.getTime();
+                    totalHours += durationInMillis / (1000.0 * 60 * 60); 
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
+        }
+        return totalHours;
+    }
+
+
 }

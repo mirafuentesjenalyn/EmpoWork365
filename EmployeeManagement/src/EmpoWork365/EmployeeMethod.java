@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 public class EmployeeMethod {
     private final Connection connection;
 
+
     public EmployeeMethod(Connection connection) {
         this.connection = connection;
     }
@@ -186,7 +187,7 @@ public class EmployeeMethod {
                      + "FROM tbl_attendance a "
                      + "INNER JOIN tbl_employees e ON a.fld_employee_id = e.fld_employee_id "
                      + "WHERE e.fld_employee_id = ? "
-                     + "ORDER BY e.fld_employee_id ASC";
+                     + "ORDER BY a.fld_attendance_date DESC";
 
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -214,14 +215,110 @@ public class EmployeeMethod {
         return model;
     }
 
-    // Helper method to format timestamps
     private String formatTimestamp(Timestamp timestamp, SimpleDateFormat timeFormat) {
         return (timestamp != null) ? timeFormat.format(timestamp) : "N/A";
     }
 
-    // Helper method to format dates
     private String formatDate(Date date, SimpleDateFormat dateFormat) {
         return (date != null) ? dateFormat.format(date) : "N/A"; 
     }
 
+    public Employee getEmployeeIdById(int employeeId) throws SQLException {
+        String query = "SELECT e.fld_employee_id, "
+                     + "e.fld_first_name, "
+                     + "e.fld_last_name, "
+                     + "e.fld_email, "
+                     + "e.fld_gender, "
+                     + "e.fld_image_path, "
+                     + "jt.fld_job_title, "
+                     + "jt.fld_rate_per_hour, "
+                     + "d.fld_department_name "
+                     + "FROM tbl_employees e "
+                     + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                     + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                     + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id " 
+                     + "WHERE r.fld_role_name <> 'Admin' " 
+                     + "AND e.fld_employee_id = ?"; 
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, employeeId); 
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Employee(
+                        rs.getInt("fld_employee_id"),
+                        rs.getString("fld_first_name"),
+                        rs.getString("fld_last_name"),
+                        rs.getString("fld_email"),
+                        rs.getString("fld_gender"),
+                        rs.getString("fld_job_title"),
+                        rs.getString("fld_department_name"),
+                        rs.getString("fld_image_path"),
+                        rs.getDouble("fld_rate_per_hour"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    );
+                } else {
+                    return null; 
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching employee data: " + e.getMessage(), e);
+        }
     }
+    
+    public Employee getEmployeeByName(String name) throws SQLException {
+        String query = "SELECT e.fld_employee_id, "
+                     + "e.fld_first_name, "
+                     + "e.fld_last_name, "
+                     + "e.fld_email, "
+                     + "e.fld_gender, "
+                     + "e.fld_image_path, "
+                     + "jt.fld_job_title, "
+                     + "jt.fld_rate_per_hour, "
+                     + "d.fld_department_name "
+                     + "FROM tbl_employees e "
+                     + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                     + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                     + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id "
+                     + "WHERE r.fld_role_name <> 'Admin' "
+                     + "AND (e.fld_first_name LIKE ? OR e.fld_last_name LIKE ?)"; 
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            String searchTerm = "%" + name + "%";  
+            pstmt.setString(1, searchTerm);
+            pstmt.setString(2, searchTerm);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Employee(
+                        rs.getInt("fld_employee_id"),
+                        rs.getString("fld_first_name"),
+                        rs.getString("fld_last_name"),
+                        rs.getString("fld_email"),
+                        rs.getString("fld_gender"),
+                        rs.getString("fld_job_title"),
+                        rs.getString("fld_department_name"),
+                        rs.getString("fld_image_path"),
+                        rs.getDouble("fld_rate_per_hour"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    );
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching employee data: " + e.getMessage(), e);
+        }
+    }
+    
+}
+
+
