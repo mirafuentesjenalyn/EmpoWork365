@@ -37,6 +37,12 @@ public class UserAuthenticate {
         this.roleName = roleName;               
         this.imagepath = imagepath;
     }
+    
+    // New constructor for essential fields
+    public UserAuthenticate(int id, String firstname, String lastname, String email, String password) {
+        this(id, firstname, lastname, email, password, null, null, null, null, null);
+    }
+
    
     // Password hashing method (using BCrypt as an example)
     private String hashPassword(String password) {

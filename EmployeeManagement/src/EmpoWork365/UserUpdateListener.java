@@ -11,3 +11,8 @@ package EmpoWork365;
 interface UserUpdateListener {
         void onUserUpdated(UserAuthenticate updatedUser);
 }
+
+
+interface LeaveSubmissionListener {
+        void onLeaveSubmitted();
+}

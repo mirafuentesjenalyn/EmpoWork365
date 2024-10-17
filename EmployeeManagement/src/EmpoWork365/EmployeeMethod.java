@@ -1,5 +1,6 @@
 package EmpoWork365;
 
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 public class EmployeeMethod {
@@ -274,6 +276,7 @@ public class EmployeeMethod {
         String query = "SELECT e.fld_employee_id, "
                      + "e.fld_first_name, "
                      + "e.fld_last_name, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
                      + "e.fld_email, "
                      + "e.fld_gender, "
                      + "e.fld_image_path, "
@@ -285,12 +288,15 @@ public class EmployeeMethod {
                      + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
                      + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id "
                      + "WHERE r.fld_role_name <> 'Admin' "
-                     + "AND (e.fld_first_name LIKE ? OR e.fld_last_name LIKE ?)"; 
+                     + "AND (e.fld_first_name LIKE ? OR e.fld_last_name LIKE ? "
+                     + "OR CONCAT(e.fld_first_name, ' ', e.fld_last_name) LIKE ?)"; 
+
 
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             String searchTerm = "%" + name + "%";  
             pstmt.setString(1, searchTerm);
             pstmt.setString(2, searchTerm);
+            pstmt.setString(3, searchTerm);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -319,6 +325,146 @@ public class EmployeeMethod {
         }
     }
     
+    public Employee getLoggedInUser(int userId) throws SQLException {
+        String query = "SELECT e.fld_employee_id, "
+                     + "e.fld_first_name, "
+                     + "e.fld_last_name, "
+                     + "e.fld_email, "
+                     + "e.fld_gender, "
+                     + "e.fld_image_path, "
+                     + "jt.fld_job_title, "
+                     + "jt.fld_rate_per_hour, "
+                     + "d.fld_department_name "
+                     + "FROM tbl_employees e "
+                     + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                     + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                     + "WHERE e.fld_employee_id = ?"; 
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Employee(
+                        rs.getInt("fld_employee_id"),
+                        rs.getString("fld_first_name"),
+                        rs.getString("fld_last_name"),
+                        rs.getString("fld_email"),
+                        rs.getString("fld_gender"),
+                        rs.getString("fld_job_title"),
+                        rs.getString("fld_department_name"),
+                        rs.getString("fld_image_path"),
+                        rs.getDouble("fld_rate_per_hour"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    );
+                } else {
+                    return null; // No user found
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching logged-in user data: " + e.getMessage(), e);
+        }
+    }
+    
+    public DefaultTableModel viewLeaveApplications(int employeeId) throws SQLException {
+            String[] columnNames = {
+            "Application ID", "Employee ID", "Full Name", "Leave Type", 
+            "Start Date", "End Date", "Status", "Date Applied"
+        };
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT la.fld_application_id, "
+                     + "e.fld_employee_id, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                     + "lt.fld_leave_type_name, "
+                     + "la.fld_start_date, "
+                     + "la.fld_end_date, "
+                     + "la.fld_status, "
+                     + "la.fld_request_date "
+                     + "FROM tbl_leave_applications la "
+                     + "INNER JOIN tbl_employees e ON la.fld_employee_id = e.fld_employee_id "
+                     + "INNER JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id "
+                     + "WHERE e.fld_employee_id = ? "
+                     + "ORDER BY la.fld_application_id ASC";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId); // Set employee ID parameter
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Object[] row = {
+                    resultSet.getInt("fld_application_id"),
+                    resultSet.getInt("fld_employee_id"),
+                    resultSet.getString("full_name"),
+                    resultSet.getString("fld_leave_type_name"),
+                    resultSet.getDate("fld_start_date"),
+                    resultSet.getDate("fld_end_date"),
+                    resultSet.getString("fld_status"),
+                    resultSet.getDate("fld_request_date")
+                };
+                model.addRow(row);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error retrieving leave applications: " + e.getMessage(), e);
+        }
+
+        return model;
+    }
+
+
+  
+    public DefaultTableModel getRequestsData(int employeeId) throws SQLException {
+        String[] columnNames = {
+            "Application ID", "Employee ID", "Name", "Start Date",
+            "End Date", "Leave Type", "Reason", "Status", "Date Applied"
+        };
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT la.fld_application_id, "
+                     + "e.fld_employee_id, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                     + "la.fld_start_date, "
+                     + "la.fld_end_date, "
+                     + "lt.fld_leave_type_name, "
+                     + "la.fld_reason, "
+                     + "la.fld_status, "
+                     + "la.fld_request_date "
+                     + "FROM tbl_leave_applications la "
+                     + "INNER JOIN tbl_employees e ON la.fld_employee_id = e.fld_employee_id "
+                     + "INNER JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id "
+                     + "WHERE la.fld_employee_id = ?"; 
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId); 
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Object[] row = {
+                    resultSet.getInt("fld_application_id"),
+                    resultSet.getInt("fld_employee_id"),
+                    resultSet.getString("full_name"),
+                    resultSet.getDate("fld_start_date"),
+                    resultSet.getDate("fld_end_date"),
+                    resultSet.getString("fld_leave_type_name"),
+                    resultSet.getString("fld_reason"),
+                    resultSet.getString("fld_status"),
+                    resultSet.getTimestamp("fld_request_date") 
+                };
+                model.addRow(row);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching leave applications: " + e.getMessage(), e);
+        }
+
+        return model; 
+    }
+
 }
 
 

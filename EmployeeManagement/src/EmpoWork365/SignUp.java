@@ -315,6 +315,7 @@ public final class SignUp extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         passWord = new javax.swing.JPasswordField();
         jLabel2 = new javax.swing.JLabel();
+        btnClear1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -565,6 +566,16 @@ public final class SignUp extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("SIGN UP");
 
+        btnClear1.setBackground(new java.awt.Color(71, 146, 146));
+        btnClear1.setForeground(new java.awt.Color(255, 255, 255));
+        btnClear1.setText("Clear All");
+        btnClear1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClear1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -585,7 +596,9 @@ public final class SignUp extends javax.swing.JFrame {
                         .addGap(50, 50, 50)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(65, 65, 65)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnClear1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(227, 227, 227)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -602,7 +615,9 @@ public final class SignUp extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnClear1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
                 .addComponent(btnCreateAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -779,6 +794,10 @@ public final class SignUp extends javax.swing.JFrame {
         selectImage();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void btnClear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear1ActionPerformed
+        clearFields();
+    }//GEN-LAST:event_btnClear1ActionPerformed
+
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
@@ -853,7 +872,20 @@ public final class SignUp extends javax.swing.JFrame {
            return null;
        }
    }
-
+    
+    private void clearFields() {
+        firstName.setText("");
+        lastName.setText("");
+        eMail.setText("");
+        passWord.setText("");
+        comboBoxGender.setSelectedIndex(-1);
+        comboBoxJobTitle.setSelectedIndex(-1);
+        comboBoxDepartment.setSelectedIndex(-1);
+        comboBoxRole.setSelectedIndex(-1);
+        imageLabel.setIcon(null); 
+        imageLocation = ""; 
+    }
+    
     
     
     
@@ -898,6 +930,7 @@ public final class SignUp extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClear1;
     private javax.swing.JButton btnCreateAccount;
     private javax.swing.JButton btnSignIn;
     private javax.swing.JComboBox<Department> comboBoxDepartment;

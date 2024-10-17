@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -31,6 +32,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private UserAuthenticate loggedInUser;
     private EditUserDetails editUserDetails;
     private Connection connection;
+    private Employee loggedInEmployee; 
     private final int REGULAR_HOURS_PER_MONTH ; 
 
     public static MainAdmin instance;
@@ -39,7 +41,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
      */
     public MainAdmin() {
         this.REGULAR_HOURS_PER_MONTH  = 160;
-        
         initComponents();
         instance = this;
         
@@ -47,12 +48,14 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         addButtonHoverEffect(btnEmpMan);
         addButtonHoverEffect(btnAttSum);
         addButtonHoverEffect(btnPayroll);
-        
+        addButtonHoverEffect(btnLeaveSum);
+
         try {
               sqlConnector connector = new sqlConnector();
               this.connection = connector.createConnection(); 
               loadEmployeeData();
               getAttendanceData();
+              loadEmployeeLeave();
           } catch (SQLException e) {
               JOptionPane.showMessageDialog(this, "Failed to connect to the database: " + e.getMessage());
         }
@@ -87,14 +90,13 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     
         @Override
         public void onUserUpdated(UserAuthenticate updatedUser) {
-            // Update the displayed user details
             setUserDetails(updatedUser);
         }
         
         public void setAuthenticatedUser(UserAuthenticate loggedInUser) {
             this.loggedInUser = loggedInUser;
-        setUserDetails(loggedInUser); // Pass the logged-in user
-    }
+            setUserDetails(loggedInUser); 
+        }
     
     public void loadEmployeeData() {
         try {
@@ -134,17 +136,66 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             }
         };
         jTable2.setModel(nonEditableModel);
-
     }
     
+    private void loadEmployeeLeave() {
+        if (loggedInEmployee == null) {
+            JOptionPane.showMessageDialog(this, "Employee data is not available.");
+            return;
+        }
+
+        int employeeId = loggedInEmployee.getEmployeeId(); 
+
+        try {
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            DefaultTableModel model = employeeMethod.getRequestsData(employeeId);
+            leaveTable.setModel(model); 
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading leave applications: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
+    private void setTableModel(DefaultTableModel model, JTable leaveTable) {
+        DefaultTableModel nonEditableModel = new DefaultTableModel(model.getDataVector(), getColumnNames(model)) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; 
+            }
+        };
+        jTable2.setModel(nonEditableModel);
+    }
+
+//    private void setTableModel(DefaultTableModel model, JTable leaveTable) {
+//        DefaultTableModel nonEditableModel = new DefaultTableModel(
+//                model.getDataVector(),
+//                getColumnNames(model)
+//        ) {
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//                return column >= model.getColumnCount() - 2; 
+//            }
+//        };
+//
+//        leaveTable.setModel(nonEditableModel);
+//
+//        // Set the button renderer and editor for the "Approve" and "Reject" columns
+//        leaveTable.getColumn("Approve").setCellRenderer(new ButtonRenderer());
+//        leaveTable.getColumn("Reject").setCellRenderer(new ButtonRenderer());
+//
+//        leaveTable.getColumn("Approve").setCellEditor(new ButtonEditor(new JButton(), leaveTable));
+//        leaveTable.getColumn("Reject").setCellEditor(new ButtonEditor(new JButton(), leaveTable));
+//    }
+
+
+
     private Vector<String> getColumnNames(DefaultTableModel model) {
         Vector<String> columnNames = new Vector<>();
         for (int i = 0; i < model.getColumnCount(); i++) {
-            columnNames.add(model.getColumnName(i));
+            columnNames.add(model.getColumnName(i)); // Use getColumnName instead
         }
         return columnNames;
     }
+
 
     private void addButtonHoverEffect(javax.swing.JButton button) {
         button.setOpaque(true);
@@ -221,6 +272,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnHome = new javax.swing.JButton();
         btnEmpMan = new javax.swing.JButton();
         btnAttSum = new javax.swing.JButton();
+        btnLeaveSum = new javax.swing.JButton();
         btnPayroll = new javax.swing.JButton();
         fullName = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -264,6 +316,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
+        leave = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        leaveTable = new javax.swing.JTable();
         managePayroll = new javax.swing.JPanel();
         payrollManagementTitle = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
@@ -314,6 +370,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jobTitleTextField = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         userImagePayroll = new javax.swing.JLabel();
+        btnClear2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -365,6 +422,19 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             }
         });
 
+        btnLeaveSum.setBackground(new java.awt.Color(102, 102, 102));
+        btnLeaveSum.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLeaveSum.setForeground(new java.awt.Color(255, 255, 255));
+        btnLeaveSum.setText("Leave Summary");
+        btnLeaveSum.setContentAreaFilled(false);
+        btnLeaveSum.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLeaveSum.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnLeaveSum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLeaveSumActionPerformed(evt);
+            }
+        });
+
         btnPayroll.setBackground(new java.awt.Color(102, 102, 102));
         btnPayroll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPayroll.setForeground(new java.awt.Color(255, 255, 255));
@@ -382,10 +452,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnPayroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnAttSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnEmpMan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnHome, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(btnLeaveSum, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 12, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(btnPayroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,12 +471,14 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addComponent(btnEmpMan)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAttSum)
+                .addGap(12, 12, 12)
+                .addComponent(btnLeaveSum)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPayroll)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
-        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 204, 210, -1));
+        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 204, 210, 220));
 
         fullName.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         fullName.setForeground(new java.awt.Color(255, 255, 255));
@@ -709,8 +786,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(searchNameTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchBarEmployeeName)
                 .addContainerGap())
         );
@@ -718,9 +795,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchBarEmployeeName))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(searchNameTxt)
+                    .addComponent(searchBarEmployeeName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(54, 54, 54))
         );
 
@@ -852,6 +929,59 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         jTabbedPane1.addTab("tab3", trackingAttendance);
 
+        leave.setBackground(new java.awt.Color(255, 249, 249));
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("Leave Summary");
+
+        leaveTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Application ID", "Employee ID", "Name", "Start Date", "End Date", "Leave Type", "Reason", "Status"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false, true, true, true, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(leaveTable);
+
+        javax.swing.GroupLayout leaveLayout = new javax.swing.GroupLayout(leave);
+        leave.setLayout(leaveLayout);
+        leaveLayout.setHorizontalGroup(
+            leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leaveLayout.createSequentialGroup()
+                .addGroup(leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(leaveLayout.createSequentialGroup()
+                        .addGap(292, 292, 292)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(leaveLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 765, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(1229, Short.MAX_VALUE))
+        );
+        leaveLayout.setVerticalGroup(
+            leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leaveLayout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(270, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("tab1", leave);
+
         payrollManagementTitle.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         payrollManagementTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         payrollManagementTitle.setText("Payroll Management");
@@ -901,6 +1031,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         thirteenthMonthPayLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         thirteenthMonthPayLabel.setText("13th Month Pay:");
+
+        netSalaryTextField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 
         netSalaryLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         netSalaryLabel.setText("Net Salary:");
@@ -953,10 +1085,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                                             .addComponent(rateHourTextField, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(getIdPayroll, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(totalSalaryPerMonthTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(HrsMonthTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(totalHrsWorkedTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(overtimeHrsTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))))
+                                            .addComponent(HrsMonthTextField)
+                                            .addComponent(totalHrsWorkedTextField)
+                                            .addComponent(overtimeHrsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)))
                                     .addGroup(jPanel9Layout.createSequentialGroup()
                                         .addGap(59, 59, 59)
                                         .addComponent(philHealthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))))))
@@ -966,7 +1097,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel9Layout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                                 .addComponent(netSalaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(netSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1043,11 +1174,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(thirteenthMonthPayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(thirteenthMonthPayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(netSalaryTextField)
                     .addComponent(netSalaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         departmentTextField.setEditable(false);
@@ -1157,6 +1288,16 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
+        btnClear2.setBackground(new java.awt.Color(71, 146, 146));
+        btnClear2.setForeground(new java.awt.Color(204, 255, 255));
+        btnClear2.setText("Clear All");
+        btnClear2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClear2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout managePayrollLayout = new javax.swing.GroupLayout(managePayroll);
         managePayroll.setLayout(managePayrollLayout);
         managePayrollLayout.setHorizontalGroup(
@@ -1166,8 +1307,13 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(managePayrollLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(managePayrollLayout.createSequentialGroup()
+                                .addGap(183, 183, 183)
+                                .addComponent(btnClear2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addGap(274, 274, 274)
                         .addComponent(payrollManagementTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1181,7 +1327,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addGap(42, 42, 42)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnClear2))
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1237,7 +1385,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }//GEN-LAST:event_btnAttSumActionPerformed
 
     private void btnPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayrollActionPerformed
-        jTabbedPane1.setSelectedIndex(3);
+        jTabbedPane1.setSelectedIndex(4);
     }//GEN-LAST:event_btnPayrollActionPerformed
 
     private void searchNameTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchNameTxtFocusGained
@@ -1376,6 +1524,14 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }//GEN-LAST:event_nameTextFieldActionPerformed
 
+    private void btnClear2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear2ActionPerformed
+        clearFields();
+    }//GEN-LAST:event_btnClear2ActionPerformed
+
+    private void btnLeaveSumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeaveSumActionPerformed
+        jTabbedPane1.setSelectedIndex(3);
+    }//GEN-LAST:event_btnLeaveSumActionPerformed
+
     private void updateEmployeeDetails(Employee employee) {
         String FullName = employee.getFirstname() + " " + employee.getLastname();
         String imagePath = employee.getImagePath();
@@ -1464,24 +1620,24 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
     private double calculateIncomeTax(double salary) {
         if (salary <= 250000) {
-            return 0;
+            return 0; // No tax for salaries <= PHP 250,000
         } else if (salary <= 400000) {
-            return (salary - 250000) * 0.20; // 20%
+            return (salary - 250000) * 0.15; // 15% tax on income between PHP 250,001 and PHP 400,000
         } else if (salary <= 800000) {
-            return 30000 + (salary - 400000) * 0.25; // 25%
+            return 22500 + (salary - 400000) * 0.20; // 20% tax on income between PHP 400,001 and PHP 800,000
         } else if (salary <= 2000000) {
-            return 130000 + (salary - 800000) * 0.30; // 30%
+            return 102500 + (salary - 800000) * 0.25; // 25% tax on income between PHP 800,001 and PHP 2,000,000
+        } else if (salary <= 8000000) {
+            return 402500 + (salary - 2000000) * 0.30; // 30% tax on income between PHP 2,000,001 and PHP 8,000,000
         } else {
-            return 430000 + (salary - 2000000) * 0.35; // 35%
+            return 1802500 + (salary - 8000000) * 0.35; // 35% tax on income above PHP 8,000,000
         }
     }
+
 
     private String formatCurrency(double amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount);
     }
-
-
-    
     
     public void searchAndDisplayEmployees(String searchTerm) {
         EmployeeMethod employeeMethod = new EmployeeMethod(connection);
@@ -1509,6 +1665,39 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jTable1.setModel(model);
     }
 
+    
+    private void clearFields() {
+        getIdPayroll.setText("");
+        rateHourTextField.setText("");
+        totalSalaryPerMonthTextField.setText("");
+        HrsMonthTextField.setText("");
+        totalHrsWorkedTextField.setText("");
+        overtimeHrsTextField.setText("");
+        totalDeducTextField.setText("");
+        philHealthTextField.setText("");
+        SSSTextField.setText("");
+        pagibigTextField.setText("");
+        incomeTaxTextField.setText("");
+        unpaidLeaveTextField.setText("");
+        leaveBalanceTextField.setText("");
+        sickLeaveTextField.setText("");
+        emergencyLeaveTextField.setText("");
+        thirteenthMonthPayTextField.setText("");
+        netSalaryTextField.setText("");
+        nameTextField.setText("");
+        emailTextField.setText("");
+        genderTextField.setText("");
+        jobTitleTextField.setText("");
+        departmentTextField.setText("");
+        userImagePayroll.setIcon(null);
+
+    }
+    
+    
+    
+    
+    
+    
     
     /**
      * @param args the command line arguments
@@ -1552,11 +1741,13 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JTextField SSSTextField;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAttSum;
+    private javax.swing.JButton btnClear2;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnEditProfile;
     private javax.swing.JButton btnEmpMan;
     private javax.swing.JButton btnHome;
+    private javax.swing.JButton btnLeaveSum;
     private javax.swing.JButton btnPayroll;
     private javax.swing.JLabel departmentLabel;
     private javax.swing.JLabel departmentNameLabel;
@@ -1589,6 +1780,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
@@ -1601,13 +1793,16 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JLabel jobTitleLabel;
     private javax.swing.JTextField jobTitleTextField;
     private javax.swing.JLabel lastNameLabel;
+    private javax.swing.JPanel leave;
     private javax.swing.JTextField leaveBalanceTextField;
+    private javax.swing.JTable leaveTable;
     private javax.swing.JLabel logout;
     private javax.swing.JPanel managePayroll;
     private javax.swing.JLabel nameLabel;
@@ -1648,4 +1843,20 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JLabel userRole;
     private javax.swing.JLabel userWelcome;
     // End of variables declaration//GEN-END:variables
+
+    private static class DefaultTableModelImpl extends DefaultTableModel {
+
+        private final DefaultTableModel model;
+
+        public DefaultTableModelImpl(Object[] columnNames, int rowCount, DefaultTableModel model) {
+            super(columnNames, rowCount);
+            this.model = model;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // Allow button cells to be editable
+            return column >= model.getColumnCount() - 2; // Allow editing only for last two columns
+        }
+    }
 }

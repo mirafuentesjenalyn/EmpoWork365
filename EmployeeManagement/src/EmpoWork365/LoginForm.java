@@ -7,6 +7,9 @@ package EmpoWork365;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -222,32 +225,39 @@ public class LoginForm extends javax.swing.JFrame {
         UserAuthenticate authenticatedUser = loginMethod.authenticate(email, password); 
 
         if (authenticatedUser != null) {
-            String roleName = authenticatedUser.getRoleName();
+          String roleName = authenticatedUser.getRoleName();
 
-            if (null == roleName) {
-                JOptionPane.showMessageDialog(this, "Invalid role.");
-                return;
-            } else switch (roleName) {
-                case "Admin" -> {
-                    MainAdmin adminForm = new MainAdmin();
-                    adminForm.setAuthenticatedUser(authenticatedUser);
-                    adminForm.setVisible(true);
-                }
-                case "Employee", "Department Manager", "HR Manager" -> {
-                    MainEmployee employeeForm = new MainEmployee();
-                    employeeForm.setAuthenticatedUser(authenticatedUser);
-                    employeeForm.setVisible(true);
-                }
-                default -> {
-                    JOptionPane.showMessageDialog(this, "Invalid role.");
-                    return;
-                }
-            }
+          if (null == roleName) {
+              JOptionPane.showMessageDialog(this, "Invalid role.");
+              return;
+          } else {
+              switch (roleName) {
+                  case "Admin" -> {
+                      MainAdmin adminForm = new MainAdmin();
+                      adminForm.setAuthenticatedUser(authenticatedUser);
+                      adminForm.setVisible(true);
+                  }
+                  case "Employee", "Department Manager", "HR Manager" -> {
+                      try {
+                          MainEmployee employeeForm = new MainEmployee();
+                          employeeForm.setAuthenticatedUser(authenticatedUser);
+                          employeeForm.setVisible(true);
+                      } catch (SQLException ex) {
+                          Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
+                      }
+                  }
 
-            this.dispose(); 
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid email or password.");
-        }
+                  default -> {
+                      JOptionPane.showMessageDialog(this, "Invalid role.");
+                      return;
+                  }
+              }
+          }
+
+          this.dispose(); 
+      } else {
+          JOptionPane.showMessageDialog(this, "Invalid email or password.");
+      }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void eMailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusGained

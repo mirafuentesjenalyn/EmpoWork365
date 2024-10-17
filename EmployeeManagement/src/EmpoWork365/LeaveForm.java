@@ -1,0 +1,418 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package EmpoWork365;
+
+/**
+ *
+ * @author jenal
+ */
+
+import java.awt.Color;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+import org.jdatepicker.impl.JDatePanelImpl;
+import java.util.Properties;
+import javax.swing.*;
+
+
+public class LeaveForm extends javax.swing.JFrame {
+    private LeaveSubmissionListener leaveSubmissionListener;
+    private Connection connection;
+    private final UserAuthenticate loggedInUser;
+    private static int loggedInEmployeeId;
+    private JDatePickerImpl datePickerStart;
+    private JDatePickerImpl datePickerEnd;
+
+    /**
+     * Creates new form LeaveForm
+     * @param loggedInUser
+     */
+    public LeaveForm(UserAuthenticate loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        initComponents();
+        setDefaultTextForTextArea();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        connectToDatabase();
+        setupDatePickers();
+        loadLeaveTypes();
+
+        usernameLabel.setText(loggedInUser.getFirstname() + " " + loggedInUser.getLastname());
+
+    }
+    
+    private void connectToDatabase() {
+        try {
+            sqlConnector connector = new sqlConnector();
+            this.connection = connector.createConnection();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to connect to the database: " + e.getMessage());
+        }
+    }
+    
+    public void setLeaveSubmissionListener(LeaveSubmissionListener listener) {
+        this.leaveSubmissionListener = listener;
+    }
+    
+    public UserAuthenticate getCurrentLoggedInUser() {
+        // Assuming you have a way to track the currently logged-in user
+        return loggedInUser; // Make sure loggedInUser is defined and properly set
+    }
+
+    
+    public void setLoggedInUser(UserAuthenticate user) {
+        loggedInEmployeeId = user.getId(); 
+    }
+
+
+    private void setupDatePickers() {        
+        UtilDateModel modelStart = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+
+        JDatePanelImpl datePanelStart = new JDatePanelImpl(modelStart, p);
+        datePickerStart = new JDatePickerImpl(datePanelStart, new DateLabelFormatter());
+
+        datePanelStartContainer.setLayout(new java.awt.BorderLayout());
+        datePanelStartContainer.add(datePickerStart, java.awt.BorderLayout.CENTER);
+        datePanelStartContainer.revalidate();  
+        datePanelStartContainer.repaint();
+
+        UtilDateModel modelEnd = new UtilDateModel();
+        JDatePanelImpl datePanelEnd = new JDatePanelImpl(modelEnd, p);
+        datePickerEnd = new JDatePickerImpl(datePanelEnd, new DateLabelFormatter());
+
+        datePanelEndContainer.setLayout(new java.awt.BorderLayout());
+        datePanelEndContainer.add(datePickerEnd, java.awt.BorderLayout.CENTER);
+        datePanelEndContainer.revalidate();  
+        datePanelEndContainer.repaint();
+    }
+
+    public class DateLabelFormatter extends javax.swing.JFormattedTextField.AbstractFormatter {
+        private final String datePattern = "yyyy-MM-dd";
+        private final java.text.SimpleDateFormat dateFormatter = new java.text.SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws java.text.ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws java.text.ParseException {
+            if (value != null) {
+                java.util.Calendar cal = (java.util.Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+            return "Select Date";
+        }
+    }
+    
+    
+    private void loadLeaveTypes() {
+        try {
+            String sql = "SELECT fld_leave_type_name FROM tbl_leave_types";
+            try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+                comboBoxLeaveType.removeAllItems();
+                while (rs.next()) {
+                    comboBoxLeaveType.addItem(rs.getString("fld_leave_type_name"));
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load leave types: " + e.getMessage());
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        datePanelEndContainer = new javax.swing.JPanel();
+        datePanelStartContainer = new javax.swing.JPanel();
+        btnSubmit = new javax.swing.JButton();
+        comboBoxLeaveType = new javax.swing.JComboBox<>();
+        textAreaReason = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        usernameLabel = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        datePanelEndContainer.setBackground(new java.awt.Color(153, 204, 255));
+
+        javax.swing.GroupLayout datePanelEndContainerLayout = new javax.swing.GroupLayout(datePanelEndContainer);
+        datePanelEndContainer.setLayout(datePanelEndContainerLayout);
+        datePanelEndContainerLayout.setHorizontalGroup(
+            datePanelEndContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 35, Short.MAX_VALUE)
+        );
+        datePanelEndContainerLayout.setVerticalGroup(
+            datePanelEndContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 33, Short.MAX_VALUE)
+        );
+
+        datePanelStartContainer.setBackground(new java.awt.Color(204, 204, 255));
+
+        javax.swing.GroupLayout datePanelStartContainerLayout = new javax.swing.GroupLayout(datePanelStartContainer);
+        datePanelStartContainer.setLayout(datePanelStartContainerLayout);
+        datePanelStartContainerLayout.setHorizontalGroup(
+            datePanelStartContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 42, Short.MAX_VALUE)
+        );
+        datePanelStartContainerLayout.setVerticalGroup(
+            datePanelStartContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        btnSubmit.setText("Submit");
+        btnSubmit.setToolTipText("");
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        textAreaReason.setViewportView(jTextArea1);
+
+        usernameLabel.setText("jLabel1");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(71, 71, 71)
+                        .addComponent(comboBoxLeaveType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(90, 90, 90)
+                        .addComponent(btnSubmit))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(usernameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(datePanelStartContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(64, 64, 64)
+                                .addComponent(datePanelEndContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(370, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(textAreaReason, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(usernameLabel)
+                .addGap(5, 5, 5)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(datePanelEndContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(datePanelStartContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(comboBoxLeaveType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(241, 241, 241)
+                .addComponent(btnSubmit)
+                .addContainerGap(128, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(textAreaReason, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        setSize(new java.awt.Dimension(556, 509));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        java.util.Date startDate = (java.util.Date) datePickerStart.getModel().getValue();
+        java.util.Date endDate = (java.util.Date) datePickerEnd.getModel().getValue();
+        String selectedLeaveType = (String) comboBoxLeaveType.getSelectedItem();
+        String reason = jTextArea1.getText().trim();
+
+        if (startDate == null || endDate == null || selectedLeaveType == null || reason.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (startDate.after(endDate)) {
+            JOptionPane.showMessageDialog(this, "Start date cannot be after the end date.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        boolean success = saveLeaveToDatabase(loggedInUser.getId(), selectedLeaveType, startDate, endDate, reason, "Pending");
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Leave request submitted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (leaveSubmissionListener != null) {
+                leaveSubmissionListener.onLeaveSubmitted(); 
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to submit leave request. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
+    private void setDefaultTextForTextArea() {
+        String defaultText = "Enter your reason for leave..."; // Your default text
+        jTextArea1.setText(defaultText);
+        jTextArea1.setForeground(Color.LIGHT_GRAY); // Set the default text color
+
+        jTextArea1.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (jTextArea1.getText().equals(defaultText)) {
+                    jTextArea1.setText(""); // Clear the default text
+                    jTextArea1.setForeground(Color.BLACK); // Set text color to black
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (jTextArea1.getText().isEmpty()) {
+                    jTextArea1.setText(defaultText); // Restore the default text if empty
+                    jTextArea1.setForeground(Color.LIGHT_GRAY); // Reset text color
+                }
+            }
+        });
+    }
+    
+    private boolean saveLeaveToDatabase(int employeeId, String leaveType, java.util.Date startDate, java.util.Date endDate, String reason, String status) {
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        
+        try {
+            String checkEmployeeIdSql = "SELECT fld_employee_id FROM tbl_employees WHERE fld_employee_id = ?";
+            pst = connection.prepareStatement(checkEmployeeIdSql);
+            pst.setInt(1, employeeId);
+            rs = pst.executeQuery();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "Employee ID not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                return false; 
+            }
+            
+            String sqlTypeId = "SELECT fld_leave_type_id FROM tbl_leave_types WHERE fld_leave_type_name = ?";
+            pst = connection.prepareStatement(sqlTypeId);
+            pst.setString(1, leaveType);
+            rs = pst.executeQuery();
+
+            int leaveTypeId = 0;
+            if (rs.next()) {
+                leaveTypeId = rs.getInt("fld_leave_type_id");
+            } else {
+                JOptionPane.showMessageDialog(this, "Leave type not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                return false; 
+            }
+            rs.close();
+            pst.close();
+
+            String sqlInsert = "INSERT INTO tbl_leave_applications (fld_employee_id, fld_leave_type_id, fld_start_date, fld_end_date, fld_reason, fld_status) VALUES (?, ?, ?, ?, ?, ?)";
+            pst = connection.prepareStatement(sqlInsert);
+            pst.setInt(1, employeeId);
+            pst.setInt(2, leaveTypeId);
+            pst.setDate(3, new java.sql.Date(startDate.getTime()));
+            pst.setDate(4, new java.sql.Date(endDate.getTime()));
+            pst.setString(5, reason);
+            pst.setString(6, status);
+
+            int rowsAffected = pst.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error while saving leave: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            return false; 
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (pst != null) {
+                try {
+                    pst.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+//    public enum LeaveStatus {
+//    PENDING, APPROVED, REJECTED;
+//}
+
+
+//datePickerStart.getModel().setValue(null);
+//datePickerEnd.getModel().setValue(null);
+//comboBoxLeaveType.setSelectedIndex(-1);
+//jTextArea1.setText("");
+
+
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(LeaveForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(LeaveForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(LeaveForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(LeaveForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                UserAuthenticate loggedInUser = null; 
+                new LeaveForm(loggedInUser).setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSubmit;
+    private javax.swing.JComboBox<String> comboBoxLeaveType;
+    private javax.swing.JPanel datePanelEndContainer;
+    private javax.swing.JPanel datePanelStartContainer;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JScrollPane textAreaReason;
+    private javax.swing.JLabel usernameLabel;
+    // End of variables declaration//GEN-END:variables
+}
