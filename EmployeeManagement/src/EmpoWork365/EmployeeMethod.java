@@ -372,7 +372,7 @@ public class EmployeeMethod {
     public DefaultTableModel viewLeaveApplications(int employeeId) throws SQLException {
             String[] columnNames = {
             "Application ID", "Employee ID", "Full Name", "Leave Type", 
-            "Start Date", "End Date", "Status", "Date Applied"
+            "Start Date", "Status", "Date Applied"
         };
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -382,7 +382,6 @@ public class EmployeeMethod {
                      + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
                      + "lt.fld_leave_type_name, "
                      + "la.fld_start_date, "
-                     + "la.fld_end_date, "
                      + "la.fld_status, "
                      + "la.fld_request_date "
                      + "FROM tbl_leave_applications la "
@@ -402,7 +401,6 @@ public class EmployeeMethod {
                     resultSet.getString("full_name"),
                     resultSet.getString("fld_leave_type_name"),
                     resultSet.getDate("fld_start_date"),
-                    resultSet.getDate("fld_end_date"),
                     resultSet.getString("fld_status"),
                     resultSet.getDate("fld_request_date")
                 };
@@ -425,7 +423,7 @@ public class EmployeeMethod {
 
     String query = "SELECT la.fld_application_id, "
                  + "e.fld_employee_id, "
-                 + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                 + "CONCAT('ID', ' ', e.fld_employee_id, ':', e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
                  + "lt.fld_leave_type_name, "
                  + "la.fld_start_date, "
                  + "la.fld_status, "

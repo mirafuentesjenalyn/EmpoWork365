@@ -29,7 +29,6 @@ public class LeaveForm extends javax.swing.JFrame {
     private final UserAuthenticate loggedInUser;
     private static int loggedInEmployeeId;
     private JDatePickerImpl datePickerStart;
-    private JDatePickerImpl datePickerEnd;
 
     /**
      * Creates new form LeaveForm
@@ -86,15 +85,6 @@ public class LeaveForm extends javax.swing.JFrame {
         datePanelStartContainer.add(datePickerStart, java.awt.BorderLayout.CENTER);
         datePanelStartContainer.revalidate();  
         datePanelStartContainer.repaint();
-
-        UtilDateModel modelEnd = new UtilDateModel();
-        JDatePanelImpl datePanelEnd = new JDatePanelImpl(modelEnd, p);
-        datePickerEnd = new JDatePickerImpl(datePanelEnd, new DateLabelFormatter());
-
-        datePanelEndContainer.setLayout(new java.awt.BorderLayout());
-        datePanelEndContainer.add(datePickerEnd, java.awt.BorderLayout.CENTER);
-        datePanelEndContainer.revalidate();  
-        datePanelEndContainer.repaint();
     }
 
     public class DateLabelFormatter extends javax.swing.JFormattedTextField.AbstractFormatter {
@@ -140,7 +130,6 @@ public class LeaveForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        datePanelEndContainer = new javax.swing.JPanel();
         datePanelStartContainer = new javax.swing.JPanel();
         btnSubmit = new javax.swing.JButton();
         comboBoxLeaveType = new javax.swing.JComboBox<>();
@@ -149,19 +138,6 @@ public class LeaveForm extends javax.swing.JFrame {
         usernameLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        datePanelEndContainer.setBackground(new java.awt.Color(153, 204, 255));
-
-        javax.swing.GroupLayout datePanelEndContainerLayout = new javax.swing.GroupLayout(datePanelEndContainer);
-        datePanelEndContainer.setLayout(datePanelEndContainerLayout);
-        datePanelEndContainerLayout.setHorizontalGroup(
-            datePanelEndContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 35, Short.MAX_VALUE)
-        );
-        datePanelEndContainerLayout.setVerticalGroup(
-            datePanelEndContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 33, Short.MAX_VALUE)
-        );
 
         datePanelStartContainer.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -173,7 +149,7 @@ public class LeaveForm extends javax.swing.JFrame {
         );
         datePanelStartContainerLayout.setVerticalGroup(
             datePanelStartContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 33, Short.MAX_VALUE)
         );
 
         btnSubmit.setText("Submit");
@@ -208,8 +184,7 @@ public class LeaveForm extends javax.swing.JFrame {
                             .addComponent(usernameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(datePanelStartContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(64, 64, 64)
-                                .addComponent(datePanelEndContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGap(99, 99, 99)))))
                 .addContainerGap(370, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -223,9 +198,7 @@ public class LeaveForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(usernameLabel)
                 .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(datePanelEndContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(datePanelStartContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(datePanelStartContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(comboBoxLeaveType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(241, 241, 241)
@@ -244,26 +217,17 @@ public class LeaveForm extends javax.swing.JFrame {
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         java.util.Date startDate = (java.util.Date) datePickerStart.getModel().getValue();
-        java.util.Date endDate = (java.util.Date) datePickerEnd.getModel().getValue();
         String selectedLeaveType = (String) comboBoxLeaveType.getSelectedItem();
         String reason = jTextArea1.getText().trim();
 
-        if (startDate == null || endDate == null || selectedLeaveType == null || reason.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-        if (startDate.after(endDate)) {
-            JOptionPane.showMessageDialog(this, "Start date cannot be after the end date.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        boolean success = saveLeaveToDatabase(loggedInUser.getId(), selectedLeaveType, startDate, endDate, reason, "Pending");
+        boolean success = saveLeaveToDatabase(loggedInUser.getId(), selectedLeaveType, startDate, reason, "Pending");
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Leave request submitted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             if (leaveSubmissionListener != null) {
                 leaveSubmissionListener.onLeaveSubmitted(); 
+                this.dispose();
             }
         } else {
             JOptionPane.showMessageDialog(this, "Failed to submit leave request. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -294,7 +258,7 @@ public class LeaveForm extends javax.swing.JFrame {
         });
     }
     
-    private boolean saveLeaveToDatabase(int employeeId, String leaveType, java.util.Date startDate, java.util.Date endDate, String reason, String status) {
+    private boolean saveLeaveToDatabase(int employeeId, String leaveType, java.util.Date startDate, String reason, String status) {
         PreparedStatement pst = null;
         ResultSet rs = null;
         
@@ -324,14 +288,13 @@ public class LeaveForm extends javax.swing.JFrame {
             rs.close();
             pst.close();
 
-            String sqlInsert = "INSERT INTO tbl_leave_applications (fld_employee_id, fld_leave_type_id, fld_start_date, fld_end_date, fld_reason, fld_status) VALUES (?, ?, ?, ?, ?, ?)";
+            String sqlInsert = "INSERT INTO tbl_leave_applications (fld_employee_id, fld_leave_type_id, fld_start_date, fld_reason, fld_status) VALUES (?, ?, ?, ?, ?)";
             pst = connection.prepareStatement(sqlInsert);
             pst.setInt(1, employeeId);
             pst.setInt(2, leaveTypeId);
             pst.setDate(3, new java.sql.Date(startDate.getTime()));
-            pst.setDate(4, new java.sql.Date(endDate.getTime()));
-            pst.setString(5, reason);
-            pst.setString(6, status);
+            pst.setString(4, reason);
+            pst.setString(5, status);
 
             int rowsAffected = pst.executeUpdate();
             return rowsAffected > 0;
@@ -409,7 +372,6 @@ public class LeaveForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> comboBoxLeaveType;
-    private javax.swing.JPanel datePanelEndContainer;
     private javax.swing.JPanel datePanelStartContainer;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JScrollPane textAreaReason;

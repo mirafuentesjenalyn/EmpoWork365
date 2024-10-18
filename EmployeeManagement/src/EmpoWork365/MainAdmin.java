@@ -103,8 +103,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             loadEmployeeLeave();
         }
 
-
-
     public void loadEmployeeData() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
@@ -163,7 +161,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         leaveTable.setModel(model);
         leaveTable.setRowHeight(40); // Set a minimum height for each row
 
-        leaveTable.getColumnModel().getColumn(2).setCellRenderer(new MultiLineCellRenderer());
+//        leaveTable.getColumnModel().getColumn(2).setCellRenderer(new MultiLineCellRenderer());
         leaveTable.getColumnModel().getColumn(4).setCellRenderer(new MultiLineCellRenderer());
         leaveTable.getColumnModel().getColumn(5).setCellRenderer(new MultiLineCellRenderer());
 
