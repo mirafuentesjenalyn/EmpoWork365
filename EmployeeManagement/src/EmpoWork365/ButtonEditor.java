@@ -1,60 +1,69 @@
 package EmpoWork365;
 
-
-import java.awt.Component;
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.EventObject;
+import java.awt.event.ActionListener;
 
-public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
-    private final JButton button;
-    private String label;
-    private final JTable table;
+public class ButtonEditor extends DefaultCellEditor implements ActionListener {
+    private final JButton approveButton = new JButton("Approve");
+    private final JButton rejectButton = new JButton("Reject");
+    private int leaveId;
 
-    public ButtonEditor(JButton button, JTable table) {
-        this.button = button;
-        this.table = table;
+    public ButtonEditor(JCheckBox checkBox) {
+        super(checkBox);
+        approveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        rejectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Action when the button is clicked
-        button.addActionListener((ActionEvent e) -> {
-            fireEditingStopped(); // Stop editing and notify listeners
-            int row = table.getSelectedRow();
-            if (row >= 0) { // Check if a row is selected
-                int applicationId = (int) table.getValueAt(row, 0); // Assuming application ID is in the first column
-                handleLeaveRequest(applicationId, label);
-            }
-        });
-    }
+        // Set colors for buttons
+        approveButton.setBackground(new Color(34, 165, 102));
+        approveButton.setForeground(Color.WHITE);
+        rejectButton.setBackground(new Color(165, 61, 33));
+        rejectButton.setForeground(Color.WHITE);
 
-    @Override
-    public Object getCellEditorValue() {
-        return label; // Return the button label
-    }
+        // Set button borders
+        approveButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        rejectButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-    public Component getTableCellEditorComponent(JTable table, Object value,
-            boolean isSelected, int row) {
-        label = (value == null) ? "Approve" : value.toString();
-        button.setText(label);
-        return button; // Return the button as the editor component
-    }
-
-    private void handleLeaveRequest(int applicationId, String action) {
-        // Implement your logic to approve/reject leave requests based on applicationId
-        // You may want to update the database here
-        // For now, we'll just show a message dialog
-        JOptionPane.showMessageDialog(table, action + " request for application ID: " + applicationId);
-        // You might call a method to update the database here
-    }
-
-    // Override this method to prevent the default behavior of cell editing
-    @Override
-    public boolean isCellEditable(EventObject e) {
-        return true;
+        approveButton.addActionListener(this);
+        rejectButton.addActionListener(this);
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        leaveId = (Integer) table.getValueAt(row, 0); 
+
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5)); // Adjusted layout
+        panel.add(approveButton);
+        panel.add(rejectButton);
+
+        // Set a preferred size for the panel
+        panel.setPreferredSize(new Dimension(200, 30)); // Adjust height as needed
+        return panel;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        return leaveId;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == approveButton) {
+            int confirmation = JOptionPane.showConfirmDialog(approveButton, 
+                "Are you sure you want to approve this leave request?", 
+                "Confirmation", JOptionPane.YES_NO_OPTION);
+            if (confirmation == JOptionPane.YES_OPTION) {
+                ((MainAdmin) SwingUtilities.getWindowAncestor(approveButton)).approveLeave(leaveId);
+            }
+        } else if (e.getSource() == rejectButton) {
+            int confirmation = JOptionPane.showConfirmDialog(rejectButton, 
+                "Are you sure you want to reject this leave request?", 
+                "Confirmation", JOptionPane.YES_NO_OPTION);
+            if (confirmation == JOptionPane.YES_OPTION) {
+                ((MainAdmin) SwingUtilities.getWindowAncestor(rejectButton)).rejectLeave(leaveId);
+            }
+        }
+        fireEditingStopped(); 
     }
 }

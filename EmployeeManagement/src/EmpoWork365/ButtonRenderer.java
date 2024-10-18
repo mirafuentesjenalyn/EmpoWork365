@@ -1,46 +1,46 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package EmpoWork365;
 
-/**
- *
- * @author jenal
- */
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
-public class ButtonRenderer extends JButton implements TableCellRenderer {
+public class ButtonRenderer extends JPanel implements TableCellRenderer {
+
+    private final JButton approveButton = new JButton("Approve");
+    private final JButton rejectButton = new JButton("Reject");
 
     public ButtonRenderer() {
-        setOpaque(true);
+        setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5)); 
+        
+        approveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        rejectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        approveButton.setOpaque(true);
+        rejectButton.setOpaque(true);
+
+        // Set colors for the buttons
+        approveButton.setBackground(new Color(34, 165, 102));
+        rejectButton.setBackground(new Color(165, 61, 33));
+
+        approveButton.setForeground(Color.WHITE);
+        rejectButton.setForeground(Color.WHITE);
+
+        approveButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        rejectButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+        add(approveButton);
+        add(rejectButton);
     }
-
-    public Component getTableCellRendererComponent(JTable table, Object value,
-                                                   boolean isSelected, boolean hasFocus, int row) {
-        if (value != null) {
-            setText(value.toString());
-        } else {
-            setText("");
-        }
-
-        // Set background and foreground based on selection
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(table.getBackground());
-        }
-
-        return this;
-    }
-
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (isSelected) {
+            setBackground(table.getSelectionBackground());
+        } else {
+            setBackground(table.getBackground());
+        }
+        return this; // Return the panel containing both buttons
     }
 }
+
+

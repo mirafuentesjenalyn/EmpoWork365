@@ -6,6 +6,8 @@ package EmpoWork365;
 
 import java.sql.Connection;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -18,11 +20,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -32,10 +35,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private UserAuthenticate loggedInUser;
     private EditUserDetails editUserDetails;
     private Connection connection;
-    private Employee loggedInEmployee; 
-    private final int REGULAR_HOURS_PER_MONTH ; 
+    private final int REGULAR_HOURS_PER_MONTH;
+
 
     public static MainAdmin instance;
+    private int columnIndex;
     /**
      * Creates new form Login
      */
@@ -43,7 +47,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         this.REGULAR_HOURS_PER_MONTH  = 160;
         initComponents();
         instance = this;
-        
+
         addButtonHoverEffect(btnHome);
         addButtonHoverEffect(btnEmpMan);
         addButtonHoverEffect(btnAttSum);
@@ -96,8 +100,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         public void setAuthenticatedUser(UserAuthenticate loggedInUser) {
             this.loggedInUser = loggedInUser;
             setUserDetails(loggedInUser); 
+            loadEmployeeLeave();
         }
-    
+
+
+
     public void loadEmployeeData() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
@@ -138,56 +145,67 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jTable2.setModel(nonEditableModel);
     }
     
-    private void loadEmployeeLeave() {
-        if (loggedInEmployee == null) {
-            JOptionPane.showMessageDialog(this, "Employee data is not available.");
-            return;
-        }
-
-        int employeeId = loggedInEmployee.getEmployeeId(); 
-
+    public void loadEmployeeLeave() {
         try {
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-            DefaultTableModel model = employeeMethod.getRequestsData(employeeId);
-            leaveTable.setModel(model); 
+            DefaultTableModel model = employeeMethod.getRequestsData();
+            if (model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "No leave applications found.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                setLeaveTableModel(model);
+            }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error loading leave applications: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private void setTableModel(DefaultTableModel model, JTable leaveTable) {
-        DefaultTableModel nonEditableModel = new DefaultTableModel(model.getDataVector(), getColumnNames(model)) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; 
-            }
-        };
-        jTable2.setModel(nonEditableModel);
+
+    private void setLeaveTableModel(DefaultTableModel model) {
+        leaveTable.setModel(model);
+        leaveTable.setRowHeight(40); // Set a minimum height for each row
+
+        leaveTable.getColumnModel().getColumn(2).setCellRenderer(new MultiLineCellRenderer());
+        leaveTable.getColumnModel().getColumn(4).setCellRenderer(new MultiLineCellRenderer());
+        leaveTable.getColumnModel().getColumn(5).setCellRenderer(new MultiLineCellRenderer());
+
+        leaveTable.getColumnModel().getColumn(0).setPreferredWidth(30);  // "Application ID" column
+        leaveTable.getColumnModel().getColumn(1).setPreferredWidth(80); // "Application" column
+        leaveTable.getColumnModel().getColumn(2).setPreferredWidth(120); // "Name" column
+        leaveTable.getColumnModel().getColumn(3).setPreferredWidth(80); // "Leave Request" column
+        leaveTable.getColumnModel().getColumn(4).setPreferredWidth(95); // "Leave Type" column
+        leaveTable.getColumnModel().getColumn(5).setPreferredWidth(200); // "Reason" column
+        leaveTable.getColumnModel().getColumn(6).setPreferredWidth(75); // "Status" column
+        leaveTable.getColumnModel().getColumn(7).setPreferredWidth(200); // "Action" column
+
+        leaveTable.getColumn("Action").setCellRenderer(new ButtonRenderer());
+        leaveTable.getColumn("Action").setCellEditor(new ButtonEditor(new JCheckBox()));
+        leaveTable.revalidate();
+        leaveTable.repaint();
     }
 
-//    private void setTableModel(DefaultTableModel model, JTable leaveTable) {
-//        DefaultTableModel nonEditableModel = new DefaultTableModel(
-//                model.getDataVector(),
-//                getColumnNames(model)
-//        ) {
-//            @Override
-//            public boolean isCellEditable(int row, int column) {
-//                return column >= model.getColumnCount() - 2; 
-//            }
-//        };
-//
-//        leaveTable.setModel(nonEditableModel);
-//
-//        // Set the button renderer and editor for the "Approve" and "Reject" columns
-//        leaveTable.getColumn("Approve").setCellRenderer(new ButtonRenderer());
-//        leaveTable.getColumn("Reject").setCellRenderer(new ButtonRenderer());
-//
-//        leaveTable.getColumn("Approve").setCellEditor(new ButtonEditor(new JButton(), leaveTable));
-//        leaveTable.getColumn("Reject").setCellEditor(new ButtonEditor(new JButton(), leaveTable));
-//    }
+    void approveLeave(int leaveId) {
+        try {
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            employeeMethod.updateLeaveStatus(leaveId, "Approved");
+            loadEmployeeLeave(); // Refresh the leave table
+            JOptionPane.showMessageDialog(this, "Leave approved successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error approving leave: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
+    // Reject leave action
+    void rejectLeave(int leaveId) {
+        try {
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            employeeMethod.updateLeaveStatus(leaveId, "Rejected");
+            loadEmployeeLeave(); // Refresh the leave table
+            JOptionPane.showMessageDialog(this, "Leave rejected successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error rejecting leave: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-
+    
     private Vector<String> getColumnNames(DefaultTableModel model) {
         Vector<String> columnNames = new Vector<>();
         for (int i = 0; i < model.getColumnCount(); i++) {
@@ -386,10 +404,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnHome.setBackground(new java.awt.Color(102, 102, 102));
         btnHome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnHome.setForeground(new java.awt.Color(255, 255, 255));
-        btnHome.setText("Home");
+        btnHome.setBorder(null);
         btnHome.setContentAreaFilled(false);
         btnHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHome.setHideActionText(true);
         btnHome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnHome.setLabel("      Home");
+        btnHome.setMargin(new java.awt.Insets(50, 30, 20, 15));
+        btnHome.setPreferredSize(new java.awt.Dimension(210, 30));
+        btnHome.setRequestFocusEnabled(false);
         btnHome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnHomeActionPerformed(evt);
@@ -399,10 +422,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnEmpMan.setBackground(new java.awt.Color(102, 102, 102));
         btnEmpMan.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnEmpMan.setForeground(new java.awt.Color(255, 255, 255));
-        btnEmpMan.setText("Employee Management");
+        btnEmpMan.setBorder(null);
         btnEmpMan.setContentAreaFilled(false);
         btnEmpMan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEmpMan.setHideActionText(true);
         btnEmpMan.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnEmpMan.setLabel("      Employee Management");
+        btnEmpMan.setMargin(new java.awt.Insets(50, 30, 20, 15));
+        btnEmpMan.setPreferredSize(new java.awt.Dimension(210, 30));
+        btnEmpMan.setRequestFocusEnabled(false);
         btnEmpMan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEmpManActionPerformed(evt);
@@ -412,10 +440,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnAttSum.setBackground(new java.awt.Color(102, 102, 102));
         btnAttSum.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnAttSum.setForeground(new java.awt.Color(255, 255, 255));
-        btnAttSum.setText("Attendance Summary");
+        btnAttSum.setBorder(null);
         btnAttSum.setContentAreaFilled(false);
         btnAttSum.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAttSum.setHideActionText(true);
         btnAttSum.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnAttSum.setLabel("      Attendance Summary");
+        btnAttSum.setMargin(new java.awt.Insets(50, 30, 20, 15));
+        btnAttSum.setPreferredSize(new java.awt.Dimension(210, 30));
+        btnAttSum.setRequestFocusEnabled(false);
         btnAttSum.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAttSumActionPerformed(evt);
@@ -425,10 +458,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnLeaveSum.setBackground(new java.awt.Color(102, 102, 102));
         btnLeaveSum.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnLeaveSum.setForeground(new java.awt.Color(255, 255, 255));
-        btnLeaveSum.setText("Leave Summary");
+        btnLeaveSum.setBorder(null);
         btnLeaveSum.setContentAreaFilled(false);
         btnLeaveSum.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLeaveSum.setHideActionText(true);
         btnLeaveSum.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnLeaveSum.setLabel("      Leave Summary");
+        btnLeaveSum.setMargin(new java.awt.Insets(50, 30, 20, 15));
+        btnLeaveSum.setPreferredSize(new java.awt.Dimension(210, 30));
+        btnLeaveSum.setRequestFocusEnabled(false);
         btnLeaveSum.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLeaveSumActionPerformed(evt);
@@ -438,10 +476,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnPayroll.setBackground(new java.awt.Color(102, 102, 102));
         btnPayroll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPayroll.setForeground(new java.awt.Color(255, 255, 255));
-        btnPayroll.setText("Payroll Management");
+        btnPayroll.setBorder(null);
         btnPayroll.setContentAreaFilled(false);
         btnPayroll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPayroll.setHideActionText(true);
         btnPayroll.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnPayroll.setLabel("      Payroll Management");
+        btnPayroll.setMargin(new java.awt.Insets(50, 30, 20, 15));
+        btnPayroll.setPreferredSize(new java.awt.Dimension(210, 30));
+        btnPayroll.setRequestFocusEnabled(false);
         btnPayroll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPayrollActionPerformed(evt);
@@ -452,33 +495,29 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnEmpMan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnAttSum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnEmpMan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnHome, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(btnLeaveSum, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(btnPayroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(btnLeaveSum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnPayroll, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnHome)
+                .addComponent(btnHome, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEmpMan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnAttSum)
+                .addComponent(btnEmpMan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
-                .addComponent(btnLeaveSum)
+                .addComponent(btnAttSum, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(btnLeaveSum, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnPayroll)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addComponent(btnPayroll, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
-        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 204, 210, 220));
+        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 204, 210, 280));
 
         fullName.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         fullName.setForeground(new java.awt.Color(255, 255, 255));
@@ -933,7 +972,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("Leave Summary");
+        jLabel7.setText("Leave Request Summary");
 
         leaveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -943,11 +982,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Application ID", "Employee ID", "Name", "Start Date", "End Date", "Leave Type", "Reason", "Status"
+                "Applciation ID", "Date Applied", "Name", "Leave Request", "Leave Type", "Reason", "Status", "Action"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, true, true, true, true, true, true
+                true, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -963,11 +1002,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             .addGroup(leaveLayout.createSequentialGroup()
                 .addGroup(leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(leaveLayout.createSequentialGroup()
-                        .addGap(292, 292, 292)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(leaveLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 765, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 765, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(leaveLayout.createSequentialGroup()
+                        .addGap(285, 285, 285)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(1229, Short.MAX_VALUE))
         );
         leaveLayout.setVerticalGroup(
@@ -976,8 +1015,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addGap(37, 37, 37)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 660, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab1", leave);

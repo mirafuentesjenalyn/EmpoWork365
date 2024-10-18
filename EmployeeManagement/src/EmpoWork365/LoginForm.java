@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
  */
 public class LoginForm extends javax.swing.JFrame {
     private static final String PASSWORD_PLACEHOLDER = "Password";
+    private static final String EMAIL_PLACEHOLDER = "Email";
+    private Employee loggedInEmployee;
 
 
     /**
@@ -212,12 +214,12 @@ public class LoginForm extends javax.swing.JFrame {
     }
     
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        LoginMethod loginMethod = new LoginMethod();
-
+       LoginMethod loginMethod = new LoginMethod();
         String email = eMail.getText().trim(); 
         String password = new String(passWord.getPassword());
 
-        if (password.equals(PASSWORD_PLACEHOLDER) || email.isEmpty() || password.isEmpty()) {
+        // Validate fields
+        if (email.equals(EMAIL_PLACEHOLDER) || password.equals(PASSWORD_PLACEHOLDER) || email.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Email and password cannot be empty.");
             return;
         }
@@ -225,39 +227,48 @@ public class LoginForm extends javax.swing.JFrame {
         UserAuthenticate authenticatedUser = loginMethod.authenticate(email, password); 
 
         if (authenticatedUser != null) {
-          String roleName = authenticatedUser.getRoleName();
+            this.loggedInEmployee = new Employee(authenticatedUser.getId(),  // Changed from getEmployeeId()
+                                                 authenticatedUser.getFirstname(), 
+                                                 authenticatedUser.getLastname(), 
+                                                 authenticatedUser.getEmail(), 
+                                                 authenticatedUser.getGender(), 
+                                                 authenticatedUser.getJobtitle(), 
+                                                 authenticatedUser.getDepartmentName(), 
+                                                 authenticatedUser.getImagepath());
 
-          if (null == roleName) {
-              JOptionPane.showMessageDialog(this, "Invalid role.");
-              return;
-          } else {
-              switch (roleName) {
-                  case "Admin" -> {
-                      MainAdmin adminForm = new MainAdmin();
-                      adminForm.setAuthenticatedUser(authenticatedUser);
-                      adminForm.setVisible(true);
-                  }
-                  case "Employee", "Department Manager", "HR Manager" -> {
-                      try {
-                          MainEmployee employeeForm = new MainEmployee();
-                          employeeForm.setAuthenticatedUser(authenticatedUser);
-                          employeeForm.setVisible(true);
-                      } catch (SQLException ex) {
-                          Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
-                      }
-                  }
 
-                  default -> {
-                      JOptionPane.showMessageDialog(this, "Invalid role.");
-                      return;
-                  }
-              }
-          }
+            String roleName = authenticatedUser.getRoleName();
 
-          this.dispose(); 
-      } else {
-          JOptionPane.showMessageDialog(this, "Invalid email or password.");
-      }
+            if (roleName == null) {
+                JOptionPane.showMessageDialog(this, "Invalid role.");
+                return;
+            } else {
+                switch (roleName) {
+                    case "Admin" -> {
+                        MainAdmin adminForm = new MainAdmin();
+                        adminForm.setAuthenticatedUser(authenticatedUser);
+                        adminForm.setVisible(true);
+                    }
+                    case "Employee", "Department Manager", "HR Manager" -> {
+                        try {
+                            MainEmployee employeeForm = new MainEmployee();
+                            employeeForm.setAuthenticatedUser(authenticatedUser);
+                            employeeForm.setVisible(true);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    default -> {
+                        JOptionPane.showMessageDialog(this, "Invalid role.");
+                        return;
+                    }
+                }
+            }
+
+            this.dispose(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid email or password.");
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void eMailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusGained

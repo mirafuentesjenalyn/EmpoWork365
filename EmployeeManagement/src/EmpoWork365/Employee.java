@@ -20,7 +20,7 @@ public class Employee {
     private Double incomeTax;
 
     // Constructor with parameters
-    public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, Date dateOfEmployment) {
+    public Employee(String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, Date dateOfEmployment) {
         this.employeeId = employeeId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -30,6 +30,19 @@ public class Employee {
         this.departmentName = departmentName;
         this.dateOfEmployment = dateOfEmployment;
     }
+    
+    public Employee(int employeeId, String firstname, String lastname, String email,
+                    String gender, String jobtitle, String departmentName, String imagePath) {
+        this.employeeId = employeeId;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.gender = gender;
+        this.jobtitle = jobtitle;
+        this.departmentName = departmentName;
+        this.imagePath = imagePath;
+    }
+        
     public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, 
                        String departmentName, String imagePath, Double ratePerHour, 
                        Double netSalary, Double philHealthDeduction, Double sssDeduction, Double pagIbigDeduction, 
