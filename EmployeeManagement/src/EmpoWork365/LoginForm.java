@@ -89,7 +89,7 @@ public class LoginForm extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setBackground(new Color(0, 0, 0, 100));
+        jPanel1.setBackground(new Color(0, 0, 0, 150));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jPanel2.setBackground(new Color(0, 0, 0, 0));
@@ -149,7 +149,6 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel3.setText("No Account?");
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 280, -1, 30));
 
-        jButton1.setBackground(new Color(0, 0, 0, 0));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("SIGN UP");
@@ -157,7 +156,10 @@ public class LoginForm extends javax.swing.JFrame {
         jButton1.setBorderPainted(false);
         jButton1.setContentAreaFilled(false);
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.setFocusPainted(false);
         jButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jButton1.setRequestFocusEnabled(false);
+        jButton1.setRolloverEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);

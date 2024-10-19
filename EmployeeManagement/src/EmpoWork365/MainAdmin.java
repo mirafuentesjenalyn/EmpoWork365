@@ -18,6 +18,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -183,12 +184,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         leaveTable.getColumnModel().getColumn(6).setPreferredWidth(75); // "Status" column
         leaveTable.getColumnModel().getColumn(7).setPreferredWidth(200); // "Action" column
 
-        leaveTable.getColumn("Action").setCellEditor(new ButtonEditor(new JCheckBox()) {
-        protected void onButtonClicked(int rowIndex) {
-            int leaveId = (Integer) leaveTable.getValueAt(rowIndex, 0); 
-            unpaidLeave(leaveId); 
-            }
-        });
+        leaveTable.getColumn("Action").setCellEditor(new ButtonEditor(new JCheckBox()));
+
                 
         leaveTable.getColumn("Action").setCellRenderer(new ButtonRenderer());
         leaveTable.getColumn("Action").setCellEditor(new ButtonEditor(new JCheckBox()));
@@ -377,9 +374,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         getIdPayroll = new javax.swing.JTextField();
         rateperHour_Label = new javax.swing.JLabel();
         emp_idLabel = new javax.swing.JLabel();
-        totalSalaryPerMonthLabel = new javax.swing.JLabel();
         totalDeducTextField = new javax.swing.JTextField();
-        totalSalaryPerMonthTextField = new javax.swing.JTextField();
         overtimeHrsTextField = new javax.swing.JTextField();
         leaveBalanceLabel = new javax.swing.JLabel();
         leaveBalanceTextField = new javax.swing.JTextField();
@@ -393,6 +388,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         netSalaryLabel = new javax.swing.JLabel();
         vacationLeaveLabel = new javax.swing.JLabel();
         vacationLeaveTextField = new javax.swing.JTextField();
+        totalSalaryPerMonthLabel = new javax.swing.JLabel();
+        totalSalaryPerMonthTextField = new javax.swing.JTextField();
         jPanel10 = new javax.swing.JPanel();
         departmentTextField = new javax.swing.JTextField();
         departmentNameLabel = new javax.swing.JLabel();
@@ -1106,15 +1103,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         emp_idLabel.setText("Employee ID:");
         jPanel9.add(emp_idLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 18, 117, 26));
 
-        totalSalaryPerMonthLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        totalSalaryPerMonthLabel.setText("Total Salary/Month:");
-        jPanel9.add(totalSalaryPerMonthLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 100, 117, 26));
-
         totalDeducTextField.setEditable(false);
         jPanel9.add(totalDeducTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 255, 177, -1));
-
-        totalSalaryPerMonthTextField.setEditable(false);
-        jPanel9.add(totalSalaryPerMonthTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 100, 177, -1));
 
         overtimeHrsTextField.setEditable(false);
         jPanel9.add(overtimeHrsTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 214, 177, -1));
@@ -1162,6 +1152,13 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         vacationLeaveTextField.setEditable(false);
         jPanel9.add(vacationLeaveTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 565, 177, -1));
+
+        totalSalaryPerMonthLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        totalSalaryPerMonthLabel.setText("Total Salary/Month:");
+        jPanel9.add(totalSalaryPerMonthLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 100, 117, 26));
+
+        totalSalaryPerMonthTextField.setEditable(false);
+        jPanel9.add(totalSalaryPerMonthTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 100, 177, -1));
 
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -1237,7 +1234,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 btnClear2ActionPerformed(evt);
             }
         });
-        jPanel10.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 103, -1));
+        jPanel10.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 90, 20));
 
         btnChangeRatePerHour.setBackground(new java.awt.Color(76, 122, 172));
         btnChangeRatePerHour.setForeground(new java.awt.Color(255, 255, 255));
@@ -1248,7 +1245,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 btnChangeRatePerHourActionPerformed(evt);
             }
         });
-        jPanel10.add(btnChangeRatePerHour, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 51, 103, -1));
+        jPanel10.add(btnChangeRatePerHour, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 90, 20));
 
         javax.swing.GroupLayout managePayrollLayout = new javax.swing.GroupLayout(managePayroll);
         managePayroll.setLayout(managePayrollLayout);
@@ -1274,11 +1271,12 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(55, Short.MAX_VALUE))
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(55, Short.MAX_VALUE))
+                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         jTabbedPane1.addTab("tab4", managePayroll);
@@ -1529,7 +1527,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
            double ratePerHour = employee.getRatePerHour();
            rateHourTextField.setText(String.format("%.2f", ratePerHour));
            
-
+           double totalSalary = calculateTotalSalary((double) REGULAR_HOURS_PER_MONTH, ratePerHour, 0);
+           double thirteenthMonthPay = totalSalary;
+           thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay)); 
 
            HrsMonthTextField.setText(String.format("%.2f hrs", (double) REGULAR_HOURS_PER_MONTH));
 
@@ -1663,18 +1663,24 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }
 
 
-    void unpaidLeave(int leaveId) {
-        try {
-            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-            employeeMethod.updateLeaveStatus(leaveId, "Unpaid");
-            
-            
-            loadEmployeeLeave(); 
-            JOptionPane.showMessageDialog(this, "Leave marked as unpaid successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error marking leave as unpaid: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    public void handleDeductionForUnpaidLeave(int employeeId, double ratePerHour) throws SQLException {
+        AttendanceMethod attendanceMethod = new AttendanceMethod(connection); // Use your existing connection
+
+        boolean hasClockedIn = attendanceMethod.hasClockedIn(employeeId);
+        boolean hasClockedOut = attendanceMethod.hasClockedOut(employeeId);
+
+        if (!hasClockedIn && !hasClockedOut) {
+            int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employeeId, LocalDate.now().getMonthValue(), LocalDate.now().getYear());
+            int leaveBalance = attendanceMethod.getLeaveBalance(employeeId); // Call the method in AttendanceMethod
+
+            if (leaveBalance <= 0) {
+                double unpaidLeaveDeduction = calculateUnpaidLeave(ratePerHour, unpaidLeaveDays);
+                attendanceMethod.processDeduction(employeeId, unpaidLeaveDeduction);
+            }
         }
     }
+
+
     
     private String formatCurrency(double amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount);

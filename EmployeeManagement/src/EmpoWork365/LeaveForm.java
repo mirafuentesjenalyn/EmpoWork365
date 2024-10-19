@@ -27,7 +27,6 @@ public class LeaveForm extends javax.swing.JFrame {
     private LeaveSubmissionListener leaveSubmissionListener;
     private Connection connection;
     private final UserAuthenticate loggedInUser;
-    private static int loggedInEmployeeId;
     private JDatePickerImpl datePickerStart;
 
     /**
@@ -67,7 +66,7 @@ public class LeaveForm extends javax.swing.JFrame {
 
     
     public void setLoggedInUser(UserAuthenticate user) {
-        loggedInEmployeeId = user.getId(); 
+        user.getId(); 
     }
 
 
@@ -109,9 +108,8 @@ public class LeaveForm extends javax.swing.JFrame {
     
     private void loadLeaveTypes() {
         try {
-            String sql = "SELECT fld_leave_type_name FROM tbl_leave_types WHERE fld_leave_type_name != 'Unpaid Leave'";
+            String sql = "SELECT fld_leave_type_name FROM tbl_leave_types"; // Remove the WHERE clause
             try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-                comboBoxLeaveType.removeAllItems();
                 while (rs.next()) {
                     comboBoxLeaveType.addItem(rs.getString("fld_leave_type_name"));
                 }
@@ -120,6 +118,7 @@ public class LeaveForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Failed to load leave types: " + e.getMessage());
         }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -220,6 +219,21 @@ public class LeaveForm extends javax.swing.JFrame {
         String selectedLeaveType = (String) comboBoxLeaveType.getSelectedItem();
         String reason = jTextArea1.getText().trim();
 
+        // Validate input
+        if (startDate == null) {
+            JOptionPane.showMessageDialog(this, "Please select a start date for your leave.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (selectedLeaveType == null) {
+            JOptionPane.showMessageDialog(this, "Please select a leave type.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (reason.isEmpty() || reason.equals("Enter your reason for leave...")) {
+            JOptionPane.showMessageDialog(this, "Please provide a reason for your leave.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         boolean success = saveLeaveToDatabase(loggedInUser.getId(), selectedLeaveType, startDate, reason, "Pending");
 

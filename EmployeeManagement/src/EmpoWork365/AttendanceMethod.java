@@ -17,8 +17,6 @@ public class AttendanceMethod {
 
     public void clockIn(int employeeId) throws SQLException {
 
-//        LocalTime currentTime = LocalTime.now();
-
         String sql = "INSERT INTO tbl_attendance (fld_employee_id, fld_attendance_date, fld_time_in) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, employeeId);
@@ -33,8 +31,6 @@ public class AttendanceMethod {
     }
    
     public void clockOut(int employeeId) throws SQLException {
-
-//        LocalTime currentTime = LocalTime.now();
 
         String sql = "UPDATE tbl_attendance SET fld_time_out = ? "
                 + "WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE() AND fld_time_out IS NULL";
@@ -113,29 +109,39 @@ public class AttendanceMethod {
     }
     
     public int getUnpaidLeaveDays(int employeeId, int month, int year) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM tbl_leave_applications " +
-                     "WHERE fld_employee_id = ? " +
-                     "AND fld_leave_type_id = 4 " + 
-                     "AND fld_status = 'Approved' " +
-                     "AND MONTH(fld_date_leave_request) = ? " +  
-                     "AND YEAR(fld_date_leave_request) = ?";  
-
+        String sql = "SELECT COUNT(*) FROM tbl_leave_applications WHERE fld_employee_id = ? AND fld_leave_type_id = 4 AND fld_status = 'Approved' AND MONTH(fld_date_leave_request) = ? AND YEAR(fld_date_leave_request) = ?";  
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, employeeId);
             preparedStatement.setInt(2, month);
             preparedStatement.setInt(3, year);
-
             ResultSet rs = preparedStatement.executeQuery();
-
             if (rs.next()) {
                 return rs.getInt(1); 
             }
-        } catch (SQLException e) {
-            throw new SQLException("Error fetching unpaid leave days: " + e.getMessage(), e);
         }
         return 0; 
     }
 
+    public int getLeaveBalance(int employeeId) throws SQLException {
+        String sql = "SELECT fld_remaining_days FROM tbl_leave_balances WHERE fld_employee_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, employeeId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("fld_remaining_days"); 
+            }
+        }
+        return 0; 
+    }
+    
+    public void processDeduction(int employeeId, double deduction) throws SQLException {
+        String deductionQuery = "UPDATE tbl_payroll SET fld_deductions = fld_deductions + ? WHERE fld_employee_id = ?";
+        try (PreparedStatement deductionStatement = connection.prepareStatement(deductionQuery)) {
+            deductionStatement.setDouble(1, deduction);
+            deductionStatement.setInt(2, employeeId);
+            deductionStatement.executeUpdate();
+        }
+    }
 
 
 }
