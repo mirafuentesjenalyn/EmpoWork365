@@ -5,8 +5,11 @@
 package EmpoWork365;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +23,7 @@ public class LoginForm extends javax.swing.JFrame {
     private static final String PASSWORD_PLACEHOLDER = "Password";
     private static final String EMAIL_PLACEHOLDER = "Email";
     private Employee loggedInEmployee;
+    private Color hoverColor;
 
 
     /**
@@ -28,12 +32,14 @@ public class LoginForm extends javax.swing.JFrame {
     public LoginForm() {
         initComponents();
         setTitle("EmpoWork365");
-        
+        setResizable(false);  
 //        ImageIcon icon = IconLoader.getIcon();
 //        Image img = icon.getImage();
 //        
 //        setIconImage(img);
 
+        addButtonHoverEffect(btnLogin);
+        
         eMail.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -72,22 +78,25 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(17, 94, 94));
 
-        jPanel3.setBackground(new java.awt.Color(17, 94, 94));
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setBackground(new java.awt.Color(8, 127, 127));
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setBackground(new Color(0, 0, 0, 100));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jPanel2.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel2.setBackground(new Color(0, 0, 0, 0));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        eMail.setBackground(new java.awt.Color(229, 255, 237));
-        eMail.setForeground(new java.awt.Color(153, 204, 188));
+        eMail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        eMail.setForeground(new java.awt.Color(65, 126, 118));
         eMail.setText("Email");
         eMail.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -97,10 +106,15 @@ public class LoginForm extends javax.swing.JFrame {
                 eMailFocusLost(evt);
             }
         });
-        jPanel2.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 79, 222, 45));
+        eMail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eMailActionPerformed(evt);
+            }
+        });
+        jPanel2.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 230, 45));
 
-        passWord.setBackground(new java.awt.Color(229, 255, 237));
-        passWord.setForeground(new java.awt.Color(153, 204, 188));
+        passWord.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        passWord.setForeground(new java.awt.Color(65, 126, 118));
         passWord.setText("Password");
         passWord.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -110,11 +124,11 @@ public class LoginForm extends javax.swing.JFrame {
                 passWordFocusLost(evt);
             }
         });
-        jPanel2.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 136, 222, 45));
+        jPanel2.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 230, 45));
 
         btnLogin.setBackground(new java.awt.Color(185, 230, 230));
         btnLogin.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        btnLogin.setForeground(new java.awt.Color(65, 126, 118));
+        btnLogin.setForeground(new java.awt.Color(43, 101, 135));
         btnLogin.setText("LOGIN");
         btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -122,34 +136,20 @@ public class LoginForm extends javax.swing.JFrame {
                 btnLoginActionPerformed(evt);
             }
         });
-        jPanel2.add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 212, 105, 40));
+        jPanel2.add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 210, 110, 40));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(102, 204, 255));
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("SIGN IN");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(59, 6, 90, 35));
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(34, 78, 0, 78);
-        jPanel1.add(jPanel2, gridBagConstraints);
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 90, 35));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(204, 204, 204));
         jLabel3.setText("No Account?");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 8;
-        gridBagConstraints.ipady = 19;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(18, 119, 0, 0);
-        jPanel1.add(jLabel3, gridBagConstraints);
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 280, -1, 30));
 
+        jButton1.setBackground(new Color(0, 0, 0, 0));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("SIGN UP");
@@ -163,47 +163,44 @@ public class LoginForm extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
+        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 280, -1, 30));
+
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.ipadx = 27;
-        gridBagConstraints.ipady = 23;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 13;
+        gridBagConstraints.ipady = 29;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(19, 6, 42, 0);
-        jPanel1.add(jButton1, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(43, 57, 52, 69);
+        jPanel1.add(jPanel2, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(153, 204, 255));
-        jLabel1.setText("EmpoWork365");
+        jPanel3.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, -1, 390));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(194, 194, 194)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(313, 313, 313)
-                        .addComponent(jLabel1)))
-                .addContainerGap(224, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
-        );
+        jPanel5.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                jPanel5ComponentResized(evt);
+            }
+        });
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/bg2.jpg"))); // NOI18N
+        jPanel5.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -5, -1, 560));
+
+        jPanel3.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(816, 549));
+        jPanel4.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("AxisPower365");
+        jPanel4.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, 50));
+
+        getContentPane().add(jPanel4, java.awt.BorderLayout.PAGE_START);
+
+        setSize(new java.awt.Dimension(817, 626));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -212,9 +209,27 @@ public class LoginForm extends javax.swing.JFrame {
         public void setLoggedInUser(UserAuthenticate user) {
         }
     }
+    private void addButtonHoverEffect(javax.swing.JButton button) {
+        button.setOpaque(true);
+        button.setBackground(new Color(185,230,230));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(43,101,135));
+                button.setForeground(new Color(185,230,230));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(new Color(185,230,230));
+                button.setForeground(new Color(43,101,135));
+            }
+        });
+    }
     
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-       LoginMethod loginMethod = new LoginMethod();
+        LoginMethod loginMethod = new LoginMethod();
         String email = eMail.getText().trim(); 
         String password = new String(passWord.getPassword());
 
@@ -274,14 +289,14 @@ public class LoginForm extends javax.swing.JFrame {
     private void eMailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusGained
         if (eMail.getText().equals("Email")) {
             eMail.setText("");
-            eMail.setForeground(new Color(142,122,69));
+            eMail.setForeground(new Color(65,126,118));
         } 
     }//GEN-LAST:event_eMailFocusGained
 
     private void eMailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusLost
         if (eMail.getText().isEmpty()) {
             eMail.setText("Email");
-            eMail.setForeground(new Color(205,186,136));
+            eMail.setForeground(new Color(65,126,118));
         }
     }//GEN-LAST:event_eMailFocusLost
 
@@ -289,7 +304,7 @@ public class LoginForm extends javax.swing.JFrame {
         if (String.valueOf(passWord.getPassword()).equals("Password")) {
             passWord.setText("");
             passWord.setEchoChar('*');
-            passWord.setForeground(new Color(142,122,69));
+            passWord.setForeground(new Color(65,126,118));
         } else {
         }
     }//GEN-LAST:event_passWordFocusGained
@@ -298,7 +313,7 @@ public class LoginForm extends javax.swing.JFrame {
         if (String.valueOf(passWord.getPassword()).isEmpty()) {
             passWord.setEchoChar((char) 0); 
             passWord.setText("Password"); 
-            passWord.setForeground(new Color(205, 186, 136)); 
+            passWord.setForeground(new Color(65,126,118)); 
         }
     }//GEN-LAST:event_passWordFocusLost
 
@@ -306,6 +321,14 @@ public class LoginForm extends javax.swing.JFrame {
         SignUp signUp = new SignUp();
         signUp.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void eMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eMailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_eMailActionPerformed
+
+    private void jPanel5ComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel5ComponentResized
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel5ComponentResized
 
     /**
      * @param args the command line arguments
@@ -352,9 +375,12 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPasswordField passWord;
     // End of variables declaration//GEN-END:variables
 }

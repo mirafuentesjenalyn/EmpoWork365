@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 public class EmployeeMethod {
@@ -324,6 +326,20 @@ public class EmployeeMethod {
         }
     }
     
+    public void updateRatePerHourInDatabase(String jobTitle, double newRatePerHour) throws SQLException {
+        String updateQuery = "UPDATE tbl_job_titles SET fld_rate_per_hour = ? WHERE fld_job_title = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(updateQuery)) {
+            pstmt.setDouble(1, newRatePerHour);
+            pstmt.setString(2, jobTitle);  // Update this to use job title
+
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new SQLException("Failed to update the rate. No rows affected.");
+            }
+        }
+    }
+
     public Employee getLoggedInUser(int userId) throws SQLException {
         String query = "SELECT e.fld_employee_id, "
                      + "e.fld_first_name, "
@@ -372,7 +388,7 @@ public class EmployeeMethod {
     public DefaultTableModel viewLeaveApplications(int employeeId) throws SQLException {
             String[] columnNames = {
             "Application ID", "Employee ID", "Full Name", "Leave Type", 
-            "Start Date", "Status", "Date Applied"
+            "Leave Request", "Status", "Date Applied"
         };
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -381,7 +397,7 @@ public class EmployeeMethod {
                      + "e.fld_employee_id, "
                      + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
                      + "lt.fld_leave_type_name, "
-                     + "la.fld_start_date, "
+                     + "la.fld_date_leave_request, "
                      + "la.fld_status, "
                      + "la.fld_request_date "
                      + "FROM tbl_leave_applications la "
@@ -400,7 +416,7 @@ public class EmployeeMethod {
                     resultSet.getInt("fld_employee_id"),
                     resultSet.getString("full_name"),
                     resultSet.getString("fld_leave_type_name"),
-                    resultSet.getDate("fld_start_date"),
+                    resultSet.getDate("fld_date_leave_request"),
                     resultSet.getString("fld_status"),
                     resultSet.getDate("fld_request_date")
                 };
@@ -425,7 +441,7 @@ public class EmployeeMethod {
                  + "e.fld_employee_id, "
                  + "CONCAT('ID', ' ', e.fld_employee_id, ':', e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
                  + "lt.fld_leave_type_name, "
-                 + "la.fld_start_date, "
+                 + "la.fld_date_leave_request, "
                  + "la.fld_status, "
                  + "la.fld_reason, "
                  + "la.fld_request_date "
@@ -442,7 +458,7 @@ public class EmployeeMethod {
                 resultSet.getInt("fld_application_id"),
                 resultSet.getDate("fld_request_date"),
                 resultSet.getString("full_name"),
-                resultSet.getDate("fld_start_date"),
+                resultSet.getDate("fld_date_leave_request"),
                 resultSet.getString("fld_leave_type_name"),
                 resultSet.getString("fld_reason"),
                 resultSet.getString("fld_status"),
@@ -457,28 +473,218 @@ public class EmployeeMethod {
     return model;
 }
 
-public void updateLeaveStatus(int leaveId, String status) throws SQLException {
+    public void updateLeaveStatus(int leaveId, String status) throws SQLException {
+       String updateQuery = "UPDATE tbl_leave_applications SET fld_status = ? WHERE fld_application_id = ?";
 
-    String query = "UPDATE tbl_leave_applications SET fld_status = ? WHERE fld_application_id = ?";
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-        statement.setString(1, status);
-        statement.setInt(2, leaveId);
-        
-        System.out.println("Updating leave application with ID: " + leaveId + " to status: " + status);
-        
-        int rowsAffected = statement.executeUpdate();
-        
-        if (rowsAffected == 0) {
-            throw new SQLException("Failed to update leave application with ID: " + leaveId );
+       try {
+           connection.setAutoCommit(false); 
+
+           // Update the leave status
+           try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+               updateStatement.setString(1, status);
+               updateStatement.setInt(2, leaveId);
+
+               int rowsAffected = updateStatement.executeUpdate();
+               if (rowsAffected == 0) {
+                   throw new SQLException("Failed to update leave application with ID: " + leaveId);
+               }
+           }
+
+           // Handle different leave statuses
+           switch (status.toLowerCase()) {
+               case "approved" -> handleApprovedLeave(leaveId);
+
+               case "rejected" -> archiveRejectedLeave(leaveId);
+
+               case "unpaid" -> handleUnpaidLeave(leaveId); // Handle unpaid leave case
+
+               default -> throw new IllegalArgumentException("Invalid leave status: " + status);
+           }
+
+           connection.commit();
+       } catch (SQLException e) {
+           connection.rollback(); 
+           throw e;
+       } finally {
+           connection.setAutoCommit(true);
+       }
+   }
+
+
+    private void handleApprovedLeave(int leaveId) throws SQLException {
+        String checkQuery = "SELECT COUNT(*) FROM tbl_leave_balances WHERE fld_employee_id = ? AND fld_leave_type_id = ?";
+        String insertQuery = "INSERT INTO tbl_leave_balances (fld_employee_id, fld_leave_type_id, fld_remaining_days, fld_application_id) " +
+                             "SELECT la.fld_employee_id, lt.fld_leave_type_id, lt.fld_max_days, la.fld_application_id " +
+                             "FROM tbl_leave_applications la " +
+                             "JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id " +
+                             "WHERE la.fld_application_id = ?";
+
+        // Get employee ID and leave type ID
+        int employeeId;
+        int leaveTypeId;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT fld_employee_id, fld_leave_type_id FROM tbl_leave_applications WHERE fld_application_id = ?")) {
+            preparedStatement.setInt(1, leaveId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                employeeId = resultSet.getInt("fld_employee_id");
+                leaveTypeId = resultSet.getInt("fld_leave_type_id");
+            } else {
+                throw new SQLException("Leave application not found for ID: " + leaveId);
+            }
         }
-    } catch (SQLException e) {
-        System.err.println("SQL Exception during update: " + e.getMessage());
-        throw e;
+
+        // Check if the record already exists
+        try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+            checkStatement.setInt(1, employeeId);
+            checkStatement.setInt(2, leaveTypeId);
+            ResultSet checkResult = checkStatement.executeQuery();
+            checkResult.next();
+            if (checkResult.getInt(1) > 0) {
+                // Record exists, so you may want to update instead or skip insert
+                return; // or handle update logic if necessary
+            }
+        }
+
+        // Proceed with the insert
+        try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
+            insertStatement.setInt(1, leaveId);
+            insertStatement.executeUpdate();
+        }
+
+        updateRemainingDays(leaveId);
     }
-}
 
 
+    private void updateRemainingDays(int leaveId) throws SQLException {
+        String maxDaysQuery = "SELECT lt.fld_max_days FROM tbl_leave_applications la " +
+                              "JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id " +
+                              "WHERE la.fld_application_id = ?";
 
+        try (PreparedStatement maxDaysStatement = connection.prepareStatement(maxDaysQuery)) {
+            maxDaysStatement.setInt(1, leaveId);
+            ResultSet maxDaysResult = maxDaysStatement.executeQuery();
+
+            if (maxDaysResult.next()) {
+                int maxDays = maxDaysResult.getInt("fld_max_days");
+
+                String currentBalanceQuery = "SELECT fld_remaining_days FROM tbl_leave_balances " +
+                                              "WHERE fld_employee_id = (SELECT fld_employee_id FROM tbl_leave_applications WHERE fld_application_id = ?) " +
+                                              "AND fld_leave_type_id = (SELECT fld_leave_type_id FROM tbl_leave_applications WHERE fld_application_id = ?)";
+
+                int remainingDays;
+                try (PreparedStatement currentBalanceStatement = connection.prepareStatement(currentBalanceQuery)) {
+                    currentBalanceStatement.setInt(1, leaveId);
+                    currentBalanceStatement.setInt(2, leaveId);
+                    ResultSet currentBalanceResult = currentBalanceStatement.executeQuery();
+
+                    if (currentBalanceResult.next()) {
+                        remainingDays = currentBalanceResult.getInt("fld_remaining_days");
+                    } else {
+                        remainingDays = maxDays;
+                    }
+                }
+
+                // Update the remaining days
+                int updatedRemainingDays = remainingDays - 1; // Subtract 1 from remaining days
+                String updateBalanceQuery = "UPDATE tbl_leave_balances SET fld_remaining_days = ? " +
+                                             "WHERE fld_employee_id = (SELECT fld_employee_id FROM tbl_leave_applications WHERE fld_application_id = ?) " +
+                                             "AND fld_leave_type_id = (SELECT fld_leave_type_id FROM tbl_leave_applications WHERE fld_application_id = ?)";
+                try (PreparedStatement updateBalanceStatement = connection.prepareStatement(updateBalanceQuery)) {
+                    updateBalanceStatement.setInt(1, updatedRemainingDays);
+                    updateBalanceStatement.setInt(2, leaveId);
+                    updateBalanceStatement.setInt(3, leaveId);
+                    updateBalanceStatement.executeUpdate();
+                }
+            }
+        }
+    }
+
+
+    private void archiveRejectedLeave(int leaveId) throws SQLException {
+        String archiveQuery = "INSERT INTO tbl_rejected_leave_applications (fld_application_id, fld_employee_id, fld_leave_type_id, fld_date_leave_request, fld_reason, fld_request_date, fld_status) " +
+                              "SELECT fld_application_id, fld_employee_id, fld_leave_type_id, fld_date_leave_request, fld_reason, fld_request_date, fld_status " +
+                              "FROM tbl_leave_applications WHERE fld_application_id = ?";
+        try (PreparedStatement archiveStatement = connection.prepareStatement(archiveQuery)) {
+            archiveStatement.setInt(1, leaveId);
+            archiveStatement.executeUpdate();
+        }
+    }
+
+    private void handleUnpaidLeave(int leaveId) throws SQLException {
+        String checkExistsQuery = "SELECT COUNT(*) FROM tbl_unpaid_leave_records WHERE fld_application_id = ?";
+        try (PreparedStatement checkExistsStatement = connection.prepareStatement(checkExistsQuery)) {
+            checkExistsStatement.setInt(1, leaveId);
+            ResultSet resultSet = checkExistsStatement.executeQuery();
+
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                throw new SQLException("Unpaid leave record already exists for application ID: " + leaveId);
+            }
+        }
+
+        // Proceed with insertion if no duplicate exists
+        String unpaidInsertQuery = "INSERT INTO tbl_unpaid_leave_records (fld_application_id, fld_employee_id, fld_leave_type_id, fld_date_leave_request, fld_reason) " +
+                                    "SELECT fld_application_id, fld_employee_id, fld_leave_type_id, fld_date_leave_request, fld_reason " +
+                                    "FROM tbl_leave_applications WHERE fld_application_id = ?";
+        try (PreparedStatement unpaidInsertStatement = connection.prepareStatement(unpaidInsertQuery)) {
+            unpaidInsertStatement.setInt(1, leaveId);
+            unpaidInsertStatement.executeUpdate();
+        }
+
+        updateUnpaidLeaveDays(leaveId);
+    }
+
+
+    
+    public Map<String, Integer> getRemainingLeaveDays(int employeeId) throws SQLException {
+        Map<String, Integer> remainingDaysMap = new HashMap<>();
+        String query = "SELECT lt.fld_leave_type_name, " +
+                       "COALESCE(lb.fld_remaining_days, lt.fld_max_days) AS remaining_days " +
+                       "FROM tbl_leave_types lt " +
+                       "LEFT JOIN tbl_leave_balances lb ON lb.fld_leave_type_id = lt.fld_leave_type_id " +
+                       "AND lb.fld_employee_id = ? " +
+                       "WHERE lt.fld_leave_type_name IN ('Sick Leave', 'Emergency Leave', 'Vacation Leave')";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, employeeId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String leaveTypeName = rs.getString("fld_leave_type_name");
+                int remainingDays = rs.getInt("remaining_days");
+                remainingDaysMap.put(leaveTypeName, remainingDays);
+            }
+        }
+
+        return remainingDaysMap; 
+    }
+    
+    private void updateUnpaidLeaveDays(int leaveId) throws SQLException {
+        String unpaidDaysQuery = "SELECT lb.fld_remaining_days, lt.fld_max_days " +
+                                 "FROM tbl_leave_balances lb " +
+                                 "JOIN tbl_leave_applications la ON la.fld_employee_id = lb.fld_employee_id " +
+                                 "JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id " +
+                                 "WHERE la.fld_application_id = ? AND lt.fld_leave_type_name = 'Unpaid Leave'";
+
+        try (PreparedStatement unpaidDaysStatement = connection.prepareStatement(unpaidDaysQuery)) {
+            unpaidDaysStatement.setInt(1, leaveId);
+            ResultSet rs = unpaidDaysStatement.executeQuery();
+
+            if (rs.next()) {
+                int remainingDays = rs.getInt("fld_remaining_days");
+                int updatedDays = remainingDays - 1; // Deduct 1 unpaid day (you can adjust logic as needed)
+
+                String updateBalanceQuery = "UPDATE tbl_leave_balances SET fld_remaining_days = ? " +
+                                            "WHERE fld_employee_id = (SELECT fld_employee_id FROM tbl_leave_applications WHERE fld_application_id = ?) " +
+                                            "AND fld_leave_type_id = (SELECT fld_leave_type_id FROM tbl_leave_applications WHERE fld_application_id = ?)";
+                try (PreparedStatement updateBalanceStatement = connection.prepareStatement(updateBalanceQuery)) {
+                    updateBalanceStatement.setInt(1, updatedDays);
+                    updateBalanceStatement.setInt(2, leaveId);
+                    updateBalanceStatement.setInt(3, leaveId);
+                    updateBalanceStatement.executeUpdate();
+                }
+            }
+        }
+    }
 }
 
 

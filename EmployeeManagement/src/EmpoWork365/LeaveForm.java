@@ -109,7 +109,7 @@ public class LeaveForm extends javax.swing.JFrame {
     
     private void loadLeaveTypes() {
         try {
-            String sql = "SELECT fld_leave_type_name FROM tbl_leave_types";
+            String sql = "SELECT fld_leave_type_name FROM tbl_leave_types WHERE fld_leave_type_name != 'Unpaid Leave'";
             try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
                 comboBoxLeaveType.removeAllItems();
                 while (rs.next()) {
@@ -288,7 +288,7 @@ public class LeaveForm extends javax.swing.JFrame {
             rs.close();
             pst.close();
 
-            String sqlInsert = "INSERT INTO tbl_leave_applications (fld_employee_id, fld_leave_type_id, fld_start_date, fld_reason, fld_status) VALUES (?, ?, ?, ?, ?)";
+            String sqlInsert = "INSERT INTO tbl_leave_applications (fld_employee_id, fld_leave_type_id, fld_date_leave_request, fld_reason, fld_status) VALUES (?, ?, ?, ?, ?)";
             pst = connection.prepareStatement(sqlInsert);
             pst.setInt(1, employeeId);
             pst.setInt(2, leaveTypeId);

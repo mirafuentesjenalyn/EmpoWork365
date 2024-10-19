@@ -111,6 +111,31 @@ public class AttendanceMethod {
         }
         return totalHours;
     }
+    
+    public int getUnpaidLeaveDays(int employeeId, int month, int year) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM tbl_leave_applications " +
+                     "WHERE fld_employee_id = ? " +
+                     "AND fld_leave_type_id = 4 " + 
+                     "AND fld_status = 'Approved' " +
+                     "AND MONTH(fld_date_leave_request) = ? " +  
+                     "AND YEAR(fld_date_leave_request) = ?";  
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, employeeId);
+            preparedStatement.setInt(2, month);
+            preparedStatement.setInt(3, year);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1); 
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching unpaid leave days: " + e.getMessage(), e);
+        }
+        return 0; 
+    }
+
 
 
 }
