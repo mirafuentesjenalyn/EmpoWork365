@@ -19,7 +19,7 @@ public class MultiLineCellRenderer extends JTextArea implements TableCellRendere
         setLineWrap(true);
         setWrapStyleWord(true);
         setOpaque(true);
-        setMargin(new Insets(15, 20, 15, 20)); 
+        setMargin(new Insets(20, 15, 20, 15)); 
     }
 
 @Override

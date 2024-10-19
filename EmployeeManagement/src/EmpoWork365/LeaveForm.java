@@ -87,7 +87,7 @@ public class LeaveForm extends javax.swing.JFrame {
     }
 
     public class DateLabelFormatter extends javax.swing.JFormattedTextField.AbstractFormatter {
-        private final String datePattern = "yyyy-MM-dd";
+        private final String datePattern = "MMMM dd, yyyy";
         private final java.text.SimpleDateFormat dateFormatter = new java.text.SimpleDateFormat(datePattern);
 
         @Override

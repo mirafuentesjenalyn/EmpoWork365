@@ -17,8 +17,23 @@ public class sqlConnector {
     private String userName = "root";
     private String passWord = "";
     
-    // Method to create a connection to the database
+  // Method to create a connection to the database
     public Connection createConnection() throws SQLException {
-        return DriverManager.getConnection(connString, userName, passWord);
+        System.out.println("Attempting to connect to the database...");
+
+        try {
+            Connection conn = DriverManager.getConnection(connString, userName, passWord);
+
+            if (conn != null) {
+                System.out.println("Database connected successfully.");
+            } else {
+                System.out.println("Failed to connect to database.");
+            }
+
+            return conn;
+        } catch (SQLException e) {
+            System.err.println("Connection failed: " + e.getMessage());
+            throw e;  // Re-throw the exception to allow the caller to handle it
+        }
     }
 }

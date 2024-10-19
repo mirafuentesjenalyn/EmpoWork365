@@ -428,51 +428,7 @@ public class EmployeeMethod {
 
         return model;
     }
-
- public DefaultTableModel getRequestsData() throws SQLException {
-    String[] columnNames = {
-        "ID", "Application", "Name", "Leave Request", "Leave Type", 
-        "Reason", "Status", "Action"
-    };
-
-    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-
-    String query = "SELECT la.fld_application_id, "
-                 + "e.fld_employee_id, "
-                 + "CONCAT('ID', ' ', e.fld_employee_id, ':', e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
-                 + "lt.fld_leave_type_name, "
-                 + "la.fld_date_leave_request, "
-                 + "la.fld_status, "
-                 + "la.fld_reason, "
-                 + "la.fld_request_date "
-                 + "FROM tbl_leave_applications la "
-                 + "INNER JOIN tbl_employees e ON la.fld_employee_id = e.fld_employee_id "
-                 + "INNER JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id "
-                 + "ORDER BY la.fld_application_id ASC"; 
-
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-        ResultSet resultSet = statement.executeQuery();
-
-        while (resultSet.next()) {
-            Object[] row = {
-                resultSet.getInt("fld_application_id"),
-                resultSet.getDate("fld_request_date"),
-                resultSet.getString("full_name"),
-                resultSet.getDate("fld_date_leave_request"),
-                resultSet.getString("fld_leave_type_name"),
-                resultSet.getString("fld_reason"),
-                resultSet.getString("fld_status"),
-                "Approve / Reject"
-            };
-            model.addRow(row);
-        }
-    } catch (SQLException e) {
-        throw new SQLException("Error retrieving leave applications: " + e.getMessage(), e);
-    }
-
-    return model;
-}
-
+    
     public void updateLeaveStatus(int leaveId, String status) throws SQLException {
        String updateQuery = "UPDATE tbl_leave_applications SET fld_status = ? WHERE fld_application_id = ?";
 
