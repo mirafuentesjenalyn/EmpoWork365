@@ -218,6 +218,56 @@ public class EmployeeMethod {
         return model;
     }
 
+    public DefaultTableModel getAttendanceDataByDate(java.sql.Date selectedDate) throws SQLException {
+        String[] columnNames = {
+            "Employee ID", "Full Name", "Job Title", "Department", 
+            "Time In", "Time Out", "Date"
+        };
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT e.fld_employee_id, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                     + "jt.fld_job_title, "
+                     + "d.fld_department_name, "
+                     + "a.fld_time_in, a.fld_time_out, a.fld_attendance_date "
+                     + "FROM tbl_attendance a "
+                     + "INNER JOIN tbl_employees e ON a.fld_employee_id = e.fld_employee_id "
+                     + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                     + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                     + "WHERE a.fld_attendance_date = ? "  // Filter by date
+                     + "ORDER BY e.fld_employee_id ASC";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            // Set the date parameter in the SQL query
+            statement.setDate(1, selectedDate);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+
+                while (resultSet.next()) {
+                    Object[] row = {
+                        resultSet.getInt("fld_employee_id"),
+                        resultSet.getString("full_name"),
+                        resultSet.getString("fld_job_title"),
+                        resultSet.getString("fld_department_name"),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat)
+                    };
+                    model.addRow(row);
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
+        }
+
+        return model;
+    }
+
+    
+    
     private String formatTimestamp(Timestamp timestamp, SimpleDateFormat timeFormat) {
         return (timestamp != null) ? timeFormat.format(timestamp) : "N/A";
     }

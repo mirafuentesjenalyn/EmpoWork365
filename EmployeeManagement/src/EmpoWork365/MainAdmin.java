@@ -50,7 +50,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private static final int TOTAL_SICK_LEAVE = 5; 
     private static final int TOTAL_EMERGENCY_LEAVE = 5; 
     private static final int TOTAL_VACATION_LEAVE = 15; 
-    
+    private JDatePickerImpl datePickerStart;  
+
 
     public static MainAdmin instance;
     /**
@@ -60,7 +61,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         this.REGULAR_HOURS_PER_MONTH  = 160;
         initComponents();
         instance = this;
-        initializeComboBox(); 
+        initializeComboBox();
+        setupDatePickers();
+        
         addButtonHoverEffect(btnHome);
         addButtonHoverEffect(btnEmpMan);
         addButtonHoverEffect(btnAttSum);
@@ -69,7 +72,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         try {
             sqlConnector connector = new sqlConnector();
-            this.connection = connector.createConnection();  // Create and assign the database connection
+            this.connection = connector.createConnection();  
 
             if (connection != null) {
                  // Load data only if the connection is successful
@@ -109,6 +112,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 }
             }
         });
+        
+        datePickerStart.addActionListener((ActionEvent e) -> {
+            fetchAttendanceForSelectedDate();
+        });
+
         
     }
     
@@ -162,8 +170,66 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         };
         jTable2.setModel(nonEditableModel);
     }
-   
     
+    private void setupDatePickers() {
+        UtilDateModel modelStart = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+
+        JDatePanelImpl datePanelStart = new JDatePanelImpl(modelStart, p);
+        datePickerStart = new JDatePickerImpl(datePanelStart, new DateLabelFormatter());
+
+        // Ensure datePanelPicker is not null and add the date picker
+        if (datePanelPicker != null) {
+            datePanelPicker.setLayout(new java.awt.BorderLayout());
+            datePanelPicker.add(datePickerStart, java.awt.BorderLayout.CENTER);
+            datePanelPicker.revalidate();  
+            datePanelPicker.repaint();
+        }
+    }
+
+
+    public class DateLabelFormatter extends javax.swing.JFormattedTextField.AbstractFormatter {
+        private final String datePattern = "MMMM dd, yyyy";
+        private final java.text.SimpleDateFormat dateFormatter = new java.text.SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws java.text.ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws java.text.ParseException {
+            if (value != null) {
+                java.util.Calendar cal = (java.util.Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+            return "Select Date";
+        }
+    }
+    
+    private void fetchAttendanceForSelectedDate() {
+        try {
+            java.util.Date selectedDate = (java.util.Date) datePickerStart.getModel().getValue();
+
+            if (selectedDate == null) {
+                JOptionPane.showMessageDialog(this, "Please select a date.", "Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            java.sql.Date sqlDate = new java.sql.Date(selectedDate.getTime());
+
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            DefaultTableModel model = employeeMethod.getAttendanceDataByDate(sqlDate);
+
+            setTableAttendance(model);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load attendance data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void loadEmployeeLeave() {
         try {
             if (connection == null) {
@@ -996,11 +1062,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         datePanelPicker.setLayout(datePanelPickerLayout);
         datePanelPickerLayout.setHorizontalGroup(
             datePanelPickerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 49, Short.MAX_VALUE)
+            .addGap(0, 35, Short.MAX_VALUE)
         );
         datePanelPickerLayout.setVerticalGroup(
             datePanelPickerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 33, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -1029,9 +1095,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         trackingAttendanceLayout.setHorizontalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addGap(273, 273, 273)
+                .addContainerGap()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(257, 257, 257)
+                .addGap(369, 369, 369)
                 .addComponent(datePanelPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
@@ -1041,10 +1107,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         trackingAttendanceLayout.setVerticalGroup(
             trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(datePanelPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
+                .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(datePanelPicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 677, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(41, Short.MAX_VALUE))
