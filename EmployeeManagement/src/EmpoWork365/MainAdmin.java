@@ -499,6 +499,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         vacationLeaveTextField = new javax.swing.JTextField();
         totalSalaryPerMonthLabel = new javax.swing.JLabel();
         totalSalaryPerMonthTextField = new javax.swing.JTextField();
+        totalAbsenceLabel = new javax.swing.JLabel();
+        totalAbsenceTextField = new javax.swing.JTextField();
         jPanel10 = new javax.swing.JPanel();
         departmentTextField = new javax.swing.JTextField();
         departmentNameLabel = new javax.swing.JLabel();
@@ -1172,119 +1174,260 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         payrollManagementTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         payrollManagementTitle.setText("Payroll Management");
 
-        jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
         incomeTaxLabel.setText("Income Tax:");
-        jPanel9.add(incomeTaxLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 395, 117, 26));
-        jPanel9.add(SSSTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 325, 177, -1));
-        jPanel9.add(philHealthTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 293, 177, -1));
 
         pagibigLabel.setText("Pag-IBIG:");
-        jPanel9.add(pagibigLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 357, 117, 26));
 
         unpaidLeaveLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         unpaidLeaveLabel.setText("Unpaid Leave:");
-        jPanel9.add(unpaidLeaveLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 433, 117, 26));
 
         SSSLabel.setText("Social Security Sytem:");
-        jPanel9.add(SSSLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 325, 117, 26));
 
         unpaidLeaveTextField.setEditable(false);
-        jPanel9.add(unpaidLeaveTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 433, 178, -1));
 
         totalDeducLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalDeducLabel.setText("Total Deduction:");
-        jPanel9.add(totalDeducLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 255, 117, 26));
 
         philHealthLabel.setText("Philhealth:");
-        jPanel9.add(philHealthLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 293, 117, 26));
-        jPanel9.add(pagibigTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 357, 177, -1));
 
         incomeTaxTextField.setEditable(false);
-        jPanel9.add(incomeTaxTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 395, 178, -1));
 
         overtimeHours_Label.setText("Overtime Hours");
-        jPanel9.add(overtimeHours_Label, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 217, 117, 21));
 
         total_hours_worked_Label.setText("Total Hours Worked");
-        jPanel9.add(total_hours_worked_Label, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 179, 117, 21));
 
         HrsMonthTextField.setEditable(false);
-        jPanel9.add(HrsMonthTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 138, 177, -1));
 
         totalHrsWorkedTextField.setEditable(false);
-        jPanel9.add(totalHrsWorkedTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 176, 177, -1));
 
         jLabel19.setText("Hours/Month");
-        jPanel9.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 141, 117, 21));
-        jPanel9.add(rateHourTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 62, 177, -1));
 
         getIdPayroll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 getIdPayrollActionPerformed(evt);
             }
         });
-        jPanel9.add(getIdPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 18, 177, -1));
 
         rateperHour_Label.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         rateperHour_Label.setText("Rate/Hour:");
-        jPanel9.add(rateperHour_Label, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 62, 117, 26));
 
         emp_idLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         emp_idLabel.setText("Employee ID:");
-        jPanel9.add(emp_idLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 18, 117, 26));
 
         totalDeducTextField.setEditable(false);
-        jPanel9.add(totalDeducTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 255, 177, -1));
 
         overtimeHrsTextField.setEditable(false);
-        jPanel9.add(overtimeHrsTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 214, 177, -1));
 
         leaveBalanceLabel.setText("Leave Balance:");
-        jPanel9.add(leaveBalanceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 471, 117, 26));
 
         leaveBalanceTextField.setEditable(false);
-        jPanel9.add(leaveBalanceTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 471, 177, -1));
 
         unpaidLeaveLabel2.setText("Sick Leave (5):");
-        jPanel9.add(unpaidLeaveLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 503, 117, 26));
 
         sickLeaveTextField.setEditable(false);
-        jPanel9.add(sickLeaveTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 503, 177, -1));
 
         unpaidLeaveLabel3.setText("Emergency Leave (5):");
-        jPanel9.add(unpaidLeaveLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 535, 117, 26));
 
         emergencyLeaveTextField.setEditable(false);
-        jPanel9.add(emergencyLeaveTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 535, 177, -1));
 
         thirteenthMonthPayLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         thirteenthMonthPayLabel.setText("13th Month Pay:");
-        jPanel9.add(thirteenthMonthPayLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 597, 118, 26));
 
         thirteenthMonthPayTextField.setEditable(false);
-        jPanel9.add(thirteenthMonthPayTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 597, 177, -1));
 
         netSalaryTextField.setEditable(false);
         netSalaryTextField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jPanel9.add(netSalaryTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 631, 177, -1));
 
         netSalaryLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         netSalaryLabel.setText("Net Salary:");
-        jPanel9.add(netSalaryLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 629, 118, 34));
 
         vacationLeaveLabel.setText("Vacation Leave (15):");
-        jPanel9.add(vacationLeaveLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 565, 117, 26));
 
         vacationLeaveTextField.setEditable(false);
-        jPanel9.add(vacationLeaveTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(153, 565, 177, -1));
 
         totalSalaryPerMonthLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         totalSalaryPerMonthLabel.setText("Total Salary/Month:");
-        jPanel9.add(totalSalaryPerMonthLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 100, 117, 26));
 
         totalSalaryPerMonthTextField.setEditable(false);
-        jPanel9.add(totalSalaryPerMonthTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 100, 177, -1));
+
+        totalAbsenceLabel.setText("Total Absence:");
+
+        totalAbsenceTextField.setEditable(false);
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(emp_idLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(getIdPayroll, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(rateperHour_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(rateHourTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(totalSalaryPerMonthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(totalSalaryPerMonthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(HrsMonthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(total_hours_worked_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(totalHrsWorkedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(overtimeHours_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(overtimeHrsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(totalDeducLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(totalDeducTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(philHealthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(philHealthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(SSSLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(SSSTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(pagibigLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(pagibigTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(incomeTaxLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(incomeTaxTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(unpaidLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(unpaidLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(leaveBalanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(leaveBalanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(unpaidLeaveLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(sickLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(unpaidLeaveLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(emergencyLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(vacationLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(vacationLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(thirteenthMonthPayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(thirteenthMonthPayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(netSalaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(netSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(totalAbsenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(totalAbsenceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(emp_idLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(getIdPayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rateperHour_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rateHourTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(totalSalaryPerMonthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalSalaryPerMonthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(HrsMonthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(total_hours_worked_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(totalHrsWorkedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(overtimeHours_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(overtimeHrsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(totalDeducLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalDeducTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(philHealthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(philHealthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SSSLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SSSTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pagibigLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pagibigTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(incomeTaxLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(incomeTaxTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(unpaidLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(unpaidLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(totalAbsenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalAbsenceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(leaveBalanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(leaveBalanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(unpaidLeaveLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sickLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(unpaidLeaveLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(emergencyLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(vacationLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(vacationLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(thirteenthMonthPayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(thirteenthMonthPayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(netSalaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(netSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(59, Short.MAX_VALUE))
+        );
 
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -1360,18 +1503,18 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 btnClear2ActionPerformed(evt);
             }
         });
-        jPanel10.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 90, 20));
+        jPanel10.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 120, 20));
 
         btnChangeRatePerHour.setBackground(new java.awt.Color(76, 122, 172));
         btnChangeRatePerHour.setForeground(new java.awt.Color(255, 255, 255));
-        btnChangeRatePerHour.setText("Change");
+        btnChangeRatePerHour.setText("Change rate/hr");
         btnChangeRatePerHour.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnChangeRatePerHour.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnChangeRatePerHourActionPerformed(evt);
             }
         });
-        jPanel10.add(btnChangeRatePerHour, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 90, 20));
+        jPanel10.add(btnChangeRatePerHour, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 120, 20));
 
         javax.swing.GroupLayout managePayrollLayout = new javax.swing.GroupLayout(managePayroll);
         managePayroll.setLayout(managePayrollLayout);
@@ -1383,7 +1526,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                         .addGap(274, 274, 274)
                         .addComponent(payrollManagementTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(managePayrollLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addContainerGap()
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1396,12 +1539,12 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addComponent(payrollManagementTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(managePayrollLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(managePayrollLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(managePayrollLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab4", managePayroll);
@@ -1634,7 +1777,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         comboBoxSelectStatus.addItem("Approved");
         comboBoxSelectStatus.addItem("Rejected");
 
-        // Add listener to handle ComboBox change
         comboBoxSelectStatus.addActionListener((ActionEvent evt) -> {
             comboBoxSelectStatusActionPerformed(evt);
         });
@@ -1679,67 +1821,72 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }//GEN-LAST:event_comboBoxPresentAbsentActionPerformed
 
-    
     private void updateEmployeeDetails(Employee employee) {
-       if (employee == null) {
-           JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
-           return;
-       }
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-       try {
-           String FullName = employee.getFirstname() + " " + employee.getLastname();
-           String imagePath = employee.getImagePath();
+        try {
+            String FullName = employee.getFirstname() + " " + employee.getLastname();
+            String imagePath = employee.getImagePath();
 
-           nameTextField.setText(FullName);
-           emailTextField.setText(employee.getEmail());
-           genderTextField.setText(employee.getGender());
-           jobTitleTextField.setText(employee.getJobtitle());
-           departmentTextField.setText(employee.getDepartmentName());
+            nameTextField.setText(FullName);
+            emailTextField.setText(employee.getEmail());
+            genderTextField.setText(employee.getGender());
+            jobTitleTextField.setText(employee.getJobtitle());
+            departmentTextField.setText(employee.getDepartmentName());
 
-           double ratePerHour = employee.getRatePerHour();
-           rateHourTextField.setText(String.format("%.2f", ratePerHour));
-           
-           double totalSalary = calculateTotalSalary((double) REGULAR_HOURS_PER_MONTH, ratePerHour, 0);
-           double thirteenthMonthPay = totalSalary;
-           thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay)); 
+            double ratePerHour = employee.getRatePerHour();
+            rateHourTextField.setText(String.format("%.2f", ratePerHour));
 
-           HrsMonthTextField.setText(String.format("%.2f hrs", (double) REGULAR_HOURS_PER_MONTH));
+            double totalSalary = calculateTotalSalary(REGULAR_HOURS_PER_MONTH, ratePerHour, 0); // Assuming no overtime or unpaid leave yet
+            double thirteenthMonthPay = totalSalary;
+            thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay));
 
-           if (imagePath != null && !imagePath.isEmpty()) {
-               ImageIcon originalIcon = new ImageIcon(imagePath);
-               int width = 100;
-               int height = 100; 
-               Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-               userImagePayroll.setIcon(new ImageIcon(scaledImage));
-           } else {
-               userImagePayroll.setIcon(null); 
-           }
+            HrsMonthTextField.setText(String.format("%.2f hrs", (double) REGULAR_HOURS_PER_MONTH));
 
-           Calendar calendar = Calendar.getInstance();
-           int month = calendar.get(Calendar.MONTH) + 1; 
-           int year = calendar.get(Calendar.YEAR);
-           displayTotalHoursWorked(employee.getEmployeeId(), month, year, ratePerHour);
+            if (imagePath != null && !imagePath.isEmpty()) {
+                ImageIcon originalIcon = new ImageIcon(imagePath);
+                int width = 100;
+                int height = 100; 
+                Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                userImagePayroll.setIcon(new ImageIcon(scaledImage));
+            } else {
+                userImagePayroll.setIcon(null); 
+            }
 
-           EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-           Map<String, Integer> remainingLeaveDays = employeeMethod.getRemainingLeaveDays(employee.getEmployeeId());
+            Calendar calendar = Calendar.getInstance();
+            int month = calendar.get(Calendar.MONTH) + 1; 
+            int year = calendar.get(Calendar.YEAR);
+            displayTotalHoursWorked(employee.getEmployeeId(), month, year, ratePerHour);
 
-           int sickLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE);
-           int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
-           int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            Map<String, Integer> remainingLeaveDays = employeeMethod.getRemainingLeaveDays(employee.getEmployeeId());
 
-           sickLeaveTextField.setText(String.valueOf(sickLeaveBalance));
-           emergencyLeaveTextField.setText(String.valueOf(emergencyLeaveBalance));
-           vacationLeaveTextField.setText(String.valueOf(vacationLeaveBalance));
+            int sickLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE);
+            int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
+            int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
 
-           int totalLeaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
-           leaveBalanceTextField.setText(String.valueOf(totalLeaveBalance));
+            sickLeaveTextField.setText(String.valueOf(sickLeaveBalance));
+            emergencyLeaveTextField.setText(String.valueOf(emergencyLeaveBalance));
+            vacationLeaveTextField.setText(String.valueOf(vacationLeaveBalance));
 
-       } catch (SQLException e) {
-           JOptionPane.showMessageDialog(this, "Database error occurred: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-       } catch (Exception e) {
-           JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-       }
-   }
+            int totalLeaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
+            leaveBalanceTextField.setText(String.valueOf(totalLeaveBalance));
+
+            updateUnpaidLeave(employee);
+            
+            int totalAbsences = employeeMethod.getTotalAbsences(employee);
+            totalAbsenceTextField.setText(String.valueOf(totalAbsences));
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Database error occurred: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     
     private void displayTotalHoursWorked(int employeeId, int month, int year, double ratePerHour) {
         AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
@@ -1750,13 +1897,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             double overtimeHours = calculateOvertimeHours(totalHours);
             overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours));
 
-            // Retrieve unpaid leave days for the employee
-            int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employeeId, month, year); // Assuming this method exists
+            int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employeeId, month, year); 
             double unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, unpaidLeaveDays);
 
-            // Now calculate the total salary and net salary including unpaid leave
             double totalSalary = calculateTotalSalary(totalHours, ratePerHour, overtimeHours);
-            double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost); // Include unpaid leave cost
+            double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost); 
 
             totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
             netSalaryTextField.setText(formatCurrency(netSalary));
@@ -1766,40 +1911,37 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }
 
+
     private double calculateOvertimeHours(double totalHoursWorked) {
-        double overtimeHours = totalHoursWorked - REGULAR_HOURS_PER_MONTH ;
-        return Math.max(overtimeHours, 0); 
+        double overtimeHours = totalHoursWorked - REGULAR_HOURS_PER_MONTH;
+        return Math.max(overtimeHours, 0); // Overtime is positive, if any
     }
 
     private double calculateTotalSalary(double totalHoursWorked, double ratePerHour, double overtimeHours) {
-        double regularSalary = ratePerHour * REGULAR_HOURS_PER_MONTH;
-        double overtimeRate = ratePerHour * 1.5; 
+        double regularSalary = ratePerHour * totalHoursWorked;
+
+        double overtimeRate = ratePerHour * 1.5;
         double overtimeSalary = overtimeRate * overtimeHours; 
-        double totalSalary = regularSalary + overtimeSalary; 
 
-        return totalSalary; 
-    }
-    
-    private double calculateNetSalary(double totalSalary, double unpaidLeaveCost) { 
-        double philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
-        double sssDeduction = calculateSSSDeduction(totalSalary);
-        double pagIbigDeduction = calculatePagIbigDeduction(totalSalary);
-        double incomeTax = calculateIncomeTax(totalSalary);
-
-        double totalDeductions = philHealthDeduction + sssDeduction + pagIbigDeduction + incomeTax + unpaidLeaveCost;
-
-        // Displaying unpaid leave cost
-        unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost)); 
-
-        philHealthTextField.setText(formatCurrency(philHealthDeduction));
-        SSSTextField.setText(formatCurrency(sssDeduction));
-        pagibigTextField.setText(formatCurrency(pagIbigDeduction));
-        incomeTaxTextField.setText(formatCurrency(incomeTax));
-        totalDeducTextField.setText(formatCurrency(totalDeductions));
-
-        return totalSalary - totalDeductions;
+        return regularSalary + overtimeSalary; 
     }
 
+    private double calculateNetSalary(double totalSalary, double unpaidLeaveCost) {
+       double philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
+       double sssDeduction = calculateSSSDeduction(totalSalary);
+       double pagIbigDeduction = calculatePagIbigDeduction(totalSalary);
+       double incomeTax = calculateIncomeTax(totalSalary);
+
+       double totalDeductions = philHealthDeduction + sssDeduction + pagIbigDeduction + incomeTax + unpaidLeaveCost;
+
+       philHealthTextField.setText(formatCurrency(philHealthDeduction));
+       SSSTextField.setText(formatCurrency(sssDeduction));
+       pagibigTextField.setText(formatCurrency(pagIbigDeduction));
+       incomeTaxTextField.setText(formatCurrency(incomeTax));
+       totalDeducTextField.setText(formatCurrency(totalDeductions));
+
+       return totalSalary - totalDeductions;
+   }
 
     private double calculatePhilHealthDeduction(double totalSalary) {
         return totalSalary * 0.01; 
@@ -1810,9 +1952,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }
 
     private double calculatePagIbigDeduction(double totalSalary) {
-        return totalSalary <= 200 ? totalSalary * 0.01 : totalSalary * 0.02; // 1% or 2%
+        return totalSalary <= 200 ? totalSalary * 0.01 : totalSalary * 0.02; 
     }
-
     private double calculateIncomeTax(double salary) {
         if (salary <= 250000) {
             return 0; // No tax for salaries <= PHP 250,000
@@ -1829,18 +1970,41 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }
     
+
     private double calculateUnpaidLeave(double ratePerHour, int unpaidLeaveDays) {
-        final int HOURS_PER_DAY = 8; // Assuming an 8-hour workday
+        final int HOURS_PER_DAY = 8; 
         return ratePerHour * HOURS_PER_DAY * unpaidLeaveDays;
     }
 
+    private void updateUnpaidLeave(Employee employee) {
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
- 
+        try {
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
 
+            double unpaidLeaveCost = employeeMethod.getUnpaidLeaveCost(employee, year);
 
+            unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
 
+            int month = Calendar.getInstance().get(Calendar.MONTH) + 1;  // Current month
+            double totalHoursWorked = attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), month, year);
 
-    
+            double overtimeHours = calculateOvertimeHours(totalHoursWorked);  // If any overtime worked
+            double totalSalary = calculateTotalSalary(totalHoursWorked, employee.getRatePerHour(), overtimeHours);
+
+            double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost);
+            netSalaryTextField.setText(formatCurrency(netSalary));
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error occurred while calculating unpaid leave: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private String formatCurrency(double amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount);
     }
@@ -2036,6 +2200,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JPanel sideBar;
     private javax.swing.JLabel thirteenthMonthPayLabel;
     private javax.swing.JTextField thirteenthMonthPayTextField;
+    private javax.swing.JLabel totalAbsenceLabel;
+    private javax.swing.JTextField totalAbsenceTextField;
     private javax.swing.JLabel totalDeducLabel;
     private javax.swing.JTextField totalDeducTextField;
     private javax.swing.JTextField totalHrsWorkedTextField;

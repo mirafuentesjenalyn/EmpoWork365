@@ -1373,7 +1373,7 @@
                                   <Component id="payrollManagementTitle" min="-2" pref="230" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jPanel10" min="-2" pref="381" max="-2" attributes="0"/>
@@ -1389,16 +1389,16 @@
                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                           <Component id="payrollManagementTitle" min="-2" pref="49" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                                  <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-                                  <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
-                              </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="45" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1415,43 +1415,241 @@
                 </Component>
                 <Container class="javax.swing.JPanel" name="jPanel9">
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-                    <Property name="useNullLayout" type="boolean" value="false"/>
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="emp_idLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="getIdPayroll" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="rateperHour_Label" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="rateHourTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="totalSalaryPerMonthLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="totalSalaryPerMonthTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabel19" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="HrsMonthTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="total_hours_worked_Label" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="totalHrsWorkedTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="overtimeHours_Label" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="overtimeHrsTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="totalDeducLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="totalDeducTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="philHealthLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="philHealthTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="SSSLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="SSSTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="pagibigLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="pagibigTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="incomeTaxLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="incomeTaxTextField" min="-2" pref="178" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="unpaidLeaveLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="unpaidLeaveTextField" min="-2" pref="178" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="leaveBalanceLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="leaveBalanceTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="unpaidLeaveLabel2" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="sickLeaveTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="unpaidLeaveLabel3" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="emergencyLeaveTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="vacationLeaveLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="vacationLeaveTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="thirteenthMonthPayLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="thirteenthMonthPayTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="netSalaryLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="netSalaryTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="totalAbsenceLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="totalAbsenceTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="14" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="emp_idLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="getIdPayroll" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="rateperHour_Label" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="rateHourTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="totalSalaryPerMonthLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="totalSalaryPerMonthTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                                      <Component id="jLabel19" min="-2" pref="21" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="HrsMonthTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                                      <Component id="total_hours_worked_Label" min="-2" pref="21" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="totalHrsWorkedTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                                      <Component id="overtimeHours_Label" min="-2" pref="21" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="overtimeHrsTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="totalDeducLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="totalDeducTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="philHealthLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="philHealthTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="SSSLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="SSSTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="pagibigLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="pagibigTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="incomeTaxLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="incomeTaxTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="unpaidLeaveLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="unpaidLeaveTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="totalAbsenceLabel" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="totalAbsenceTextField" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="leaveBalanceLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="leaveBalanceTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="unpaidLeaveLabel2" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="sickLeaveTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="unpaidLeaveLabel3" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="emergencyLeaveTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="vacationLeaveLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="vacationLeaveTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="thirteenthMonthPayLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="thirteenthMonthPayTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="netSalaryLabel" min="-2" pref="34" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="2" pref="2" max="-2" attributes="0"/>
+                                      <Component id="netSalaryTextField" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="59" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
                   </Layout>
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="incomeTaxLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Income Tax:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="395" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="SSSTextField">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="325" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="philHealthTextField">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="293" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="pagibigLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Pag-IBIG:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="357" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="unpaidLeaveLabel">
                       <Properties>
@@ -1460,31 +1658,16 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Unpaid Leave:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="433" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="SSSLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Social Security Sytem:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="325" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="unpaidLeaveTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="433" width="178" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="totalDeducLabel">
                       <Properties>
@@ -1493,105 +1676,50 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Total Deduction:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="255" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="philHealthLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Philhealth:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="293" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="pagibigTextField">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="357" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="incomeTaxTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="395" width="178" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="overtimeHours_Label">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Overtime Hours"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="217" width="117" height="21"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="total_hours_worked_Label">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Total Hours Worked"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="179" width="117" height="21"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="HrsMonthTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="138" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="totalHrsWorkedTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="176" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel19">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Hours/Month"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="141" width="117" height="21"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="rateHourTextField">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="62" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="getIdPayroll">
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getIdPayrollActionPerformed"/>
                       </Events>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="18" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="rateperHour_Label">
                       <Properties>
@@ -1600,11 +1728,6 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Rate/Hour:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="62" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="emp_idLabel">
                       <Properties>
@@ -1613,91 +1736,46 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Employee ID:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="18" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="totalDeducTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="255" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="overtimeHrsTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="214" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="leaveBalanceLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Leave Balance:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="471" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="leaveBalanceTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="471" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="unpaidLeaveLabel2">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Sick Leave (5):"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="503" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="sickLeaveTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="503" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="unpaidLeaveLabel3">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Emergency Leave (5):"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="535" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="emergencyLeaveTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="535" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="thirteenthMonthPayLabel">
                       <Properties>
@@ -1706,21 +1784,11 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="13th Month Pay:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="23" y="597" width="118" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="thirteenthMonthPayTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="597" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="netSalaryTextField">
                       <Properties>
@@ -1729,11 +1797,6 @@
                           <Font name="Segoe UI" size="14" style="1"/>
                         </Property>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="631" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="netSalaryLabel">
                       <Properties>
@@ -1742,31 +1805,16 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Net Salary:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="23" y="629" width="118" height="34"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="vacationLeaveLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Vacation Leave (15):"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="565" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="vacationLeaveTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="153" y="565" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="totalSalaryPerMonthLabel">
                       <Properties>
@@ -1775,21 +1823,21 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Total Salary/Month:"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="24" y="100" width="117" height="26"/>
-                        </Constraint>
-                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="totalSalaryPerMonthTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="154" y="100" width="177" height="-1"/>
-                        </Constraint>
-                      </Constraints>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="totalAbsenceLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Total Absence:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="totalAbsenceTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -1979,7 +2027,7 @@
                       </Events>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="0" y="10" width="90" height="20"/>
+                          <AbsoluteConstraints x="0" y="10" width="120" height="20"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1991,7 +2039,7 @@
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="ff" green="ff" red="ff" type="rgb"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Change"/>
+                        <Property name="text" type="java.lang.String" value="Change rate/hr"/>
                         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
                           <Color id="Hand Cursor"/>
                         </Property>
@@ -2001,7 +2049,7 @@
                       </Events>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="0" y="50" width="90" height="20"/>
+                          <AbsoluteConstraints x="0" y="50" width="120" height="20"/>
                         </Constraint>
                       </Constraints>
                     </Component>
