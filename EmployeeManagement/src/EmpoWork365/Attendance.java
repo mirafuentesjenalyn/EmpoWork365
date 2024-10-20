@@ -35,6 +35,12 @@ public class Attendance {
         this.timeIn = timeIn; 
         this.timeOut = timeOut; 
     }
+    
+    public Attendance(int employeeId, String firstname, String lastname) {
+        this.employeeId = employeeId;
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
 
     // Getters
     public int getAttendanceId() {

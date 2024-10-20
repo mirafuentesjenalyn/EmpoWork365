@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 public class LoginForm extends javax.swing.JFrame {
     private static final String PASSWORD_PLACEHOLDER = "Password";
     private static final String EMAIL_PLACEHOLDER = "Email";
+    private int mouseX, mouseY;
 
 
     /**
@@ -53,6 +54,25 @@ public class LoginForm extends javax.swing.JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     btnLoginActionPerformed(null);
                 }
+            }
+        });
+        
+        jPanel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                // Store the initial position when the mouse is pressed
+                mouseX = evt.getX();
+                mouseY = evt.getY();
+            }
+        });
+        
+        jPanel4.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                // When the mouse is dragged, move the JFrame accordingly
+                int x = evt.getXOnScreen();
+                int y = evt.getYOnScreen();
+                setLocation(x - mouseX, y - mouseY);
             }
         });
         
