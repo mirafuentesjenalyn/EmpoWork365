@@ -1398,7 +1398,7 @@
                                   <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="45" max="32767" attributes="0"/>
+                          <EmptySpace pref="56" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1516,6 +1516,11 @@
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                       <Component id="totalAbsenceTextField" min="-2" pref="177" max="-2" attributes="0"/>
                                   </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="unusedLeaveLabel" min="-2" pref="135" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="unusedLeaveTextField" min="-2" pref="177" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace pref="14" max="32767" attributes="0"/>
                           </Group>
@@ -1600,11 +1605,6 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="leaveBalanceLabel" min="-2" pref="26" max="-2" attributes="0"/>
-                                  <Component id="leaveBalanceTextField" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="unpaidLeaveLabel2" min="-2" pref="26" max="-2" attributes="0"/>
                                   <Component id="sickLeaveTextField" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -1620,6 +1620,16 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="leaveBalanceLabel" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="leaveBalanceTextField" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="unusedLeaveLabel" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="unusedLeaveTextField" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="thirteenthMonthPayLabel" min="-2" pref="26" max="-2" attributes="0"/>
                                   <Component id="thirteenthMonthPayTextField" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -1631,7 +1641,7 @@
                                       <Component id="netSalaryTextField" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="59" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1835,6 +1845,16 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="totalAbsenceTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="unusedLeaveLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Unused Leave:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="unusedLeaveTextField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>

@@ -501,6 +501,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         totalSalaryPerMonthTextField = new javax.swing.JTextField();
         totalAbsenceLabel = new javax.swing.JLabel();
         totalAbsenceTextField = new javax.swing.JTextField();
+        unusedLeaveLabel = new javax.swing.JLabel();
+        unusedLeaveTextField = new javax.swing.JTextField();
         jPanel10 = new javax.swing.JPanel();
         departmentTextField = new javax.swing.JTextField();
         departmentNameLabel = new javax.swing.JLabel();
@@ -1254,6 +1256,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         totalAbsenceTextField.setEditable(false);
 
+        unusedLeaveLabel.setText("Unused Leave:");
+
+        unusedLeaveTextField.setEditable(false);
+
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
@@ -1336,7 +1342,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addComponent(totalAbsenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
-                        .addComponent(totalAbsenceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(totalAbsenceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(unusedLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(unusedLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel9Layout.setVerticalGroup(
@@ -1402,10 +1412,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addComponent(totalAbsenceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(leaveBalanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(leaveBalanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(unpaidLeaveLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sickLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
@@ -1418,6 +1424,14 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addComponent(vacationLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(leaveBalanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(leaveBalanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(unusedLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(unusedLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(thirteenthMonthPayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(thirteenthMonthPayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
@@ -1426,7 +1440,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(netSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addGap(16, 16, 16))
         );
 
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1544,7 +1558,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     .addGroup(managePayrollLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab4", managePayroll);
@@ -1877,6 +1891,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
             updateUnpaidLeave(employee);
             
+            updateUnusedLeave(employee);
+            
             int totalAbsences = employeeMethod.getTotalAbsences(employee);
             totalAbsenceTextField.setText(String.valueOf(totalAbsences));
 
@@ -2004,6 +2020,26 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             JOptionPane.showMessageDialog(this, "Error occurred while calculating unpaid leave: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void updateUnusedLeave(Employee employee) {
+        if (employee == null) {
+            JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            int leaveBalance = Integer.parseInt(leaveBalanceTextField.getText()); 
+            double ratePerHour = employee.getRatePerHour();
+
+            double unusedLeaveCost = leaveBalance * ratePerHour * 8; 
+
+            unusedLeaveTextField.setText(formatCurrency(unusedLeaveCost));
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Error retrieving leave balance", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     private String formatCurrency(double amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount);
@@ -2213,6 +2249,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JLabel unpaidLeaveLabel2;
     private javax.swing.JLabel unpaidLeaveLabel3;
     private javax.swing.JTextField unpaidLeaveTextField;
+    private javax.swing.JLabel unusedLeaveLabel;
+    private javax.swing.JTextField unusedLeaveTextField;
     private javax.swing.JLabel userImageIcon;
     private javax.swing.JLabel userImagePayroll;
     private javax.swing.JLabel userJobTitle;
