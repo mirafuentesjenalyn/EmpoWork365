@@ -19,12 +19,12 @@ public class Employee {
     private Double pagIbigDeduction; 
     private Double incomeTax;
     private Double unpaidLeaveDays;
-    private int sickLeave;
-    private int sickLeaveUsed; 
-    private int emergencyLeave;
-    private int emergencyLeaveUsed; 
-    private int vacationLeave;
-    private int vacationLeaveUsed;
+    private Double sickLeave;
+    private Double sickLeaveUsed; 
+    private Double emergencyLeave;
+    private Double emergencyLeaveUsed; 
+    private Double vacationLeave;
+    private Double vacationLeaveUsed;
 
     // Constructor with parameters
     public Employee(String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, Date dateOfEmployment) {
@@ -74,8 +74,8 @@ public class Employee {
                 String jobtitle, String departmentName, String imagePath, Double ratePerHour, 
                 Double netSalary, Double philHealthDeduction, Double sssDeduction, 
                 Double pagIbigDeduction, Double incomeTax, Double unpaidLeaveDays,
-                int sickLeave, int emergencyLeave, int vacationLeave,
-                int sickLeaveUsed, int emergencyLeaveUsed, int vacationLeaveUsed) {
+                Double sickLeave, Double emergencyLeave, Double vacationLeave,
+                Double sickLeaveUsed, Double emergencyLeaveUsed, Double vacationLeaveUsed) {
         this.employeeId = employeeId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -164,51 +164,51 @@ public class Employee {
         return unpaidLeaveDays;
     }
     
-    public int getSickLeave() {
+    public Double getSickLeave() {
         return sickLeave;
     }
 
-    public int getEmergencyLeave() {
+    public Double getEmergencyLeave() {
         return emergencyLeave;
     }
 
-    public int getVacationLeave() {
+    public Double getVacationLeave() {
         return vacationLeave;
     }
     
-    public void setSickLeave(int sickLeave) {
+    public void setSickLeave(Double sickLeave) {
         this.sickLeave = sickLeave;
     }
 
-    public void setEmergencyLeave(int emergencyLeave) {
+    public void setEmergencyLeave(Double emergencyLeave) {
         this.emergencyLeave = emergencyLeave;
     }
         
-    public void setVacationLeave(int vacationLeave) {
+    public void setVacationLeave(Double vacationLeave) {
         this.vacationLeave = vacationLeave;
     }
     
-   public void setSickLeaveUsed(int usedDays) {
+   public void setSickLeaveUsed(Double usedDays) {
         this.sickLeaveUsed = usedDays;
     }
 
-    public void setEmergencyLeaveUsed(int usedDays) {
+    public void setEmergencyLeaveUsed(Double usedDays) {
         this.emergencyLeaveUsed = usedDays;
     }
 
-    public void setVacationLeaveUsed(int usedDays) {
+    public void setVacationLeaveUsed(Double usedDays) {
         this.vacationLeaveUsed = usedDays;
     }
 
-    public int getSickLeaveUsed() {
+    public Double getSickLeaveUsed() {
         return sickLeaveUsed;
     }
 
-    public int getEmergencyLeaveUsed() {
+    public Double getEmergencyLeaveUsed() {
         return emergencyLeaveUsed;
     }
 
-    public int getVacationLeaveUsed() {
+    public Double getVacationLeaveUsed() {
         return vacationLeaveUsed;
     }
     

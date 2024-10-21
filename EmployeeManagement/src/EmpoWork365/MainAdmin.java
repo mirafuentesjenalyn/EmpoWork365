@@ -4,22 +4,23 @@
  */
 package EmpoWork365;
 
+import com.toedter.calendar.JMonthChooser;
 import java.awt.Color;
+import java.awt.Component;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,13 +28,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -51,6 +57,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private static final int TOTAL_EMERGENCY_LEAVE = 5; 
     private static final int TOTAL_VACATION_LEAVE = 15; 
     private JDatePickerImpl datePickerStart;  
+    private JSpinner yearSpinner; 
 
 
     public static MainAdmin instance;
@@ -64,7 +71,13 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         initializeComboBox();
         initializeComboBoxPresentAbsent();
         setupDatePickers();
-        
+        setupKeyBindings();
+        setupMonthChooserListener(monthChooser);
+
+        yearSpinner = new javax.swing.JSpinner(new javax.swing.SpinnerNumberModel(Calendar.getInstance().get(Calendar.YEAR), 2000, 2100, 1));
+//        JMonthChooser monthChooser1 = this.monthChooser; 
+
+    
         addButtonHoverEffect(btnHome);
         addButtonHoverEffect(btnEmpMan);
         addButtonHoverEffect(btnAttSum);
@@ -112,19 +125,19 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                     performSearch();
                 }
             }
-        });     
+        });
     }
-    
-        @Override
-        public void onUserUpdated(UserAuthenticate updatedUser) {
-            setUserDetails(updatedUser);
-        }
-        
-        public void setAuthenticatedUser(UserAuthenticate loggedInUser) {
-            this.loggedInUser = loggedInUser;
-            setUserDetails(loggedInUser); 
-            loadEmployeeLeave();
-        }
+
+    @Override
+    public void onUserUpdated(UserAuthenticate updatedUser) {
+        setUserDetails(updatedUser);
+    }
+
+    public void setAuthenticatedUser(UserAuthenticate loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        setUserDetails(loggedInUser); 
+        loadEmployeeLeave();
+    }
 
     public void loadEmployeeData() {
         try {
@@ -518,6 +531,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         userImagePayroll = new javax.swing.JLabel();
         btnClear2 = new javax.swing.JButton();
         btnChangeRatePerHour = new javax.swing.JButton();
+        monthChooser = new com.toedter.calendar.JMonthChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1178,6 +1192,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         incomeTaxLabel.setText("Income Tax:");
 
+        SSSTextField.setEditable(false);
+
+        philHealthTextField.setEditable(false);
+
         pagibigLabel.setText("Pag-IBIG:");
 
         unpaidLeaveLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -1192,6 +1210,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         philHealthLabel.setText("Philhealth:");
 
+        pagibigTextField.setEditable(false);
+
         incomeTaxTextField.setEditable(false);
 
         overtimeHours_Label.setText("Overtime Hours");
@@ -1203,12 +1223,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         totalHrsWorkedTextField.setEditable(false);
 
         jLabel19.setText("Hours/Month");
-
-        getIdPayroll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                getIdPayrollActionPerformed(evt);
-            }
-        });
 
         rateperHour_Label.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         rateperHour_Label.setText("Rate/Hour:");
@@ -1446,43 +1460,37 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         departmentTextField.setEditable(false);
-        jPanel10.add(departmentTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 290, 263, -1));
+        jPanel10.add(departmentTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 370, 263, -1));
 
         departmentNameLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         departmentNameLabel.setText("Department:");
-        jPanel10.add(departmentNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, -1, 26));
+        jPanel10.add(departmentNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, -1, 26));
 
         jobTitleLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jobTitleLabel.setText("Job Title:");
-        jPanel10.add(jobTitleLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 71, 26));
+        jPanel10.add(jobTitleLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 71, 26));
 
         jLabel32.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel32.setText("Gender:");
-        jPanel10.add(jLabel32, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 71, 26));
+        jPanel10.add(jLabel32, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 71, 26));
 
         jLabel31.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel31.setText("Email:");
-        jPanel10.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 71, 26));
+        jPanel10.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 71, 26));
 
         nameLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         nameLabel.setText("Name:");
-        jPanel10.add(nameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 71, 26));
-
-        nameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel10.add(nameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 130, 264, -1));
+        jPanel10.add(nameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 71, 26));
+        jPanel10.add(nameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 264, -1));
 
         emailTextField.setEditable(false);
-        jPanel10.add(emailTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 170, 264, -1));
+        jPanel10.add(emailTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 250, 264, -1));
 
         genderTextField.setEditable(false);
-        jPanel10.add(genderTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 264, -1));
+        jPanel10.add(genderTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 290, 264, -1));
 
         jobTitleTextField.setEditable(false);
-        jPanel10.add(jobTitleTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 250, 263, -1));
+        jPanel10.add(jobTitleTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 330, 263, -1));
 
         jPanel8.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -1506,7 +1514,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addComponent(userImagePayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel10.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 0, -1, -1));
+        jPanel10.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, -1, -1));
 
         btnClear2.setBackground(new java.awt.Color(71, 146, 146));
         btnClear2.setForeground(new java.awt.Color(204, 255, 255));
@@ -1528,7 +1536,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 btnChangeRatePerHourActionPerformed(evt);
             }
         });
-        jPanel10.add(btnChangeRatePerHour, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 120, 20));
+        jPanel10.add(btnChangeRatePerHour, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 120, 20));
+        jPanel10.add(monthChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 10, 130, -1));
 
         javax.swing.GroupLayout managePayrollLayout = new javax.swing.GroupLayout(managePayroll);
         managePayroll.setLayout(managePayrollLayout);
@@ -1551,13 +1560,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             .addGroup(managePayrollLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(payrollManagementTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(managePayrollLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(managePayrollLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(56, Short.MAX_VALUE))
         );
 
@@ -1705,50 +1711,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         editUserDetails.setVisible(true);
     }//GEN-LAST:event_btnEditProfileActionPerformed
 
-    private void getIdPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getIdPayrollActionPerformed
-        String employeeIdText = getIdPayroll.getText();
-
-           try {
-               int employeeId = Integer.parseInt(employeeIdText);
-
-               EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-               Employee employees = employeeMethod.getEmployeeIdById(employeeId); 
-
-               if (employees != null) {
-                   updateEmployeeDetails(employees);
-               } else {   
-                   JOptionPane.showMessageDialog(this, "No employee found with the given ID.", "Employee Not Found", JOptionPane.WARNING_MESSAGE);
-               }
-
-           } catch (NumberFormatException e) {
-               JOptionPane.showMessageDialog(this, "Invalid Employee ID format. Please enter a valid number.", "Input Error", JOptionPane.ERROR_MESSAGE);
-           } catch (SQLException e) {
-               JOptionPane.showMessageDialog(this, "Error fetching employee data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-           }
-    }//GEN-LAST:event_getIdPayrollActionPerformed
-
-    private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
-        String name = nameTextField.getText().trim();  
-
-        if (name.length() >= 2) {
-            try {
-                EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-                Employee employees = employeeMethod.getEmployeeByName(name);
-
-                if (employees != null) {
-                    getIdPayroll.setText(String.valueOf(employees.getEmployeeId())); 
-                    updateEmployeeDetails(employees); 
-                } else {
-                    JOptionPane.showMessageDialog(this, "No employee found with the given name.", "Employee Not Found", JOptionPane.WARNING_MESSAGE);
-                }
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error fetching employee data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Please enter a name to search.", "Input Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_nameTextFieldActionPerformed
-
     private void btnClear2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear2ActionPerformed
         clearFields();
     }//GEN-LAST:event_btnClear2ActionPerformed
@@ -1757,6 +1719,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jTabbedPane1.setSelectedIndex(3);
     }//GEN-LAST:event_btnLeaveSumActionPerformed
 
+    
     private void btnChangeRatePerHourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeRatePerHourActionPerformed
         try {
             int employeeId = Integer.parseInt(getIdPayroll.getText());
@@ -1805,7 +1768,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         comboBoxPresentAbsent.addItem("Present");
         comboBoxPresentAbsent.addItem("Incomplete");
         comboBoxPresentAbsent.addItem("Absent");
-
     }
 
     private void comboBoxPresentAbsentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxPresentAbsentActionPerformed
@@ -1835,6 +1797,192 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }//GEN-LAST:event_comboBoxPresentAbsentActionPerformed
 
+    
+    private void setupKeyBindings() {
+        // For the nameTextField
+        nameTextField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "enterPressedName");
+        nameTextField.getActionMap().put("enterPressedName", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameTextField.getText().trim();
+
+                if (name.length() >= 2) {
+                    nameTextField.setEnabled(false); // Disable the field while processing
+                    try {
+                        EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+                        Employee employees = employeeMethod.getEmployeeByName(name);
+
+                        if (employees != null) {
+                            getIdPayroll.setText(String.valueOf(employees.getEmployeeId()));
+                            updateEmployeeDetails(employees);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No employee found with the given name.", "Employee Not Found", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Error fetching employee data: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        nameTextField.setEnabled(true); // Re-enable the field
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please enter a name to search.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // For getIdPayroll
+        getIdPayroll.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "enterPressedId");
+        getIdPayroll.getActionMap().put("enterPressedId", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String employeeIdText = getIdPayroll.getText();
+                if (!employeeIdText.isEmpty()) {
+                    try {
+                        int employeeId = Integer.parseInt(employeeIdText);
+
+                        getIdPayroll.setEnabled(false); // Disable the field while processing
+                        EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+                        Employee employees = employeeMethod.getEmployeeIdById(employeeId);
+
+                        if (employees != null) {
+                            updateEmployeeDetails(employees);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No employee found with the given ID.", "Employee Not Found", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid Employee ID format. Please enter a valid number.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Error fetching employee data: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        getIdPayroll.setEnabled(true); // Re-enable the field
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please enter an Employee ID.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+    
+    private Employee getEmployee() {
+        Employee employee = null;
+
+        // Check if employee ID is entered in getIdPayroll field
+        String employeeIdText = getIdPayroll.getText().trim();
+        if (!employeeIdText.isEmpty()) {
+            try {
+                int employeeId = Integer.parseInt(employeeIdText);
+                EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+                employee = employeeMethod.getEmployeeIdById(employeeId);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Invalid Employee ID format.", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        // Otherwise, retrieve employee by name if nameTextField is not empty
+        else if (!nameTextField.getText().trim().isEmpty()) {
+            String name = nameTextField.getText().trim();
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            try {
+                employee = employeeMethod.getEmployeeByName(name);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        return employee;
+    }
+    
+    private void setupMonthChooserListener(JMonthChooser monthChooser) {
+        monthChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> {
+            if ("month".equals(evt.getPropertyName())) {
+                int selectedMonth = monthChooser.getMonth() + 1; // Adjust month to be 1-based (1-12)
+                int selectedYear = (int) yearSpinner.getValue(); // Get the selected year from yearSpinner
+
+                // Ensure you get the selected employee by either ID or Name
+                Employee employee = getEmployee(); // This method should retrieve the current employee based on either ID or name
+
+                if (employee == null) {
+                    JOptionPane.showMessageDialog(null, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    clearDetails(false);
+                    updateEmployeeDetailsForSelectedMonth(selectedMonth , selectedYear);
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainAdmin.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+
+    private void clearDetails(boolean isDecember) {
+        // These fields are common for all months
+        totalSalaryPerMonthTextField.setText("");
+        totalHrsWorkedTextField.setText("");
+        overtimeHrsTextField.setText("");
+        totalDeducTextField.setText("");
+        philHealthTextField.setText("");
+        SSSTextField.setText("");
+        pagibigTextField.setText("");
+        incomeTaxTextField.setText("");
+        netSalaryTextField.setText("");
+
+        if (isDecember) {
+            // Clear leave-related fields only for December
+            unpaidLeaveTextField.setText("");
+            totalAbsenceTextField.setText("");
+            sickLeaveTextField.setText("");
+            emergencyLeaveTextField.setText("");
+            vacationLeaveTextField.setText("");
+            leaveBalanceTextField.setText("");
+            unusedLeaveTextField.setText("");
+            thirteenthMonthPayTextField.setText("");
+
+            // Make these fields visible in December
+            unpaidLeaveTextField.setEnabled(true);
+            totalAbsenceTextField.setEnabled(true);
+            sickLeaveTextField.setEnabled(true);
+            emergencyLeaveTextField.setEnabled(true);
+            vacationLeaveTextField.setEnabled(true);
+            leaveBalanceTextField.setEnabled(true);
+            unusedLeaveTextField.setEnabled(true);
+            thirteenthMonthPayTextField.setEnabled(true);
+        } else {
+            // Hide these fields for all months except December
+            unpaidLeaveTextField.setEnabled(false);
+            totalAbsenceTextField.setEnabled(false);
+            sickLeaveTextField.setEnabled(false);
+            emergencyLeaveTextField.setEnabled(false);
+            vacationLeaveTextField.setEnabled(false);
+            leaveBalanceTextField.setEnabled(false);
+            unusedLeaveTextField.setEnabled(false);
+            thirteenthMonthPayTextField.setEnabled(false);
+        }
+    }
+
+
+
+    private void updateEmployeeDetailsForSelectedMonth(int selectedMonth, int selectedYear) throws SQLException {     
+        System.out.println("update employee details: " + selectedMonth + ", Year: " + selectedYear);
+
+        Employee employee = getEmployee(); 
+        if (employee != null) {
+            updateEmployeeDetails(employee); 
+
+
+            if (selectedMonth == 12) {
+                clearDetails(true); 
+                updateDecemberDetails(employee, selectedYear); 
+            } else {
+                clearDetails(false); 
+                updateRegularPayroll(employee, selectedMonth, selectedYear, employee.getRatePerHour());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void updateEmployeeDetails(Employee employee) {
         if (employee == null) {
             JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1842,9 +1990,13 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
 
         try {
+            // Ensure monthChooser is properly initialized, and get the selected month
+            int selectedMonth = monthChooser.getMonth(); // Convert to 1-based month
+            int selectedYear = (int) yearSpinner.getValue();
+
+            // Common Fields for All Months
             String FullName = employee.getFirstname() + " " + employee.getLastname();
             String imagePath = employee.getImagePath();
-
             nameTextField.setText(FullName);
             emailTextField.setText(employee.getEmail());
             genderTextField.setText(employee.getGender());
@@ -1853,48 +2005,24 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
             double ratePerHour = employee.getRatePerHour();
             rateHourTextField.setText(String.format("%.2f", ratePerHour));
+            HrsMonthTextField.setText(REGULAR_HOURS_PER_MONTH + " hrs");
+                        
+            if (selectedMonth == 12) {
+                updateDecemberDetails(employee, selectedYear);
+            } else {
+                updateRegularPayroll(employee, selectedMonth + 1, selectedYear, employee.getRatePerHour());
+            }
 
-            double totalSalary = calculateTotalSalary(REGULAR_HOURS_PER_MONTH, ratePerHour, 0); // Assuming no overtime or unpaid leave yet
-            double thirteenthMonthPay = totalSalary;
-            thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay));
-
-            HrsMonthTextField.setText(String.format("%.2f hrs", (double) REGULAR_HOURS_PER_MONTH));
-
+            // Update image if available
             if (imagePath != null && !imagePath.isEmpty()) {
                 ImageIcon originalIcon = new ImageIcon(imagePath);
                 int width = 100;
-                int height = 100; 
+                int height = 100;
                 Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 userImagePayroll.setIcon(new ImageIcon(scaledImage));
             } else {
-                userImagePayroll.setIcon(null); 
+                userImagePayroll.setIcon(null);
             }
-
-            Calendar calendar = Calendar.getInstance();
-            int month = calendar.get(Calendar.MONTH) + 1; 
-            int year = calendar.get(Calendar.YEAR);
-            displayTotalHoursWorked(employee.getEmployeeId(), month, year, ratePerHour);
-
-            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-            Map<String, Integer> remainingLeaveDays = employeeMethod.getRemainingLeaveDays(employee.getEmployeeId());
-
-            int sickLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE);
-            int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
-            int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
-
-            sickLeaveTextField.setText(String.valueOf(sickLeaveBalance));
-            emergencyLeaveTextField.setText(String.valueOf(emergencyLeaveBalance));
-            vacationLeaveTextField.setText(String.valueOf(vacationLeaveBalance));
-
-            int totalLeaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
-            leaveBalanceTextField.setText(String.valueOf(totalLeaveBalance));
-
-            updateUnpaidLeave(employee);
-            
-            updateUnusedLeave(employee);
-            
-            int totalAbsences = employeeMethod.getTotalAbsences(employee);
-            totalAbsenceTextField.setText(String.valueOf(totalAbsences));
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Database error occurred: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -1903,30 +2031,108 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }
 
-    
-    private void displayTotalHoursWorked(int employeeId, int month, int year, double ratePerHour) {
+    private void updateRegularPayroll(Employee employee, int month, int year, double ratePerHour) {  
+       // Regular salary calculations
+       double totalHoursWorked = calculateTotalHoursWorked(employee, month, year);
+       totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHoursWorked));
+
+       double overtimeHours = calculateOvertimeHours(totalHoursWorked);
+       overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours));
+
+       double totalSalary = calculateTotalSalary(totalHoursWorked, ratePerHour, overtimeHours);
+       totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
+
+       // Calculate total deductions
+       double unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, 0); 
+       double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost);
+       netSalaryTextField.setText(formatCurrency(netSalary));
+
+       // Deductions
+       philHealthTextField.setText(formatCurrency(calculatePhilHealthDeduction(totalSalary)));
+       SSSTextField.setText(formatCurrency(calculateSSSDeduction(totalSalary)));
+       pagibigTextField.setText(formatCurrency(calculatePagIbigDeduction(totalSalary)));
+       incomeTaxTextField.setText(formatCurrency(calculateIncomeTax(totalSalary)));
+   }
+
+
+    private void updateDecemberDetails(Employee employee, int year) throws SQLException {
+        System.out.println("update december details: " + employee.getEmployeeId() + ", Year: " + year);
+
+        EmployeeMethod employeeMethod = new EmployeeMethod(connection);
         AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
+
+        // Fetch December details (12 in 1-based, 11 in 0-based)
+        double totalHoursWorked = attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), 12, year);
+        totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHoursWorked));
+
+        double overtimeHours = calculateOvertimeHours(totalHoursWorked);
+        overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours));
+
+        double totalSalary = calculateTotalSalary(totalHoursWorked, employee.getRatePerHour(), overtimeHours);
+        totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
+
+        // Calculate unpaid leave
+        int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employee.getEmployeeId(), 12, year);
+        double unpaidLeaveCost = calculateUnpaidLeave(employee.getRatePerHour(), unpaidLeaveDays);
+        unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
+
+        // Deductions (PhilHealth, SSS, PagIbig, Income Tax)
+        philHealthTextField.setText(formatCurrency(calculatePhilHealthDeduction(totalSalary)));
+        SSSTextField.setText(formatCurrency(calculateSSSDeduction(totalSalary)));
+        pagibigTextField.setText(formatCurrency(calculatePagIbigDeduction(totalSalary)));
+        incomeTaxTextField.setText(formatCurrency(calculateIncomeTax(totalSalary)));
+
+        // Employee leave balance and absences
+        Map<String, Integer> remainingLeaveDays = employeeMethod.getRemainingLeaveDays(employee.getEmployeeId());
+        int sickLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE);
+        int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
+        int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
+
+        sickLeaveTextField.setText(String.valueOf(sickLeaveBalance));
+        emergencyLeaveTextField.setText(String.valueOf(emergencyLeaveBalance));
+        vacationLeaveTextField.setText(String.valueOf(vacationLeaveBalance));
+
+        int totalLeaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
+        leaveBalanceTextField.setText(String.valueOf(totalLeaveBalance));
+
+        // Calculate unused leave
+        int leaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
+        double unusedLeaveCost = leaveBalance * employee.getRatePerHour() * 8; // 8 hours per day
+        unusedLeaveTextField.setText(formatCurrency(unusedLeaveCost));
+
+        // Calculate the 13th Month Pay based on the employee's basic salary for the year
+        // Basic salary = Rate per hour * Hours per month * 12 (for the year), then divided by 12 for 13th month pay
+        double basicSalaryForYear = employee.getRatePerHour() * REGULAR_HOURS_PER_MONTH * 12;  // 160 hrs per month for 12 months
+        double thirteenthMonthPay = basicSalaryForYear / 12;
+        thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay));
+
+        // Total absence calculation
+        int totalAbsences = employeeMethod.getTotalAbsences(employee);
+        totalAbsenceTextField.setText(String.valueOf(totalAbsences));
+
+        // Calculate net salary
+        // Here, we add the unused leave cost and 13th month pay to the net salary
+        double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost) + unusedLeaveCost + thirteenthMonthPay;
+
+        // Update net salary field
+        netSalaryTextField.setText(formatCurrency(netSalary));
+    }
+
+
+    
+    private double calculateTotalHoursWorked(Employee employee, int month, int year) {
+        AttendanceMethod attendanceMethod = new AttendanceMethod(connection); // Assuming connection is already defined
+        double totalHours = 0;
+
         try {
-            double totalHours = attendanceMethod.getTotalHoursWorkedInMonth(employeeId, month, year);
-            totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHours));
-
-            double overtimeHours = calculateOvertimeHours(totalHours);
-            overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours));
-
-            int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employeeId, month, year); 
-            double unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, unpaidLeaveDays);
-
-            double totalSalary = calculateTotalSalary(totalHours, ratePerHour, overtimeHours);
-            double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost); 
-
-            totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
-            netSalaryTextField.setText(formatCurrency(netSalary));
-
+            // Fetch the total hours worked for the employee in the given month and year
+            totalHours = attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), month, year);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error retrieving total hours worked: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
 
+        return totalHours;
+    }
 
     private double calculateOvertimeHours(double totalHoursWorked) {
         double overtimeHours = totalHoursWorked - REGULAR_HOURS_PER_MONTH;
@@ -1986,60 +2192,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         }
     }
     
-
     private double calculateUnpaidLeave(double ratePerHour, int unpaidLeaveDays) {
         final int HOURS_PER_DAY = 8; 
         return ratePerHour * HOURS_PER_DAY * unpaidLeaveDays;
     }
-
-    private void updateUnpaidLeave(Employee employee) {
-        if (employee == null) {
-            JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try {
-            int year = Calendar.getInstance().get(Calendar.YEAR);
-            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-            AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
-
-            double unpaidLeaveCost = employeeMethod.getUnpaidLeaveCost(employee, year);
-
-            unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
-
-            int month = Calendar.getInstance().get(Calendar.MONTH) + 1;  // Current month
-            double totalHoursWorked = attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), month, year);
-
-            double overtimeHours = calculateOvertimeHours(totalHoursWorked);  // If any overtime worked
-            double totalSalary = calculateTotalSalary(totalHoursWorked, employee.getRatePerHour(), overtimeHours);
-
-            double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost);
-            netSalaryTextField.setText(formatCurrency(netSalary));
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error occurred while calculating unpaid leave: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    private void updateUnusedLeave(Employee employee) {
-        if (employee == null) {
-            JOptionPane.showMessageDialog(this, "Employee data is null", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try {
-            int leaveBalance = Integer.parseInt(leaveBalanceTextField.getText()); 
-            double ratePerHour = employee.getRatePerHour();
-
-            double unusedLeaveCost = leaveBalance * ratePerHour * 8; 
-
-            unusedLeaveTextField.setText(formatCurrency(unusedLeaveCost));
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Error retrieving leave balance", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
 
     private String formatCurrency(double amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount);
@@ -2216,6 +2372,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private javax.swing.JTable leaveTable;
     private javax.swing.JLabel logout;
     private javax.swing.JPanel managePayroll;
+    private com.toedter.calendar.JMonthChooser monthChooser;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JLabel netSalaryLabel;
