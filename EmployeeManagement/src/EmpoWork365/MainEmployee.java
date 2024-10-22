@@ -1535,6 +1535,12 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         performSearchSafely();
     }//GEN-LAST:event_searchBarEmployeeNameActionPerformed
     
+    private void clearDatePicker() {
+        datePickerStart.getModel().setValue(null); // Reset the date picker model
+    }
+
+
+    
     private void setupDatePickers() {
         UtilDateModel modelStart = new UtilDateModel();
         Properties p = new Properties();
@@ -1577,49 +1583,79 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         comboBoxPresentAbsent.addItem("Present");
         comboBoxPresentAbsent.addItem("Incomplete");
         comboBoxPresentAbsent.addItem("Absent");
+        
+        comboBoxPresentAbsent.addActionListener(e -> fetchDataBasedOnStatus());
     }
-    
-    private void comboBoxPresentAbsentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxPresentAbsentActionPerformed
+
+    private void fetchDataBasedOnStatus() {
         if (loggedInUser == null) {
-            return; // Ensure the user is logged in
+            return; 
         }
 
+        String selectedStatus = (String) comboBoxPresentAbsent.getSelectedItem(); 
+        Date selectedDate = (Date) datePickerStart.getModel().getValue();
+
+        if (selectedStatus != null) {
+            // If no date is selected, fetch data based on the status only
+            if (selectedDate != null) {
+                // Fetch attendance data based on the selected status and date
+                fetchDataBasedOnDateAndStatus(selectedDate, selectedStatus);
+            } else {
+                // Fetch all attendance records for the selected status
+                fetchDataBasedOnStatusOnly(selectedStatus);
+            }
+        }
+   }
+    
+    private void fetchDataBasedOnDateAndStatus(Date selectedDate, String selectedStatus) {
         try {
-            // Ensure the date is selected
-            if (datePickerStart.getModel().getValue() == null) {
-                JOptionPane.showMessageDialog(this, "Please select a date.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Retrieve the selected date from the date picker model (java.util.Date)
-            Date selectedDate = (Date) datePickerStart.getModel().getValue();
-
-            // Get selected status from JComboBox
-            String selectedStatus = (String) comboBoxPresentAbsent.getSelectedItem(); 
-
-            // Handle null or empty status selection
-            if (selectedStatus == null || selectedStatus.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please select a status (Present, Absent, or Incomplete).", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Convert the Date to a string format for your database (e.g., "yyyy-MM-dd")
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String formattedDate = dateFormat.format(selectedDate);
-
-            // Get employee ID from the logged-in user
             int employeeId = loggedInUser.getId();
 
-            // Use EmployeeMethod to fetch filtered attendance data
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
             DefaultTableModel modelTable = employeeMethod.getFilteredAttendanceByDateAndStatus(employeeId, formattedDate, selectedStatus);
 
-            // Display the filtered data in the table
             setTableModel(modelTable, jTable2);
-
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Failed to filter attendance data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } 
+        }
+    }
+    
+    private void fetchDataBasedOnStatusOnly(String selectedStatus) {
+        try {
+            int employeeId = loggedInUser.getId();
+            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            DefaultTableModel modelTable = employeeMethod.getAttendanceByStatus(employeeId, selectedStatus); // Implement this method in EmployeeMethod
+
+            setTableModel(modelTable, jTable2);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to filter attendance data by status: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void comboBoxPresentAbsentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxPresentAbsentActionPerformed
+        if (loggedInUser == null) {
+            return; 
+        }
+
+        String selectedStatus = (String) comboBoxPresentAbsent.getSelectedItem();
+
+        if (selectedStatus == null || selectedStatus.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please select a status (Present, Absent, or Incomplete).", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Clear the date if necessary
+        if (datePickerStart.getModel().getValue() == null) {
+            clearDatePicker(); // Reset date picker if needed
+        }
+
+        Date selectedDate = (Date) datePickerStart.getModel().getValue();
+        if (selectedDate != null) {
+            fetchDataBasedOnDateAndStatus(selectedDate, selectedStatus);
+        } else {
+            fetchDataBasedOnStatusOnly(selectedStatus);
+        }
     }//GEN-LAST:event_comboBoxPresentAbsentActionPerformed
 
     private void btnClear2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear2ActionPerformed

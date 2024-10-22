@@ -507,6 +507,41 @@ public class EmployeeMethod {
         return model;
     }
     
+    public DefaultTableModel getAttendanceByStatus(int employeeId, String status) throws SQLException {
+        String[] columnNames = {"Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT fld_employee_id, fld_attendance_date, fld_time_in, fld_time_out " +
+                       "FROM tbl_attendance " +
+                       "WHERE fld_employee_id = ?";
+
+        if (status.equals("Absent")) {
+            query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
+        } else if (status.equals("Incomplete")) {
+            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
+        } else if (status.equals("Present")) {
+            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
+        }
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Object[] row = {
+                    resultSet.getInt("fld_employee_id"),
+                    resultSet.getDate("fld_attendance_date"),
+                    resultSet.getTime("fld_time_in"),
+                    resultSet.getTime("fld_time_out"),
+                    status
+                };
+                model.addRow(row);
+            }
+        }
+
+        return model;
+    }
+    
     public DefaultTableModel getFilteredAttendanceByDateAndStatus(int employeeId, String date, String status) throws SQLException {
         String[] columnNames = {"Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
 
@@ -857,8 +892,7 @@ public class EmployeeMethod {
                            "AND YEAR(a.fld_attendance_date) = YEAR(CURDATE()) " + // Current year's attendance
                            "WHERE e.fld_employee_id = ? " +  // Employee ID
                            "AND (a.fld_attendance_id IS NULL " +  // No attendance record
-                           "OR a.fld_time_in IS NULL " +  // No time-in recorded
-                           "OR a.fld_time_out IS NULL)";  // No time-out recorded
+                           "OR a.fld_time_in IS NULL)"; // No time-out recorded (correctly closed parentheses)
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, employeeId); // Set employee ID to the query
@@ -873,6 +907,7 @@ public class EmployeeMethod {
 
         return totalAbsences; 
     }
+
 
 
 
