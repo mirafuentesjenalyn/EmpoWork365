@@ -80,62 +80,32 @@ public class AttendanceMethod {
         }
         return 0;
     }
-    
-//    public double getTotalHoursWorkedInMonth(int employeeId, int month, int year) throws SQLException {
-//        String sql = "SELECT fld_time_in, fld_time_out FROM tbl_attendance " +
-//                     "WHERE fld_employee_id = ? AND MONTH(fld_attendance_date) = ? AND YEAR(fld_attendance_date) = ?";
-//
-//        double totalHours = 0.0;
-//
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setInt(1, employeeId);
-//            preparedStatement.setInt(2, month);
-//            preparedStatement.setInt(3, year);
-//
-//            ResultSet rs = preparedStatement.executeQuery();
-//
-//            while (rs.next()) {
-//                Timestamp timeIn = rs.getTimestamp("fld_time_in");
-//                Timestamp timeOut = rs.getTimestamp("fld_time_out");
-//
-//                if (timeIn != null) {
-//                    Timestamp endTime = (timeOut != null) ? timeOut : new Timestamp(System.currentTimeMillis());
-//
-//                    long durationInMillis = endTime.getTime() - timeIn.getTime();
-//                    totalHours += durationInMillis / (1000.0 * 60 * 60); 
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
-//        }
-//        return totalHours;
-//    }
-    
+   
     public double getTotalHoursWorkedInMonth(int employeeId, int month, int year) throws SQLException {
-    String sql = "SELECT fld_time_in, fld_time_out FROM tbl_attendance " +
-                 "WHERE fld_employee_id = ? AND MONTH(fld_attendance_date) = ? AND YEAR(fld_attendance_date) = ?";
-    
-    double totalHours = 0.0;
+        String sql = "SELECT fld_time_in, fld_time_out FROM tbl_attendance " +
+                     "WHERE fld_employee_id = ? AND MONTH(fld_attendance_date) = ? AND YEAR(fld_attendance_date) = ?";
 
-    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-        preparedStatement.setInt(1, employeeId);
-        preparedStatement.setInt(2, month);  // Ensure month is 1-12 for SQL
-        preparedStatement.setInt(3, year);
+        double totalHours = 0.0;
 
-        try (ResultSet rs = preparedStatement.executeQuery()) {
-            while (rs.next()) {
-                Timestamp timeIn = rs.getTimestamp("fld_time_in");
-                Timestamp timeOut = rs.getTimestamp("fld_time_out");
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, employeeId);
+            preparedStatement.setInt(2, month);  // Ensure month is 1-12 for SQL
+            preparedStatement.setInt(3, year);
 
-                if (timeIn != null && timeOut != null) {
-                    long duration = timeOut.getTime() - timeIn.getTime();  // Calculate duration in milliseconds
-                    totalHours += duration / (1000.0 * 60 * 60);  // Convert to hours
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    Timestamp timeIn = rs.getTimestamp("fld_time_in");
+                    Timestamp timeOut = rs.getTimestamp("fld_time_out");
+
+                    if (timeIn != null && timeOut != null) {
+                        long duration = timeOut.getTime() - timeIn.getTime();  // Calculate duration in milliseconds
+                        totalHours += duration / (1000.0 * 60 * 60);  // Convert to hours
+                    }
                 }
             }
         }
+        return totalHours;
     }
-    return totalHours;
-}
 
     
     public int getUnpaidLeaveDays(int employeeId, int month, int year) throws SQLException {

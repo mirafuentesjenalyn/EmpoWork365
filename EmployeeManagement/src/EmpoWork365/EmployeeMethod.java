@@ -403,20 +403,6 @@ public class EmployeeMethod {
             throw new SQLException("Error fetching employee data: " + e.getMessage(), e);
         }
     }
-    
-    public void updateRatePerHourInDatabase(String jobTitle, double newRatePerHour) throws SQLException {
-        String updateQuery = "UPDATE tbl_job_titles SET fld_rate_per_hour = ? WHERE fld_job_title = ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(updateQuery)) {
-            pstmt.setDouble(1, newRatePerHour);
-            pstmt.setString(2, jobTitle);  // Update this to use job title
-
-            int rowsUpdated = pstmt.executeUpdate();
-            if (rowsUpdated == 0) {
-                throw new SQLException("Failed to update the rate. No rows affected.");
-            }
-        }
-    }
 
     public Employee getLoggedInUser(int userId) throws SQLException {
         String query = "SELECT e.fld_employee_id, "
@@ -455,11 +441,25 @@ public class EmployeeMethod {
                         null
                     );
                 } else {
-                    return null; // No user found
+                    return null; 
                 }
             }
         } catch (SQLException e) {
             throw new SQLException("Error fetching logged-in user data: " + e.getMessage(), e);
+        }
+    }
+
+    public void updateRatePerHourInDatabase(String jobTitle, double newRatePerHour) throws SQLException {
+        String updateQuery = "UPDATE tbl_job_titles SET fld_rate_per_hour = ? WHERE fld_job_title = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(updateQuery)) {
+            pstmt.setDouble(1, newRatePerHour);
+            pstmt.setString(2, jobTitle);  // Update this to use job title
+
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new SQLException("Failed to update the rate. No rows affected.");
+            }
         }
     }
     
@@ -502,6 +502,92 @@ public class EmployeeMethod {
             }
         } catch (SQLException e) {
             throw new SQLException("Error retrieving leave applications: " + e.getMessage(), e);
+        }
+
+        return model;
+    }
+    
+    public DefaultTableModel getFilteredAttendanceByDateAndStatus(int employeeId, String date, String status) throws SQLException {
+        String[] columnNames = {"Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT fld_employee_id, fld_attendance_date, fld_time_in, fld_time_out " +
+                       "FROM tbl_attendance " +
+                       "WHERE fld_employee_id = ? AND fld_attendance_date = ?";
+
+        if (status.equals("Absent")) {
+            query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
+        } else if (status.equals("Incomplete")) {
+            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
+        } else if (status.equals("Present")) {
+            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
+        }
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId);
+            statement.setString(2, date);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Object[] row = {
+                    resultSet.getInt("fld_employee_id"),
+                    resultSet.getDate("fld_attendance_date"),
+                    resultSet.getTime("fld_time_in"),
+                    resultSet.getTime("fld_time_out"),
+                    status
+                };
+                model.addRow(row);
+            }
+        }
+
+        return model;
+    }
+
+    
+    public DefaultTableModel searchLeaveApplications(int employeeId, String searchTerm) throws SQLException {
+        String[] columnNames = {
+            "Application ID", "Employee ID", "Full Name", "Leave Type", 
+            "Leave Request", "Reason", "Status", "Date Applied"
+        };
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        String query = "SELECT la.fld_application_id, "
+                     + "e.fld_employee_id, "
+                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+                     + "lt.fld_leave_type_name, "
+                     + "la.fld_date_leave_request, "
+                     + "la.fld_reason, "  // Include the reason in the query
+                     + "la.fld_status, "
+                     + "la.fld_request_date "
+                     + "FROM tbl_leave_applications la "
+                     + "INNER JOIN tbl_employees e ON la.fld_employee_id = e.fld_employee_id "
+                     + "INNER JOIN tbl_leave_types lt ON la.fld_leave_type_id = lt.fld_leave_type_id "
+                     + "WHERE e.fld_employee_id = ? "
+                     + "AND la.fld_reason LIKE ? "  // Add search term for the reason
+                     + "ORDER BY la.fld_application_id ASC";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId); // Set employee ID parameter
+            statement.setString(2, "%" + searchTerm + "%"); // Set search term with wildcards for partial matching
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Object[] row = {
+                    resultSet.getInt("fld_application_id"),
+                    resultSet.getInt("fld_employee_id"),
+                    resultSet.getString("full_name"),
+                    resultSet.getString("fld_leave_type_name"),
+                    resultSet.getDate("fld_date_leave_request"),
+                    resultSet.getString("fld_reason"), // Add reason to the results
+                    resultSet.getString("fld_status"),
+                    resultSet.getDate("fld_request_date")
+                };
+                model.addRow(row);
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error searching leave applications: " + e.getMessage(), e);
         }
 
         return model;
@@ -597,7 +683,6 @@ public class EmployeeMethod {
 
         updateRemainingDays(leaveId);
     }
-
 
     private void updateLeaveBalance(int employeeId, int leaveTypeId) throws SQLException {
         String currentBalanceQuery = "SELECT fld_remaining_days FROM tbl_leave_balances WHERE fld_employee_id = ? AND fld_leave_type_id = ?";
