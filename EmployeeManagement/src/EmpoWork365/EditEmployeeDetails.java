@@ -22,6 +22,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -226,10 +227,10 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     }
         
    private void initializeDepartmentComboBox() {
-        List<Department> departments = getDepartments(); 
+        List<Department> dept = getDepartments(); 
         DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>(); 
 
-        for (Department department : departments) {
+        for (Department department : dept) {
             model.addElement(department); 
         }
         comboBoxDepartment.setModel(model); 
@@ -238,19 +239,19 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
 
     
      private List<Department> getDepartments() {
-        List<Department> departments = new ArrayList<>();
+        List<Department> departmen = new ArrayList<>();
         String selectDepartmentsSQL = "SELECT fld_department_id, fld_department_name FROM tbl_department"; 
         try (PreparedStatement pstmt = connection.prepareStatement(selectDepartmentsSQL);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("fld_department_id"); 
                 String name = rs.getString("fld_department_name"); 
-                departments.add(new Department(id, name));
+                departmen.add(new Department(id, name));
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error fetching departments: " + ex.getMessage());
         }
-        return departments;
+        return departmen;
     }
 
     public int getSelectedDepartmentId() {
@@ -424,21 +425,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
 
         jPanel3 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        btnConfirmEdit = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        firstName = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        lastName = new javax.swing.JTextField();
-        comboBoxGender = new javax.swing.JComboBox<>();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        comboBoxJobTitle = new javax.swing.JComboBox<>();
-        jLabel10 = new javax.swing.JLabel();
-        comboBoxDepartment = new javax.swing.JComboBox<>();
-        jLabel11 = new javax.swing.JLabel();
-        comboBoxRole = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
@@ -448,181 +434,68 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         passWord = new javax.swing.JPasswordField();
         btnClear = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        firstName = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        lastName = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        comboBoxGender = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        comboBoxJobTitle = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        comboBoxDepartment = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        comboBoxRole = new javax.swing.JComboBox<>();
+        btnConfirmEdit = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        btnClose1 = new javax.swing.JButton();
+        btnMin1 = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel3.setBackground(new java.awt.Color(17, 94, 94));
+        jPanel3.setBackground(new java.awt.Color(240, 240, 240));
 
-        jPanel1.setBackground(new java.awt.Color(8, 127, 127));
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setBackground(new java.awt.Color(240, 240, 240));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(102, 204, 255));
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("EDIT PERSONAL DETAILS");
-
-        btnConfirmEdit.setBackground(new java.awt.Color(185, 230, 230));
-        btnConfirmEdit.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        btnConfirmEdit.setForeground(new java.awt.Color(65, 126, 118));
-        btnConfirmEdit.setText("CONFIRM");
-        btnConfirmEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnConfirmEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConfirmEditActionPerformed(evt);
-            }
-        });
-
-        jPanel2.setBackground(new java.awt.Color(8, 127, 127));
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("First Name");
-
-        firstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        firstName.setForeground(new java.awt.Color(153, 204, 188));
-        firstName.setText("Enter First Name");
-        firstName.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                firstNameFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                firstNameFocusLost(evt);
-            }
-        });
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Last Name");
-
-        lastName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lastName.setForeground(new java.awt.Color(153, 204, 188));
-        lastName.setText("Enter Last Name");
-        lastName.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                lastNameFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                lastNameFocusLost(evt);
-            }
-        });
-
-        comboBoxGender.setBackground(new java.awt.Color(229, 255, 237));
-        comboBoxGender.setToolTipText("");
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Gender");
-
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Job Title");
-
-        comboBoxJobTitle.setBackground(new java.awt.Color(229, 255, 237));
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel10.setText("Department");
-
-        comboBoxDepartment.setBackground(new java.awt.Color(229, 255, 237));
-
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("Role");
-
-        comboBoxRole.setBackground(new java.awt.Color(229, 255, 237));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 119, Short.MAX_VALUE))
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(13, 13, 13))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxDepartment, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxJobTitle, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxGender, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lastName, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(firstName))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel4)
-                .addGap(6, 6, 6)
-                .addComponent(firstName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addGap(6, 6, 6)
-                .addComponent(lastName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel6)
-                .addGap(6, 6, 6)
-                .addComponent(comboBoxGender, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(comboBoxJobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(comboBoxDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboBoxRole, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel4.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel4.setBackground(new java.awt.Color(240, 240, 240));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jButton2.setBackground(new java.awt.Color(170, 154, 182));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Add Image");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setFocusable(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 126, -1, -1));
+        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 180, 100, -1));
 
+        jPanel5.setBackground(new java.awt.Color(204, 204, 255));
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         imageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         imageLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 140, 120));
+        jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 120));
 
-        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 0, -1, -1));
+        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 120, -1));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Email");
-        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 165, 121, -1));
+        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 240, 121, -1));
 
         eMail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        eMail.setForeground(new java.awt.Color(153, 204, 188));
+        eMail.setForeground(new java.awt.Color(126, 138, 150));
         eMail.setText("Enter Email");
         eMail.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -637,14 +510,14 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
                 ActionPerformed(evt);
             }
         });
-        jPanel4.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 191, 246, 45));
+        jPanel4.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 246, 45));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Password");
-        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 248, 121, -1));
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 330, 121, -1));
 
-        passWord.setForeground(new java.awt.Color(153, 204, 188));
+        passWord.setForeground(new java.awt.Color(126, 138, 150));
         passWord.setText("Password");
         passWord.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -654,97 +527,203 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
                 passWordFocusLost(evt);
             }
         });
-        jPanel4.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 246, 45));
+        jPanel4.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 360, 246, 45));
 
         btnClear.setBackground(new java.awt.Color(71, 146, 146));
+        btnClear.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnClear.setForeground(new java.awt.Color(255, 255, 255));
         btnClear.setText("Clear All");
         btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear.setFocusable(false);
         btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClearActionPerformed(evt);
             }
         });
-        jPanel4.add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(138, 370, 100, -1));
+        jPanel4.add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 180, 100, -1));
 
-        btnCancel.setBackground(new java.awt.Color(185, 230, 230));
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("First Name");
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 420, 239, -1));
+
+        firstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        firstName.setForeground(new java.awt.Color(126, 138, 150));
+        firstName.setText("Enter First Name");
+        firstName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                firstNameFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                firstNameFocusLost(evt);
+            }
+        });
+        jPanel4.add(firstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 450, 246, 45));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Last Name");
+        jPanel4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 510, 120, -1));
+
+        lastName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lastName.setForeground(new java.awt.Color(126, 138, 150));
+        lastName.setText("Enter Last Name");
+        lastName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                lastNameFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                lastNameFocusLost(evt);
+            }
+        });
+        jPanel4.add(lastName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 540, 246, 45));
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel6.setText("Gender");
+        jPanel4.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 240, 239, -1));
+
+        comboBoxGender.setToolTipText("");
+        jPanel4.add(comboBoxGender, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 270, 246, 45));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel9.setText("Job Title");
+        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 330, 239, -1));
+
+        jPanel4.add(comboBoxJobTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 360, 246, 45));
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel10.setText("Department");
+        jPanel4.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 420, 239, -1));
+        jPanel4.add(comboBoxDepartment, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 450, 246, 45));
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel11.setText("Role");
+        jPanel4.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 510, 246, -1));
+
+        jPanel4.add(comboBoxRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 540, 246, 45));
+
+        btnConfirmEdit.setBackground(new java.awt.Color(0, 36, 57));
+        btnConfirmEdit.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnConfirmEdit.setForeground(new java.awt.Color(255, 255, 255));
+        btnConfirmEdit.setText("CONFIRM");
+        btnConfirmEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnConfirmEdit.setFocusable(false);
+        btnConfirmEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmEditActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnConfirmEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 640, 158, 40));
+
+        btnCancel.setBackground(new java.awt.Color(39, 82, 108));
         btnCancel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        btnCancel.setForeground(new java.awt.Color(65, 126, 118));
+        btnCancel.setForeground(new java.awt.Color(255, 255, 255));
         btnCancel.setText("CANCEL");
         btnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancel.setFocusable(false);
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
             }
         });
+        jPanel4.add(btnCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 640, 158, 40));
+
+        jLabel2.setBackground(new java.awt.Color(0, 36, 57));
+        jLabel2.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel2.setText("Edit Employee Details");
+        jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 224, -1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(88, 88, 88)
-                .addComponent(btnConfirmEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(87, 87, 87))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(50, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnConfirmEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(76, 76, 76))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 816, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(153, 204, 255));
-        jLabel1.setText("EmpoWork365");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(385, 385, 385)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(120, 120, 120)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(150, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel1)
-                .addGap(25, 25, 25)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(959, 938));
+        jPanel7.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnClose1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
+        btnClose1.setContentAreaFilled(false);
+        btnClose1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose1.setFocusable(false);
+        btnClose1.setRequestFocusEnabled(false);
+        btnClose1.setRolloverEnabled(false);
+        btnClose1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClose1ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(btnClose1, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 50, 50, 40));
+
+        btnMin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
+        btnMin1.setContentAreaFilled(false);
+        btnMin1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMin1.setFocusable(false);
+        btnMin1.setRequestFocusEnabled(false);
+        btnMin1.setRolloverEnabled(false);
+        btnMin1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMin1ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(btnMin1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 50, 50, 40));
+
+        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logo.png"))); // NOI18N
+        jPanel7.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, 50));
+
+        jLabel3.setFont(new java.awt.Font("Perpetua", 1, 28)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("EMPOWER");
+        jPanel7.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 40, -1, 60));
+
+        jLabel17.setFont(new java.awt.Font("Viner Hand ITC", 1, 24)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel17.setText("Work");
+        jPanel7.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 40, 70, 60));
+
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel18.setText("for 365");
+        jPanel7.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 60, 40));
+
+        jSeparator1.setBackground(new java.awt.Color(240, 240, 240));
+        jSeparator1.setForeground(new java.awt.Color(240, 240, 240));
+        jSeparator1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel7.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 780, -1));
+
+        getContentPane().add(jPanel7, java.awt.BorderLayout.PAGE_START);
+
+        setSize(new java.awt.Dimension(792, 895));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -884,6 +863,14 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         clearFields();
     }//GEN-LAST:event_btnClearActionPerformed
 
+    private void btnClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose1ActionPerformed
+        System.exit(0); // Close the application
+    }//GEN-LAST:event_btnClose1ActionPerformed
+
+    private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_btnMin1ActionPerformed
+
     private int getUserIdFromEmployeeId(int employeeId) {
         String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_employee_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -918,8 +905,8 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             if (imageFile.exists()) {
                 img = ImageIO.read(imageFile);
                 if (img != null) {
-                    int width = 100; 
-                    int height = 100;
+                    int width = 120; 
+                    int height = 120;
                     Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                     imageLabel.setIcon(new ImageIcon(scaledImg));
                 } else {
@@ -1008,7 +995,9 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnClose1;
     private javax.swing.JButton btnConfirmEdit;
+    private javax.swing.JButton btnMin1;
     private javax.swing.JComboBox<Department> comboBoxDepartment;
     private javax.swing.JComboBox<String> comboBoxGender;
     private javax.swing.JComboBox<JobTitle> comboBoxJobTitle;
@@ -1017,10 +1006,13 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     private javax.swing.JTextField firstName;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1028,10 +1020,11 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField lastName;
     private javax.swing.JPasswordField passWord;
     // End of variables declaration//GEN-END:variables

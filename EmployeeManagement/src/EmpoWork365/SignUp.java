@@ -369,21 +369,22 @@ public final class SignUp extends javax.swing.JFrame {
         jButton2.setText("Add Image");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton2.setFocusPainted(false);
+        jButton2.setFocusable(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 140, 100, 30));
+        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(246, 140, -1, 30));
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel5.setBackground(new java.awt.Color(204, 204, 255));
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         imageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         imageLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 140, 120));
+        jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 110, 110));
 
-        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 10, -1, -1));
+        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 20, 110, 110));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 36, 57));
@@ -427,6 +428,7 @@ public final class SignUp extends javax.swing.JFrame {
         btnClear1.setText("Clear All");
         btnClear1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnClear1.setFocusPainted(false);
+        btnClear1.setFocusable(false);
         btnClear1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClear1ActionPerformed(evt);
@@ -448,11 +450,6 @@ public final class SignUp extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 firstNameFocusLost(evt);
-            }
-        });
-        firstName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                firstNameActionPerformed(evt);
             }
         });
         jPanel4.add(firstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 240, 45));
@@ -538,6 +535,7 @@ public final class SignUp extends javax.swing.JFrame {
         btnSignIn.setBorderPainted(false);
         btnSignIn.setContentAreaFilled(false);
         btnSignIn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSignIn.setFocusable(false);
         btnSignIn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnSignIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -760,10 +758,6 @@ public final class SignUp extends javax.swing.JFrame {
         System.exit(0); // Close the application
     }//GEN-LAST:event_btnCloseActionPerformed
 
-    private void firstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firstNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_firstNameActionPerformed
-
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
@@ -796,8 +790,8 @@ public final class SignUp extends javax.swing.JFrame {
             ImageIcon originalIcon = new ImageIcon(imageLocation);
             Image originalImage = originalIcon.getImage();
             
-            int width = 110;
-            int height = 110;
+            int width = 120;
+            int height = 120;
             
             Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);

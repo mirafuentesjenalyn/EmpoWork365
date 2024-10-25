@@ -217,7 +217,125 @@ public class EmployeeMethod {
        }
 
        return model; 
-   }
+    }
+    
+//    public DefaultTableModel getAttendanceDataByDate(java.sql.Date selectedDate) throws SQLException {
+//        String[] columnNames = {
+//            "Employee ID", "Full Name", "Job Title", "Department", 
+//            "Time In", "Time Out", "Date", "Status"
+//        };
+//
+//        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+//
+//        String query = "SELECT e.fld_employee_id, "
+//                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+//                     + "jt.fld_job_title, "
+//                     + "d.fld_department_name, "
+//                     + "a.fld_time_in, a.fld_time_out, a.fld_attendance_date, "
+//                     + "CASE "
+//                     + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL THEN 'Present' "
+//                     + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL THEN 'Incomplete' "
+//                     + "ELSE 'Absent' END AS status "
+//                     + "FROM tbl_employees e "
+//                     + "LEFT JOIN tbl_attendance a ON e.fld_employee_id = a.fld_employee_id "
+//                     + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+//                     + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+//                     + "WHERE a.fld_attendance_date = ? "
+//                     + "ORDER BY e.fld_employee_id ASC";
+//
+//        try (PreparedStatement statement = connection.prepareStatement(query)) {
+//            statement.setDate(1, selectedDate);
+//
+//            try (ResultSet resultSet = statement.executeQuery()) {
+//                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+//
+//                while (resultSet.next()) {
+//                    String timeIn = formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat);
+//                    String timeOut = formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat);
+//                    String attendanceDate = formatDate(resultSet.getDate("fld_attendance_date"), dateFormat);
+//
+//                    Object[] row = {
+//                        resultSet.getInt("fld_employee_id"),
+//                        resultSet.getString("full_name"),
+//                        resultSet.getString("fld_job_title"),
+//                        resultSet.getString("fld_department_name"),
+//                        (timeIn != null) ? timeIn : "",
+//                        (timeOut != null) ? timeOut : "",
+//                        (attendanceDate != null) ? attendanceDate : "",
+//                        resultSet.getString("status")
+//                    };
+//                    model.addRow(row);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new SQLException("Error fetching attendance data by date: " + e.getMessage(), e);
+//        }
+//
+//        return model;
+//    }
+//    
+//    public DefaultTableModel getAttendanceDataByStatus(String statusFilter) throws SQLException {
+//       String[] columnNames = {
+//           "Employee ID", "Full Name", "Job Title", "Department", 
+//           "Time In", "Time Out", "Date", "Status"
+//       };
+//
+//       DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+//
+//       String query = "SELECT e.fld_employee_id, "
+//                    + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
+//                    + "jt.fld_job_title, "
+//                    + "d.fld_department_name, "
+//                    + "a.fld_time_in, a.fld_time_out, a.fld_attendance_date, "
+//                    + "CASE "
+//                    + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL THEN 'Present' "
+//                    + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL THEN 'Incomplete' "
+//                    + "ELSE 'Absent' END AS status "
+//                    + "FROM tbl_employees e "
+//                    + "LEFT JOIN tbl_attendance a ON e.fld_employee_id = a.fld_employee_id "
+//                    + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+//                    + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+//                    + "WHERE (a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL AND ? = 'Present') "
+//                    + "OR (a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL AND ? = 'Incomplete') "
+//                    + "OR (? = 'Absent' AND a.fld_time_in IS NULL) "
+//                    + "ORDER BY e.fld_employee_id ASC";
+//
+//       try (PreparedStatement statement = connection.prepareStatement(query)) {
+//           statement.setString(1, statusFilter);
+//           statement.setString(2, statusFilter);
+//           statement.setString(3, statusFilter);
+//
+//           try (ResultSet resultSet = statement.executeQuery()) {
+//               SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//               SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+//
+//               while (resultSet.next()) {
+//                   String timeIn = formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat);
+//                   String timeOut = formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat);
+//                   String attendanceDate = formatDate(resultSet.getDate("fld_attendance_date"), dateFormat);
+//
+//                   Object[] row = {
+//                       resultSet.getInt("fld_employee_id"),
+//                       resultSet.getString("full_name"),
+//                       resultSet.getString("fld_job_title"),
+//                       resultSet.getString("fld_department_name"),
+//                       (timeIn != null) ? timeIn : "",
+//                       (timeOut != null) ? timeOut : "",
+//                       (attendanceDate != null) ? attendanceDate : "",
+//                       resultSet.getString("status")
+//                   };
+//                   model.addRow(row);
+//               }
+//           }
+//       } catch (SQLException e) {
+//           e.printStackTrace(); // Log the exception
+//           throw new SQLException("Error fetching attendance data by status: " + e.getMessage(), e);
+//       }
+//
+//       return model;
+//   }
+
     
     public DefaultTableModel getAttendanceDataByDateAndStatus(java.sql.Date selectedDate, String statusFilter) throws SQLException {
         String[] columnNames = {
@@ -252,7 +370,7 @@ public class EmployeeMethod {
                 query += "WHERE a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL ";
                 break;
             case "Absent":
-                query += "WHERE a.fld_time_in IS NULL AND a.fld_time_out IS NULL ";
+                query += "WHERE a.fld_time_in IS NULL ";
                 break;
             case "All":
             default:
@@ -294,7 +412,6 @@ public class EmployeeMethod {
 
         return model;
     }
-
 
     private String formatTimestamp(Timestamp timestamp, SimpleDateFormat timeFormat) {
         return (timestamp != null) ? timeFormat.format(timestamp) : "N/A";

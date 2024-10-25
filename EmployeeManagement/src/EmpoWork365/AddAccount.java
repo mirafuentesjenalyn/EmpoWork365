@@ -25,6 +25,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -288,22 +289,15 @@ public final class AddAccount extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel3 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        btnClose1 = new javax.swing.JButton();
+        btnMin1 = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
-        btnCreateAccount = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        firstName = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        lastName = new javax.swing.JTextField();
-        comboBoxGender = new javax.swing.JComboBox<>();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        comboBoxJobTitle = new javax.swing.JComboBox<>();
-        jLabel10 = new javax.swing.JLabel();
-        comboBoxDepartment = new javax.swing.JComboBox<>();
-        jLabel11 = new javax.swing.JLabel();
-        comboBoxRole = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
@@ -312,172 +306,114 @@ public final class AddAccount extends javax.swing.JFrame {
         eMail = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         passWord = new javax.swing.JPasswordField();
-        jLabel3 = new javax.swing.JLabel();
+        comboBoxRole = new javax.swing.JComboBox<>();
+        comboBoxDepartment = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        comboBoxJobTitle = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        comboBoxGender = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        lastName = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        firstName = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        btnCreateAccount = new javax.swing.JButton();
         btnClear1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel3.setBackground(new java.awt.Color(17, 94, 94));
+        jPanel7.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setBackground(new java.awt.Color(8, 127, 127));
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        btnCreateAccount.setBackground(new java.awt.Color(185, 230, 230));
-        btnCreateAccount.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        btnCreateAccount.setForeground(new java.awt.Color(65, 126, 118));
-        btnCreateAccount.setText("CREATE ACCOUNT");
-        btnCreateAccount.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnCreateAccount.addActionListener(new java.awt.event.ActionListener() {
+        btnClose1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
+        btnClose1.setContentAreaFilled(false);
+        btnClose1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose1.setFocusable(false);
+        btnClose1.setRequestFocusEnabled(false);
+        btnClose1.setRolloverEnabled(false);
+        btnClose1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCreateAccountActionPerformed(evt);
+                btnClose1ActionPerformed(evt);
             }
         });
+        jPanel7.add(btnClose1, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 50, 50, 40));
 
-        jPanel2.setBackground(new java.awt.Color(8, 127, 127));
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("First Name");
-
-        firstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        firstName.setForeground(new java.awt.Color(153, 204, 188));
-        firstName.setText("Enter First Name");
-        firstName.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                firstNameFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                firstNameFocusLost(evt);
+        btnMin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
+        btnMin1.setContentAreaFilled(false);
+        btnMin1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMin1.setFocusable(false);
+        btnMin1.setRequestFocusEnabled(false);
+        btnMin1.setRolloverEnabled(false);
+        btnMin1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMin1ActionPerformed(evt);
             }
         });
+        jPanel7.add(btnMin1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 50, 50, 40));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Last Name");
+        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logo.png"))); // NOI18N
+        jPanel7.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, 50));
 
-        lastName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        lastName.setForeground(new java.awt.Color(153, 204, 188));
-        lastName.setText("Enter Last Name");
-        lastName.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                lastNameFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                lastNameFocusLost(evt);
-            }
-        });
+        jLabel2.setFont(new java.awt.Font("Perpetua", 1, 28)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("EMPOWER");
+        jPanel7.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 40, -1, 60));
 
-        comboBoxGender.setBackground(new java.awt.Color(229, 255, 237));
-        comboBoxGender.setToolTipText("");
+        jLabel17.setFont(new java.awt.Font("Viner Hand ITC", 1, 24)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel17.setText("Work");
+        jPanel7.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 40, 70, 60));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Gender");
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel18.setText("for 365");
+        jPanel7.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 60, 40));
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Job Title");
+        jSeparator1.setBackground(new java.awt.Color(240, 240, 240));
+        jSeparator1.setForeground(new java.awt.Color(240, 240, 240));
+        jSeparator1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel7.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 780, -1));
 
-        comboBoxJobTitle.setBackground(new java.awt.Color(229, 255, 237));
+        getContentPane().add(jPanel7, java.awt.BorderLayout.PAGE_START);
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel10.setText("Department");
+        jPanel1.setBackground(new java.awt.Color(240, 240, 240));
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        comboBoxDepartment.setBackground(new java.awt.Color(229, 255, 237));
+        jPanel4.setBackground(new java.awt.Color(240, 240, 240));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("Role");
-
-        comboBoxRole.setBackground(new java.awt.Color(229, 255, 237));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 119, Short.MAX_VALUE))
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(13, 13, 13))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxDepartment, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxJobTitle, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboBoxGender, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lastName, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(firstName))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel4)
-                .addGap(6, 6, 6)
-                .addComponent(firstName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addGap(6, 6, 6)
-                .addComponent(lastName, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel6)
-                .addGap(6, 6, 6)
-                .addComponent(comboBoxGender, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(comboBoxJobTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(comboBoxDepartment, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboBoxRole, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel4.setBackground(new java.awt.Color(8, 127, 127));
-
+        jButton2.setBackground(new java.awt.Color(170, 154, 182));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Add Image");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setFocusPainted(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
+        jPanel4.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 180, 100, -1));
 
+        jPanel5.setBackground(new java.awt.Color(204, 204, 255));
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         imageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         imageLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 140, 120));
+        jPanel5.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 120));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 120, -1));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 36, 57));
         jLabel8.setText("Email");
+        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 430, 121, -1));
 
         eMail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        eMail.setForeground(new java.awt.Color(153, 204, 188));
+        eMail.setForeground(new java.awt.Color(126, 138, 150));
         eMail.setText("Enter Email");
         eMail.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -487,12 +423,14 @@ public final class AddAccount extends javax.swing.JFrame {
                 eMailFocusLost(evt);
             }
         });
+        jPanel4.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 450, 280, 45));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 36, 57));
         jLabel7.setText("Password");
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 520, 121, -1));
 
-        passWord.setForeground(new java.awt.Color(153, 204, 188));
+        passWord.setForeground(new java.awt.Color(126, 138, 150));
         passWord.setText("Password");
         passWord.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -502,196 +440,137 @@ public final class AddAccount extends javax.swing.JFrame {
                 passWordFocusLost(evt);
             }
         });
+        jPanel4.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 540, 280, 45));
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(eMail, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(passWord, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addComponent(jButton2))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel8)
-                .addGap(6, 6, 6)
-                .addComponent(eMail, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel7)
-                .addGap(12, 12, 12)
-                .addComponent(passWord, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
+        jPanel4.add(comboBoxRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 540, 240, 45));
+        jPanel4.add(comboBoxDepartment, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 450, 240, 45));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI Historic", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(102, 204, 255));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("CREATE NEW ACCOUNT");
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel11.setText("Role");
+        jPanel4.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 520, 240, -1));
 
-        btnClear1.setBackground(new java.awt.Color(71, 146, 146));
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel10.setText("Department");
+        jPanel4.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 430, 118, -1));
+        jPanel4.add(comboBoxJobTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 360, 240, 45));
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel9.setText("Job Title");
+        jPanel4.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 340, 240, -1));
+
+        comboBoxGender.setToolTipText("");
+        jPanel4.add(comboBoxGender, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 280, 240, 45));
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel6.setText("Gender");
+        jPanel4.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 260, 240, -1));
+
+        lastName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lastName.setForeground(new java.awt.Color(126, 138, 150));
+        lastName.setText("Enter Last Name");
+        lastName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                lastNameFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                lastNameFocusLost(evt);
+            }
+        });
+        jPanel4.add(lastName, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 360, 280, 45));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel5.setText("Last Name");
+        jPanel4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 340, 120, -1));
+
+        firstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        firstName.setForeground(new java.awt.Color(126, 138, 150));
+        firstName.setText("Enter First Name");
+        firstName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                firstNameFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                firstNameFocusLost(evt);
+            }
+        });
+        jPanel4.add(firstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 280, 280, 45));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel4.setText("First Name");
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 260, 319, -1));
+
+        btnCreateAccount.setBackground(new java.awt.Color(0, 36, 57));
+        btnCreateAccount.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnCreateAccount.setForeground(new java.awt.Color(255, 255, 255));
+        btnCreateAccount.setText("CREATE ACCOUNT");
+        btnCreateAccount.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCreateAccount.setFocusPainted(false);
+        btnCreateAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateAccountActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnCreateAccount, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 650, 158, 40));
+
+        btnClear1.setBackground(new java.awt.Color(136, 168, 200));
+        btnClear1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnClear1.setForeground(new java.awt.Color(255, 255, 255));
         btnClear1.setText("Clear All");
         btnClear1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear1.setFocusPainted(false);
         btnClear1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClear1ActionPerformed(evt);
             }
         });
+        jPanel4.add(btnClear1, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 180, 100, -1));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(12, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnClear1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnCreateAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(188, 188, 188))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(182, 182, 182))))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnClear1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
-                .addComponent(btnCreateAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(79, 79, 79))
-        );
+        jLabel3.setBackground(new java.awt.Color(0, 36, 57));
+        jLabel3.setFont(new java.awt.Font("Segoe UI Light", 0, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 36, 57));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel3.setText("Create New Account");
+        jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(153, 204, 255));
-        jLabel1.setText("EmpoWork365");
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 770, 750));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(385, 385, 385)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(120, 120, 120)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(188, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel1)
-                .addGap(25, 25, 25)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(67, Short.MAX_VALUE))
-        );
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
-
-        setSize(new java.awt.Dimension(959, 938));
+        pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void lastNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusGained
-        if (lastName.getText().equals("Enter Last Name")) {
-            lastName.setText("");
-            lastName.setForeground(new Color(142,122,69));
-        }
-    }//GEN-LAST:event_lastNameFocusGained
+    private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_btnMin1ActionPerformed
 
-    private void lastNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusLost
-        if (lastName.getText().isEmpty()) {
-            lastName.setText("Enter Last Name");
-            lastName.setForeground(new Color(205,186,136));
-        }
-    }//GEN-LAST:event_lastNameFocusLost
+    private void btnClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose1ActionPerformed
+        System.exit(0); // Close the application
+    }//GEN-LAST:event_btnClose1ActionPerformed
 
-    private void passWordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusGained
-        if (String.valueOf(passWord.getPassword()).equals("Password")) {
-            passWord.setText("");
-            passWord.setEchoChar('*');
-            passWord.setForeground(new Color(142,122,69));
-        }
-    }//GEN-LAST:event_passWordFocusGained
+    private void btnClear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear1ActionPerformed
+        clearFields();
+    }//GEN-LAST:event_btnClear1ActionPerformed
 
-    private void passWordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusLost
-        if (String.valueOf(passWord.getPassword()).isEmpty()) {
-            passWord.setEchoChar((char)0);
-            passWord.setText("Password");
-            passWord.setForeground(new Color(205,186,136));
-        }
-    }//GEN-LAST:event_passWordFocusLost
-
-    private boolean isEmailDuplicate(String email) {
-        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSQL)) {
-            pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0; 
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error checking email duplication: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return false; 
-    }
-
-    
     private void btnCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateAccountActionPerformed
         String firstNameInput = firstName.getText().trim();
         String lastNameInput = lastName.getText().trim();
         String emailInput = eMail.getText().trim();
         String passwordInput = new String(passWord.getPassword()).trim();
         String genderInput = (String) comboBoxGender.getSelectedItem();
-        int jobTitleId = getJobTitleId(); 
-        Department selectedDepartment = (Department) comboBoxDepartment.getSelectedItem(); 
-        int departmentId = selectedDepartment != null ? selectedDepartment.getId() : -1; 
-        Role selectedRole = (Role) comboBoxRole.getSelectedItem(); 
-        int roleId = selectedRole != null ? selectedRole.getRoleId() : -1; 
-        String imagePath = addImageToFolder(); 
-        String dateOfEmployment = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); 
+        int jobTitleId = getJobTitleId();
+        Department selectedDepartment = (Department) comboBoxDepartment.getSelectedItem();
+        int departmentId = selectedDepartment != null ? selectedDepartment.getId() : -1;
+        Role selectedRole = (Role) comboBoxRole.getSelectedItem();
+        int roleId = selectedRole != null ? selectedRole.getRoleId() : -1;
+        String imagePath = addImageToFolder();
+        String dateOfEmployment = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || genderInput == null ||
             emailInput.isEmpty() || passwordInput.isEmpty() || imagePath == null ||
@@ -709,24 +588,31 @@ public final class AddAccount extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (passwordInput.equals(PASSWORD_PLACEHOLDER)) {
             JOptionPane.showMessageDialog(this, "Please enter a valid password.", "Invalid Password", JOptionPane.ERROR_MESSAGE);
             return;
         }
         SignUpMethod signUpMethod = new SignUpMethod();
-        boolean accountCreated = signUpMethod.createAccount(firstNameInput, lastNameInput, emailInput, passwordInput, 
-                                                            genderInput, jobTitleId, departmentId, roleId, 
-                                                            dateOfEmployment, imagePath);
+        boolean accountCreated = signUpMethod.createAccount(firstNameInput, lastNameInput, emailInput, passwordInput,
+            genderInput, jobTitleId, departmentId, roleId,
+            dateOfEmployment, imagePath);
 
         if (accountCreated) {
             JOptionPane.showMessageDialog(this, "Account created successfully!");
-            mainAdmin.loadEmployeeData(); 
+            mainAdmin.loadEmployeeData();
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Error creating account. Please try again.");
         }
     }//GEN-LAST:event_btnCreateAccountActionPerformed
+
+    private void firstNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusLost
+        if (firstName.getText().isEmpty()) {
+            firstName.setText("Enter First Name");
+            firstName.setForeground(new Color(126,138,150));
+        }
+    }//GEN-LAST:event_firstNameFocusLost
 
     private void firstNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusGained
         if (firstName.getText().equals("Enter First Name")) {
@@ -735,12 +621,42 @@ public final class AddAccount extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_firstNameFocusGained
 
-    private void firstNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusLost
-        if (firstName.getText().isEmpty()) {
-            firstName.setText("Enter First Name");
-            firstName.setForeground(new Color(205,186,136));
+    private void lastNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusLost
+        if (lastName.getText().isEmpty()) {
+            lastName.setText("Enter Last Name");
+            lastName.setForeground(new Color(205,186,136));
         }
-    }//GEN-LAST:event_firstNameFocusLost
+    }//GEN-LAST:event_lastNameFocusLost
+
+    private void lastNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lastNameFocusGained
+        if (lastName.getText().equals("Enter Last Name")) {
+            lastName.setText("");
+            lastName.setForeground(new Color(142,122,69));
+        }
+    }//GEN-LAST:event_lastNameFocusGained
+
+    private void passWordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusLost
+        if (String.valueOf(passWord.getPassword()).isEmpty()) {
+            passWord.setEchoChar((char)0);
+            passWord.setText("Password");
+            passWord.setForeground(new Color(205,186,136));
+        }
+    }//GEN-LAST:event_passWordFocusLost
+
+    private void passWordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passWordFocusGained
+        if (String.valueOf(passWord.getPassword()).equals("Password")) {
+            passWord.setText("");
+            passWord.setEchoChar('*');
+            passWord.setForeground(new Color(142,122,69));
+        }
+    }//GEN-LAST:event_passWordFocusGained
+
+    private void eMailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusLost
+        if (eMail.getText().isEmpty()) {
+            eMail.setText("Enter Email");
+            eMail.setForeground(new Color(126,138,150));
+        }
+    }//GEN-LAST:event_eMailFocusLost
 
     private void eMailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusGained
         if (eMail.getText().equals("Enter Email")) {
@@ -749,21 +665,25 @@ public final class AddAccount extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_eMailFocusGained
 
-    private void eMailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusLost
-        if (eMail.getText().isEmpty()) {
-            eMail.setText("Enter Email");
-            eMail.setForeground(new Color(205,186,136));
-        }
-    }//GEN-LAST:event_eMailFocusLost
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         selectImage();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void btnClear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear1ActionPerformed
-        clearFields();
-    }//GEN-LAST:event_btnClear1ActionPerformed
+    private boolean isEmailDuplicate(String email) {
+        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSQL)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; 
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking email duplication: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false; 
+    }
 
+    
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
@@ -796,8 +716,8 @@ public final class AddAccount extends javax.swing.JFrame {
             ImageIcon originalIcon = new ImageIcon(imageLocation);
             Image originalImage = originalIcon.getImage();
             
-            int width = 100;
-            int height = 100;
+            int width = 120;
+            int height = 120;
             
             Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
@@ -893,9 +813,10 @@ public final class AddAccount extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClear1;
+    private javax.swing.JButton btnClose1;
     private javax.swing.JButton btnCreateAccount;
+    private javax.swing.JButton btnMin1;
     private javax.swing.JComboBox<Department> comboBoxDepartment;
     private javax.swing.JComboBox<String> comboBoxGender;
     private javax.swing.JComboBox<JobTitle> comboBoxJobTitle;
@@ -904,9 +825,12 @@ public final class AddAccount extends javax.swing.JFrame {
     private javax.swing.JTextField firstName;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -915,10 +839,10 @@ public final class AddAccount extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField lastName;
     private javax.swing.JPasswordField passWord;
     // End of variables declaration//GEN-END:variables

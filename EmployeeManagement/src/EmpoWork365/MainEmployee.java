@@ -8,10 +8,6 @@ import com.toedter.calendar.JMonthChooser;
 import java.sql.Connection;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -30,10 +26,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JSpinner;
-import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -65,6 +59,14 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
      * Creates new form Login
      */
     public MainEmployee() {
+        setUndecorated(true);
+        setResizable(false);  
+        ImageIcon icon = IconLoader.getIcon();
+        Image img = icon.getImage();
+        
+        setIconImage(img);
+        
+        
         initComponents();
         this.REGULAR_HOURS_PER_MONTH  = 160.0;
         instance = this;
@@ -280,17 +282,17 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     
     private void addButtonHoverEffect(javax.swing.JButton button) {
         button.setOpaque(true);
-        button.setBackground(new Color(8,127,127));
+        button.setBackground(new Color(0,36,57));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(17,94,94));
+                button.setBackground(new Color(33,77,104));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(8,127,127));
+                button.setBackground(new Color(0,36,57));
             }
         });
     }
@@ -333,6 +335,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel11 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         sideBar = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -345,9 +348,15 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         jPanel1 = new javax.swing.JPanel();
         userImageIcon = new javax.swing.JLabel();
         logout = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         home = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
+        jPanel13 = new javax.swing.JPanel();
+        btnMin1 = new javax.swing.JButton();
+        btnClose1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         userWelcome = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -373,6 +382,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         btnTimeOut = new javax.swing.JButton();
         btnLeave = new javax.swing.JButton();
         trackingAttendance = new javax.swing.JPanel();
+        jPanel14 = new javax.swing.JPanel();
+        btnMin2 = new javax.swing.JButton();
+        btnClose2 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         comboBoxPresentAbsent = new javax.swing.JComboBox<>();
         datePanelPicker = new javax.swing.JPanel();
@@ -381,13 +393,19 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         totalCountAbsentLabel = new javax.swing.JLabel();
         totalCountAbsent = new javax.swing.JLabel();
         leave = new javax.swing.JPanel();
+        jPanel15 = new javax.swing.JPanel();
+        btnMin3 = new javax.swing.JButton();
+        btnClose3 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         searchNameTxt = new javax.swing.JTextField();
         searchBarEmployeeName = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         leaveTable = new javax.swing.JTable();
         managePayroll = new javax.swing.JPanel();
+        jPanel16 = new javax.swing.JPanel();
+        btnMin4 = new javax.swing.JButton();
+        btnClose4 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         incomeTaxLabel = new javax.swing.JLabel();
@@ -450,13 +468,15 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        sideBar.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        sideBar.setBackground(new java.awt.Color(0, 36, 57));
         sideBar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel3.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel3.setBackground(new java.awt.Color(0, 36, 57));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel2.setBackground(new java.awt.Color(0, 36, 57));
 
         btnHome.setBackground(new java.awt.Color(102, 102, 102));
         btnHome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -553,7 +573,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         fullName.setText("NAME");
         jPanel3.add(fullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 204, -1));
 
-        jPanel1.setBackground(new java.awt.Color(8, 127, 127));
+        jPanel1.setBackground(new java.awt.Color(0, 36, 57));
 
         userImageIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userImageIcon.setMaximumSize(new java.awt.Dimension(100, 100));
@@ -570,62 +590,122 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 logoutMouseClicked(evt);
             }
         });
-        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 680, -1, -1));
+        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 580, -1, -1));
 
-        sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
+        sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, -1, 740));
 
-        home.setBackground(new java.awt.Color(255, 249, 249));
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logo.png"))); // NOI18N
+        sideBar.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, 40));
 
-        jPanel4.setBackground(new java.awt.Color(218, 248, 240));
+        jLabel9.setFont(new java.awt.Font("Viner Hand ITC", 1, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Work");
+        sideBar.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 70, -1));
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(48, 77, 71));
+        jLabel8.setFont(new java.awt.Font("Perpetua", 1, 24)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("EMPOWER");
+        sideBar.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, -1, 60));
+
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel11.setText("for 365");
+        sideBar.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, 70, 30));
+
+        jPanel5.add(sideBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, -1, -1));
+
+        home.setBackground(new java.awt.Color(255, 255, 255));
+        home.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel13.setBackground(new java.awt.Color(5, 52, 80));
+
+        btnMin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
+        btnMin1.setContentAreaFilled(false);
+        btnMin1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMin1.setFocusable(false);
+        btnMin1.setRequestFocusEnabled(false);
+        btnMin1.setRolloverEnabled(false);
+        btnMin1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMin1ActionPerformed(evt);
+            }
+        });
+
+        btnClose1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
+        btnClose1.setContentAreaFilled(false);
+        btnClose1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose1.setFocusable(false);
+        btnClose1.setRequestFocusEnabled(false);
+        btnClose1.setRolloverEnabled(false);
+        btnClose1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClose1ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setBackground(new java.awt.Color(192, 213, 249));
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(192, 213, 249));
         jLabel1.setText("Hi,");
 
-        userWelcome.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
-        userWelcome.setForeground(new java.awt.Color(48, 77, 71));
+        userWelcome.setBackground(new java.awt.Color(192, 213, 249));
+        userWelcome.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        userWelcome.setForeground(new java.awt.Color(192, 213, 249));
         userWelcome.setText("user");
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(15, 86, 86));
+        jLabel6.setBackground(new java.awt.Color(192, 213, 249));
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(192, 213, 249));
         jLabel6.setText("USER ID:");
 
-        employeeIdLabel.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        employeeIdLabel.setForeground(new java.awt.Color(15, 86, 86));
+        employeeIdLabel.setBackground(new java.awt.Color(192, 213, 249));
+        employeeIdLabel.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        employeeIdLabel.setForeground(new java.awt.Color(192, 213, 249));
         employeeIdLabel.setText("Number");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel13Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userWelcome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(userWelcome, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel13Layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(employeeIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(442, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
+                .addComponent(btnMin1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(btnClose1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(userWelcome))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(employeeIdLabel))
-                .addGap(32, 32, 32))
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel13Layout.createSequentialGroup()
+                        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(userWelcome))
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(employeeIdLabel)))
+                    .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btnClose1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnMin1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
+                .addGap(10, 10, 10))
         );
 
-        jPanel7.setBackground(new java.awt.Color(255, 255, 255));
+        home.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
+
+        jPanel7.setBackground(new java.awt.Color(240, 240, 240));
 
         jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel24.setForeground(new java.awt.Color(48, 77, 71));
@@ -729,125 +809,143 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 .addGap(20, 20, 20))
         );
 
+        home.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, -1, -1));
+
         attendanceLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         attendanceLabel.setForeground(new java.awt.Color(9, 53, 53));
         attendanceLabel.setText("DAILY WORK LOG");
+        home.add(attendanceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 160, 405, 42));
 
         userRole.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         userRole.setForeground(new java.awt.Color(9, 53, 53));
         userRole.setText("ROLE");
+        home.add(userRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 397, -1));
 
         btnEditProfile.setBackground(new java.awt.Color(8, 127, 127));
         btnEditProfile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnEditProfile.setForeground(new java.awt.Color(255, 255, 255));
         btnEditProfile.setText("EDIT PROFILE");
         btnEditProfile.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditProfile.setFocusable(false);
         btnEditProfile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditProfileActionPerformed(evt);
             }
         });
+        home.add(btnEditProfile, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 330, 151, 45));
 
         jSeparator1.setBackground(new java.awt.Color(20, 165, 165));
         jSeparator1.setForeground(new java.awt.Color(20, 165, 165));
+        home.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 692, 19));
 
         btnTimeIn.setBackground(new java.awt.Color(34, 165, 102));
         btnTimeIn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnTimeIn.setForeground(new java.awt.Color(255, 255, 255));
         btnTimeIn.setText("Time In");
         btnTimeIn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnTimeIn.setFocusable(false);
         btnTimeIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTimeInActionPerformed(evt);
             }
         });
+        home.add(btnTimeIn, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 116, 43));
 
         btnTimeOut.setBackground(new java.awt.Color(165, 61, 33));
         btnTimeOut.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnTimeOut.setForeground(new java.awt.Color(255, 255, 255));
         btnTimeOut.setText("Time Out");
         btnTimeOut.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnTimeOut.setFocusable(false);
         btnTimeOut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTimeOutActionPerformed(evt);
             }
         });
+        home.add(btnTimeOut, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 210, 111, 43));
 
         btnLeave.setBackground(new java.awt.Color(235, 168, 80));
         btnLeave.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnLeave.setForeground(new java.awt.Color(255, 255, 255));
         btnLeave.setText("Leave");
         btnLeave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLeave.setFocusable(false);
         btnLeave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLeaveActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout homeLayout = new javax.swing.GroupLayout(home);
-        home.setLayout(homeLayout);
-        homeLayout.setHorizontalGroup(
-            homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(homeLayout.createSequentialGroup()
-                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(homeLayout.createSequentialGroup()
-                        .addGap(62, 62, 62)
-                        .addComponent(attendanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, homeLayout.createSequentialGroup()
-                            .addGap(114, 114, 114)
-                            .addComponent(btnTimeIn, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(btnTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnLeave, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, homeLayout.createSequentialGroup()
-                            .addGap(49, 49, 49)
-                            .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, homeLayout.createSequentialGroup()
-                                    .addGap(16, 16, 16)
-                                    .addComponent(userRole, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jSeparator1)))))
-                .addGap(30, 612, Short.MAX_VALUE))
-        );
-        homeLayout.setVerticalGroup(
-            homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(homeLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(attendanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTimeIn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTimeOut, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLeave, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 33, Short.MAX_VALUE)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(homeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnEditProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(userRole))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(78, 78, 78))
-        );
+        home.add(btnLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 210, 150, 43));
 
         jTabbedPane1.addTab("tab1", home);
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        trackingAttendance.setBackground(new java.awt.Color(255, 255, 255));
+        trackingAttendance.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel14.setBackground(new java.awt.Color(5, 52, 80));
+
+        btnMin2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
+        btnMin2.setContentAreaFilled(false);
+        btnMin2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMin2.setFocusable(false);
+        btnMin2.setRequestFocusEnabled(false);
+        btnMin2.setRolloverEnabled(false);
+        btnMin2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMin2ActionPerformed(evt);
+            }
+        });
+
+        btnClose2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
+        btnClose2.setContentAreaFilled(false);
+        btnClose2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose2.setFocusable(false);
+        btnClose2.setRequestFocusEnabled(false);
+        btnClose2.setRolloverEnabled(false);
+        btnClose2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClose2ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Track Attendance");
+
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
+                .addContainerGap(233, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(153, 153, 153)
+                .addComponent(btnMin2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(btnClose2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
+        );
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btnClose2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnMin2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
+                .addGap(18, 18, 18))
+        );
+
+        trackingAttendance.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
 
         comboBoxPresentAbsent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxPresentAbsentActionPerformed(evt);
             }
         });
+        trackingAttendance.add(comboBoxPresentAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 180, -1, 30));
 
         datePanelPicker.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -861,6 +959,8 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             datePanelPickerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 30, Short.MAX_VALUE)
         );
+
+        trackingAttendance.add(datePanelPicker, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 180, -1, -1));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -879,59 +979,78 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             jTable2.getColumnModel().getColumn(0).setMaxWidth(30);
         }
 
-        totalCountAbsentLabel.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        trackingAttendance.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 234, 772, 590));
+
+        totalCountAbsentLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         totalCountAbsentLabel.setText("Total Count of Absence:");
+        trackingAttendance.add(totalCountAbsentLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
 
-        totalCountAbsent.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        totalCountAbsent.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         totalCountAbsent.setText("jLabel");
-
-        javax.swing.GroupLayout trackingAttendanceLayout = new javax.swing.GroupLayout(trackingAttendance);
-        trackingAttendance.setLayout(trackingAttendanceLayout);
-        trackingAttendanceLayout.setHorizontalGroup(
-            trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 772, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                                .addGap(35, 35, 35)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(155, 155, 155)
-                                .addComponent(comboBoxPresentAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(31, 31, 31)
-                                .addComponent(datePanelPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                                .addComponent(totalCountAbsentLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(totalCountAbsent)))))
-                .addContainerGap(620, Short.MAX_VALUE))
-        );
-        trackingAttendanceLayout.setVerticalGroup(
-            trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(trackingAttendanceLayout.createSequentialGroup()
-                .addContainerGap(109, Short.MAX_VALUE)
-                .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(comboBoxPresentAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, trackingAttendanceLayout.createSequentialGroup()
-                        .addComponent(datePanelPicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(trackingAttendanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalCountAbsentLabel)
-                    .addComponent(totalCountAbsent))
-                .addGap(36, 36, 36)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(103, 103, 103))
-        );
+        trackingAttendance.add(totalCountAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 180, -1, -1));
 
         jTabbedPane1.addTab("tab3", trackingAttendance);
 
-        leave.setBackground(new java.awt.Color(255, 249, 249));
+        leave.setBackground(new java.awt.Color(255, 255, 255));
+        leave.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel15.setBackground(new java.awt.Color(5, 52, 80));
+
+        btnMin3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
+        btnMin3.setContentAreaFilled(false);
+        btnMin3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMin3.setFocusable(false);
+        btnMin3.setRequestFocusEnabled(false);
+        btnMin3.setRolloverEnabled(false);
+        btnMin3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMin3ActionPerformed(evt);
+            }
+        });
+
+        btnClose3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
+        btnClose3.setContentAreaFilled(false);
+        btnClose3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose3.setFocusable(false);
+        btnClose3.setRequestFocusEnabled(false);
+        btnClose3.setRolloverEnabled(false);
+        btnClose3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClose3ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Leave Summary");
+
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
+                .addContainerGap(233, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(141, 141, 141)
+                .addComponent(btnMin3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(btnClose3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btnClose3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnMin3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
+                .addGap(18, 18, 18))
+        );
+
+        leave.add(jPanel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
         jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(1, 113, 132)));
@@ -963,9 +1082,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         });
         jPanel6.add(searchBarEmployeeName, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 7, 50, -1));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Leave Summary");
+        leave.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(493, 157, -1, 43));
 
         leaveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -980,39 +1097,70 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         ));
         jScrollPane1.setViewportView(leaveTable);
 
-        javax.swing.GroupLayout leaveLayout = new javax.swing.GroupLayout(leave);
-        leave.setLayout(leaveLayout);
-        leaveLayout.setHorizontalGroup(
-            leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(leaveLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(leaveLayout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(298, 298, 298)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 765, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(627, Short.MAX_VALUE))
-        );
-        leaveLayout.setVerticalGroup(
-            leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(leaveLayout.createSequentialGroup()
-                .addGap(151, 151, 151)
-                .addGroup(leaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(156, Short.MAX_VALUE))
-        );
+        leave.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 218, 765, 610));
 
         jTabbedPane1.addTab("tab1", leave);
 
         managePayroll.setBackground(new java.awt.Color(255, 255, 255));
+        managePayroll.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jPanel16.setBackground(new java.awt.Color(5, 52, 80));
+
+        btnMin4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
+        btnMin4.setContentAreaFilled(false);
+        btnMin4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMin4.setFocusable(false);
+        btnMin4.setRequestFocusEnabled(false);
+        btnMin4.setRolloverEnabled(false);
+        btnMin4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMin4ActionPerformed(evt);
+            }
+        });
+
+        btnClose4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
+        btnClose4.setContentAreaFilled(false);
+        btnClose4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose4.setFocusable(false);
+        btnClose4.setRequestFocusEnabled(false);
+        btnClose4.setRolloverEnabled(false);
+        btnClose4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClose4ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Access Payroll");
+
+        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
+                .addContainerGap(240, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(163, 163, 163)
+                .addComponent(btnMin4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(btnClose4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
+        );
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btnClose4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnMin4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
+                .addGap(18, 18, 18))
+        );
+
+        managePayroll.add(jPanel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
 
         jPanel9.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1278,7 +1426,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(unusedLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(unusedLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(thirteenthMonthPayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(thirteenthMonthPayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1290,6 +1438,8 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                         .addComponent(netSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(16, 16, 16))
         );
+
+        managePayroll.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(26, 157, -1, 680));
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1330,26 +1480,13 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         jPanel10.add(jobTitleTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 350, 260, -1));
 
         jPanel8.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         userImagePayroll.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userImagePayroll.setMaximumSize(new java.awt.Dimension(100, 100));
         userImagePayroll.setMinimumSize(new java.awt.Dimension(100, 100));
         userImagePayroll.setPreferredSize(new java.awt.Dimension(100, 100));
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(userImagePayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(userImagePayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        jPanel8.add(userImagePayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 105, 105));
 
         jPanel10.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 100, -1, -1));
 
@@ -1362,7 +1499,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 btnClear2ActionPerformed(evt);
             }
         });
-        jPanel10.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 120, 20));
+        jPanel10.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 120, 20));
         jPanel10.add(monthChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 4, 120, -1));
 
         btnReceiptPayroll.setText("Print");
@@ -1373,66 +1510,36 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         });
         jPanel10.add(btnReceiptPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 120, 20));
 
-        javax.swing.GroupLayout managePayrollLayout = new javax.swing.GroupLayout(managePayroll);
-        managePayroll.setLayout(managePayrollLayout);
-        managePayrollLayout.setHorizontalGroup(
-            managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(managePayrollLayout.createSequentialGroup()
-                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(managePayrollLayout.createSequentialGroup()
-                        .addGap(274, 274, 274)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(managePayrollLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25)
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(638, Short.MAX_VALUE))
-        );
-        managePayrollLayout.setVerticalGroup(
-            managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(managePayrollLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addGroup(managePayrollLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30))
-        );
+        managePayroll.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(396, 161, 364, 430));
 
         jTabbedPane1.addTab("tab4", managePayroll);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1612, Short.MAX_VALUE)
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel5Layout.createSequentialGroup()
+        jPanel5.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(212, 0, 1400, 900));
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1000, Short.MAX_VALUE)
+            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel11Layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(sideBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(4, 4, 4)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 1000, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 840, Short.MAX_VALUE)
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel5Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel5Layout.createSequentialGroup()
-                            .addGap(40, 40, 40)
-                            .addComponent(sideBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 840, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 902, Short.MAX_VALUE)
+            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel11Layout.createSequentialGroup()
+                    .addGap(0, 1, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 1, Short.MAX_VALUE)))
         );
 
-        getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, 1000, -1));
+        getContentPane().add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, -1, -1));
 
-        setSize(new java.awt.Dimension(1016, 809));
+        pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1538,8 +1645,6 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private void clearDatePicker() {
         datePickerStart.getModel().setValue(null); // Reset the date picker model
     }
-
-
     
     private void setupDatePickers() {
         UtilDateModel modelStart = new UtilDateModel();
@@ -1704,6 +1809,38 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         //    // Set the frame visible
         //    receiptFrame.setVisible(true);
     }//GEN-LAST:event_btnReceiptPayrollActionPerformed
+
+    private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_btnMin1ActionPerformed
+
+    private void btnClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose1ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnClose1ActionPerformed
+
+    private void btnMin2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin2ActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_btnMin2ActionPerformed
+
+    private void btnClose2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose2ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnClose2ActionPerformed
+
+    private void btnMin3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin3ActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_btnMin3ActionPerformed
+
+    private void btnClose3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose3ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnClose3ActionPerformed
+
+    private void btnMin4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin4ActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_btnMin4ActionPerformed
+
+    private void btnClose4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose4ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnClose4ActionPerformed
 
 
     private void loadPayrollDetails() {
@@ -2148,10 +2285,18 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private javax.swing.JLabel attendanceLabel;
     private javax.swing.JButton btnAttSum;
     private javax.swing.JButton btnClear2;
+    private javax.swing.JButton btnClose1;
+    private javax.swing.JButton btnClose2;
+    private javax.swing.JButton btnClose3;
+    private javax.swing.JButton btnClose4;
     private javax.swing.JButton btnEditProfile;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnLeave;
     private javax.swing.JButton btnLeaveSum;
+    private javax.swing.JButton btnMin1;
+    private javax.swing.JButton btnMin2;
+    private javax.swing.JButton btnMin3;
+    private javax.swing.JButton btnMin4;
     private javax.swing.JButton btnPayroll;
     private javax.swing.JButton btnReceiptPayroll;
     private javax.swing.JButton btnTimeIn;
@@ -2175,6 +2320,8 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private javax.swing.JLabel incomeTaxLabel;
     private javax.swing.JTextField incomeTaxTextField;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel26;
@@ -2188,11 +2335,17 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;

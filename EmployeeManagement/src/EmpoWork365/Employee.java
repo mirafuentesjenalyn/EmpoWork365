@@ -27,7 +27,7 @@ public class Employee {
     private Double vacationLeaveUsed;
     private String payrollMonth;
     private Double leaveBalance;
-    private Double unUsedLeave;
+    private Double unusedLeave;
 
     // Constructor with parameters
     public Employee(String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, Date dateOfEmployment) {
@@ -74,7 +74,7 @@ public class Employee {
 
     public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, String imagePath, Double ratePerHour,
                     Double netSalary, Double philHealthDeduction, Double sssDeduction, Double pagIbigDeduction, Double incomeTax, Double unpaidLeaveDays, Double sickLeave, 
-                    Double emergencyLeave, Double vacationLeave, Double sickLeaveUsed, Double emergencyLeaveUsed, Double vacationLeaveUsed, String payrollMonth, Double leaveBalance, Double unUsedLeave) {
+                    Double emergencyLeave, Double vacationLeave, Double sickLeaveUsed, Double emergencyLeaveUsed, Double vacationLeaveUsed, String payrollMonth, Double leaveBalance, Double unusedLeave) {
         this.employeeId = employeeId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -98,7 +98,7 @@ public class Employee {
         this.vacationLeaveUsed = vacationLeaveUsed != null ? vacationLeaveUsed : 0.0;
         this.payrollMonth = payrollMonth != null ? payrollMonth : "January";  // Default payroll month
         this.leaveBalance = leaveBalance;
-        this.unUsedLeave = unUsedLeave;
+        this.unusedLeave = unusedLeave;
     }
 
     Employee() {

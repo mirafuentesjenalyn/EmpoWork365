@@ -62,6 +62,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
 
     public static MainAdmin instance;
+
     /**
      * Creates new form Login
      */
@@ -70,11 +71,10 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         setResizable(false);  
         ImageIcon icon = IconLoader.getIcon();
         Image img = icon.getImage();
-        
         setIconImage(img);
         
-        this.REGULAR_HOURS_PER_MONTH  = 160.0;
         initComponents();
+        this.REGULAR_HOURS_PER_MONTH  = 160.0;
         instance = this;
         initializeComboBox();
         initializeComboBoxPresentAbsent();
@@ -587,6 +587,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnReceiptPayroll = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setBounds(new java.awt.Rectangle(200, 200, 200, 200));
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel4.setPreferredSize(new java.awt.Dimension(1000, 800));
@@ -743,7 +746,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 logoutMouseClicked(evt);
             }
         });
-        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 630, -1, -1));
+        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 580, -1, -1));
 
         sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, -1, 750));
 
@@ -770,7 +773,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         home.setBackground(new java.awt.Color(255, 255, 255));
         home.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel13.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel13.setBackground(new java.awt.Color(5, 52, 80));
 
         btnMin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
         btnMin1.setContentAreaFilled(false);
@@ -856,7 +859,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         home.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 790, 130));
 
-        jPanel7.setBackground(new java.awt.Color(244, 249, 255));
+        jPanel7.setBackground(new java.awt.Color(240, 240, 240));
 
         jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel24.setForeground(new java.awt.Color(48, 77, 71));
@@ -967,6 +970,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnEditProfile.setForeground(new java.awt.Color(255, 255, 255));
         btnEditProfile.setText("EDIT PROFILE");
         btnEditProfile.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditProfile.setFocusable(false);
         btnEditProfile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditProfileActionPerformed(evt);
@@ -985,7 +989,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         employeeManagement.setPreferredSize(new java.awt.Dimension(900, 938));
         employeeManagement.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel14.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel14.setBackground(new java.awt.Color(5, 52, 80));
 
         btnMin2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
         btnMin2.setContentAreaFilled(false);
@@ -1049,6 +1053,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("Add");
         btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAdd.setFocusable(false);
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddActionPerformed(evt);
@@ -1093,6 +1098,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Delete");
         btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDelete.setFocusable(false);
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
@@ -1101,6 +1107,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         btnEdit.setText("Edit");
         btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEdit.setFocusable(false);
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditActionPerformed(evt);
@@ -1168,14 +1175,14 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             jTable1.getColumnModel().getColumn(3).setMaxWidth(70);
         }
 
-        employeeManagement.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 760, 620));
+        employeeManagement.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 760, 590));
 
         jTabbedPane1.addTab("tab2", employeeManagement);
 
         trackingAttendance.setBackground(new java.awt.Color(255, 255, 255));
         trackingAttendance.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel15.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel15.setBackground(new java.awt.Color(5, 52, 80));
 
         btnMin3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
         btnMin3.setContentAreaFilled(false);
@@ -1245,7 +1252,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             .addGap(0, 30, Short.MAX_VALUE)
         );
 
-        trackingAttendance.add(datePanelPicker, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 160, -1, -1));
+        trackingAttendance.add(datePanelPicker, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 180, -1, -1));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1264,21 +1271,21 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             jTable2.getColumnModel().getColumn(0).setMaxWidth(30);
         }
 
-        trackingAttendance.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 760, 660));
+        trackingAttendance.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 770, 620));
 
         comboBoxPresentAbsent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxPresentAbsentActionPerformed(evt);
             }
         });
-        trackingAttendance.add(comboBoxPresentAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 160, -1, 30));
+        trackingAttendance.add(comboBoxPresentAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, -1, 30));
 
         jTabbedPane1.addTab("tab3", trackingAttendance);
 
         leave.setBackground(new java.awt.Color(255, 255, 255));
         leave.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel16.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel16.setBackground(new java.awt.Color(5, 52, 80));
 
         btnMin4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
         btnMin4.setContentAreaFilled(false);
@@ -1335,6 +1342,8 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         leave.add(jPanel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 790, 130));
 
+        jScrollPane3.setBackground(new java.awt.Color(255, 255, 255));
+
         leaveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
@@ -1356,7 +1365,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         });
         jScrollPane3.setViewportView(leaveTable);
 
-        leave.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 765, 640));
+        leave.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 765, 620));
 
         comboBoxSelectStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1370,7 +1379,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         managePayroll.setBackground(new java.awt.Color(255, 255, 255));
         managePayroll.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel17.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel17.setBackground(new java.awt.Color(5, 52, 80));
 
         btnMin5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
         btnMin5.setContentAreaFilled(false);
@@ -1609,7 +1618,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(19, 19, 19)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(emp_idLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(getIdPayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1700,7 +1709,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
                 .addGap(16, 16, 16))
         );
 
-        managePayroll.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, -1, -1));
+        managePayroll.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, -1, 670));
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1739,28 +1748,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         jPanel10.add(jobTitleTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 350, 260, -1));
 
         jPanel8.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         userImagePayroll.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userImagePayroll.setMaximumSize(new java.awt.Dimension(100, 100));
         userImagePayroll.setMinimumSize(new java.awt.Dimension(100, 100));
         userImagePayroll.setPreferredSize(new java.awt.Dimension(100, 100));
+        jPanel8.add(userImagePayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(userImagePayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(userImagePayroll, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        jPanel10.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 100, -1, -1));
+        jPanel10.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 110, -1, 100));
 
         btnClear2.setBackground(new java.awt.Color(71, 146, 146));
         btnClear2.setForeground(new java.awt.Color(204, 255, 255));
@@ -1793,7 +1789,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         });
         jPanel10.add(btnReceiptPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 120, 20));
 
-        managePayroll.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 170, 364, -1));
+        managePayroll.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 180, 364, 430));
 
         jTabbedPane1.addTab("tab4", managePayroll);
 
@@ -2022,46 +2018,59 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }//GEN-LAST:event_comboBoxPresentAbsentActionPerformed
 
     private void btnReceiptPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceiptPayrollActionPerformed
-        //    Employee employee = getEmployee();
-        //
-        //    if (employee == null) {
-            //        // Show an error if no employee is selected
-            //        JOptionPane.showMessageDialog(null, "No employee selected.", "Error", JOptionPane.ERROR_MESSAGE);
-            //        return;
-            //    }
-        //
-        //    // Ensure monthChooser is initialized and not null
-        //    if (monthChooser == null) {
-            //        JOptionPane.showMessageDialog(null, "Month chooser is not initialized.", "Error", JOptionPane.ERROR_MESSAGE);
-            //        return;
-            //    }
-        //
-        //    // Get the selected payroll month from monthChooser (1-based month, 1 for January to 12 for December)
-        //    int selectedMonth = monthChooser.getMonth() + 1;  // 1-based month (1-12)
-        //    String payrollMonth = getMonthName(selectedMonth);  // Get the month name based on selected month
-        //
-        //    // Optionally, you can set payrollMonth in the Employee if necessary
-        //    employee.setPayrollMonth(payrollMonth);  // Set payroll month for employee
-        //
-        //    // Calculate total hours worked for selected month
-        //    double totalHoursWorked = calculateTotalHoursWorked(employee, selectedMonth, (int) yearSpinner.getValue());
-        //    double overtimeHours = calculateOvertimeHours(totalHoursWorked);  // Calculate overtime hours
-        //    double totalSalary = calculateTotalSalary(totalHoursWorked, employee.getRatePerHour(), overtimeHours);  // Calculate total salary
-        //
-        //    // Calculate deductions (assuming no unpaid leave)
-        //    double unpaidLeaveCost = calculateUnpaidLeave(employee.getRatePerHour(), 0);  // Assuming 0 unpaid leave for simplicity
-        //    double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost);  // Calculate net salary after deductions
-        //
-        //    // Calculate unused leave and 13th month pay (only for December)
-        //    int totalAbsences = employeeMethod.getTotalAbsences(employee);
-        //    double thirteenthMonthPay = employee.calculateThirteenthMonthPay(employee.getNetSalary());  // Calculate 13th month pay
-        //
-        //    // Create the receipt frame and pass payroll details to it
-        //    Receipt receiptFrame = new Receipt();
-        //    receiptFrame.setPayrollDetails(employee, totalSalary, totalHoursWorked, overtimeHours, unpaidLeaveCost, netSalary, unusedLeave, thirteenthMonthPay, selectedMonth);
-        //
-        //    // Set the frame visible
-        //    receiptFrame.setVisible(true);
+        Receipt receiptFrame = new Receipt();
+
+        Employee employee = getEmployee(); 
+
+         if (employee == null) {
+             JOptionPane.showMessageDialog(null, "Please select an employee.", "Error", JOptionPane.ERROR_MESSAGE);
+             return;
+         }
+
+         int selectedMonth = monthChooser.getMonth() + 1;  
+         getMonthName(selectedMonth); 
+
+         // Calculate total hours worked for the selected month
+         double totalHoursWorked = calculateTotalHoursWorked(employee, selectedMonth, (int) yearSpinner.getValue());
+         double overtimeHours = calculateOvertimeHours(totalHoursWorked);  // Calculate overtime hours
+         double totalSalary = calculateTotalSalary(totalHoursWorked, employee.getRatePerHour(), overtimeHours);  // Calculate total salary
+
+         // Calculate deductions
+         double philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
+         double sssDeduction = calculateSSSDeduction(totalSalary);
+         double pagibigDeduction = calculatePagIbigDeduction(totalSalary);
+         double incomeTaxDeduction = calculateIncomeTax(totalSalary);
+
+         double totalDeductions = philHealthDeduction + sssDeduction + pagibigDeduction + incomeTaxDeduction;
+
+         double unpaidLeaveCost = 0.0; // Assuming 0 unpaid leave for January-November
+         double netSalary = calculateNetSalary(totalSalary, totalDeductions + unpaidLeaveCost);  // Calculate net salary after deductions
+
+         // Initialize unused leave and 13th month pay
+         double unusedLeave = 0.0; // Adjust logic to calculate unused leave
+         double thirteenthMonthPay = (selectedMonth == 12) ? employee.calculateThirteenthMonthPay(netSalary) : 0.0;
+
+         // Create the receipt frame and pass payroll details to it
+
+         // Set payroll details based on the selected month
+         if (selectedMonth == 12) {
+             EmployeeMethod employeeOption = new EmployeeMethod(connection);
+             int totalAbsences = employeeOption.getTotalAbsences(employee);
+             try {
+                 unusedLeave = calculateUnusedLeave(employee); // Implement your logic for unused leave calculation
+             } catch (SQLException ex) {
+                 Logger.getLogger(MainAdmin.class.getName()).log(Level.SEVERE, null, ex);
+             }
+
+             // Pass totalAbsences and payrollMonth to the receipt details
+            receiptFrame.setPayrollDetails(employee, totalSalary, totalHoursWorked, overtimeHours, totalDeductions, netSalary, unusedLeave, thirteenthMonthPay, selectedMonth, totalAbsences);
+         } else {
+             // For January-November
+            receiptFrame.setPayrollDetails(employee, totalSalary, totalHoursWorked, overtimeHours, totalDeductions, netSalary, unusedLeave, thirteenthMonthPay, selectedMonth, 0);
+         }
+
+         // Set the frame visible
+         receiptFrame.setVisible(true);
     }//GEN-LAST:event_btnReceiptPayrollActionPerformed
 
     private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
@@ -2183,9 +2192,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         String employeeIdText = getIdPayroll.getText().trim();
         if (!employeeIdText.isEmpty()) {
             try {
-                int employeeId = Integer.parseInt(employeeIdText);
-                EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-                employee = employeeMethod.getEmployeeIdById(employeeId);
+                int EmployeeId = Integer.parseInt(employeeIdText);
+                EmployeeMethod getEmployeeMethod = new EmployeeMethod(connection);
+                employee = getEmployeeMethod.getEmployeeIdById(EmployeeId);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Invalid Employee ID format.", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (SQLException e) {
@@ -2195,9 +2204,9 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         // Otherwise, retrieve employee by name if nameTextField is not empty
         else if (!nameTextField.getText().trim().isEmpty()) {
             String name = nameTextField.getText().trim();
-            EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+            EmployeeMethod employeOpt = new EmployeeMethod(connection);
             try {
-                employee = employeeMethod.getEmployeeByName(name);
+                employee = employeOpt.getEmployeeByName(name);
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -2352,7 +2361,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
        double totalSalary = calculateTotalSalary(totalHoursWorked, ratePerHour, overtimeHours);
        totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
 
-       // Calculate total deductions
        double unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, 0); 
        double netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost);
        netSalaryTextField.setText(formatCurrency(netSalary));
@@ -2368,7 +2376,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     private void updateDecemberDetails(Employee employee, int year) throws SQLException {
         System.out.println("update december details: " + employee.getEmployeeId() + ", Year: " + year);
 
-        EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+        EmployeeMethod employeeOption = new EmployeeMethod(connection);
         AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
 
         // Fetch December details (12 in 1-based, 11 in 0-based)
@@ -2392,22 +2400,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         pagibigTextField.setText(formatCurrency(calculatePagIbigDeduction(totalSalary)));
         incomeTaxTextField.setText(formatCurrency(calculateIncomeTax(totalSalary)));
 
-        // Employee leave balance and absences
-        Map<String, Integer> remainingLeaveDays = employeeMethod.getRemainingLeaveDays(employee.getEmployeeId());
-        int sickLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE);
-        int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
-        int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
-
-        sickLeaveTextField.setText(String.valueOf(sickLeaveBalance));
-        emergencyLeaveTextField.setText(String.valueOf(emergencyLeaveBalance));
-        vacationLeaveTextField.setText(String.valueOf(vacationLeaveBalance));
-
-        int totalLeaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
-        leaveBalanceTextField.setText(String.valueOf(totalLeaveBalance));
-
-        // Calculate unused leave
-        int leaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
-        double unusedLeaveCost = leaveBalance * employee.getRatePerHour() * 8.0; 
+        double unusedLeaveCost = calculateUnusedLeave(employee); 
         unusedLeaveTextField.setText(formatCurrency(unusedLeaveCost));
 
         // Basic salary = Rate per hour * Hours per month * 12 (for the year), then divided by 12 for 13th month pay
@@ -2416,7 +2409,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay));
 
         // Total absence calculation
-        int totalAbsences = employeeMethod.getTotalAbsences(employee);
+        int totalAbsences = employeeOption.getTotalAbsences(employee);
         totalAbsenceTextField.setText(String.valueOf(totalAbsences));
 
         // Calculate net salary
@@ -2426,6 +2419,17 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         netSalaryTextField.setText(formatCurrency(netSalary));
     }
 
+    private double calculateUnusedLeave(Employee employee) throws SQLException {
+        EmployeeMethod employeeMethod = new EmployeeMethod(connection);
+        Map<String, Integer> remainingLeaveDays = employeeMethod.getRemainingLeaveDays(employee.getEmployeeId());
+        int sickLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE);
+        int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
+        int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
+
+        int leaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
+
+        return leaveBalance * employee.getRatePerHour() * 8.0; 
+    }
 
     
     private double calculateTotalHoursWorked(Employee employee, int month, int year) {
@@ -2433,7 +2437,6 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         double totalHours = 0.0;
 
         try {
-            // Fetch the total hours worked for the employee in the given month and year
             totalHours = attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), month, year);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error retrieving total hours worked: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -2444,16 +2447,15 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
     private double calculateOvertimeHours(double totalHoursWorked) {
         double overtimeHours = totalHoursWorked - REGULAR_HOURS_PER_MONTH;
-        return Math.max(overtimeHours, 0);
+        return Math.max(overtimeHours, 0.0);
     }
 
     private double calculateTotalSalary(double totalHoursWorked, double ratePerHour, double overtimeHours) {
         double regularSalary = ratePerHour * totalHoursWorked;
-
         double overtimeRate = ratePerHour * 1.5;
         double overtimeSalary = overtimeRate * overtimeHours; 
-
-        return regularSalary + overtimeSalary; 
+        double totalSalary = regularSalary + overtimeSalary;
+        return totalSalary;
     }
 
     private double calculateNetSalary(double totalSalary, double unpaidLeaveCost) {
@@ -2482,7 +2484,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }
 
     private double calculatePagIbigDeduction(double totalSalary) {
-        return totalSalary <= 200 ? totalSalary * 0.01 : totalSalary * 0.02; 
+        return totalSalary <= 200.0 ? totalSalary * 0.01 : totalSalary * 0.02; 
     }
     private double calculateIncomeTax(double salary) {
         if (salary <= 250000.00) {
@@ -2501,7 +2503,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }
     
     private double calculateUnpaidLeave(double ratePerHour, int unpaidLeaveDays) {
-        final int HOURS_PER_DAY = 8; 
+        final double HOURS_PER_DAY = 8.0; 
         return ratePerHour * HOURS_PER_DAY * unpaidLeaveDays;
     }
 
