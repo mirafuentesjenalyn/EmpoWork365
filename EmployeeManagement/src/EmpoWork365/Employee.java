@@ -1,9 +1,12 @@
 package EmpoWork365;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 public class Employee {
     private int employeeId;
+    private String employeeID;
     private String firstname;
     private String lastname;
     private String email;
@@ -12,26 +15,26 @@ public class Employee {
     private String departmentName;
     private String imagePath;
     private Date dateOfEmployment;
-    private Double ratePerHour;
-    private Double netSalary;
-    private Double philHealthDeduction;
-    private Double sssDeduction;
-    private Double pagIbigDeduction;
-    private Double incomeTax;
-    private Double unpaidLeaveDays;
-    private Double sickLeave;
-    private Double sickLeaveUsed;
-    private Double emergencyLeave;
-    private Double emergencyLeaveUsed;
-    private Double vacationLeave;
-    private Double vacationLeaveUsed;
+    private BigDecimal ratePerHour;
+    private BigDecimal netSalary;
+    private BigDecimal philHealthDeduction;
+    private BigDecimal sssDeduction;
+    private BigDecimal pagIbigDeduction;
+    private BigDecimal incomeTax;
+    private BigDecimal unpaidLeaveDays;
+    private BigDecimal sickLeave;
+    private BigDecimal sickLeaveUsed;
+    private BigDecimal emergencyLeave;
+    private BigDecimal emergencyLeaveUsed;
+    private BigDecimal vacationLeave;
+    private BigDecimal vacationLeaveUsed;
     private String payrollMonth;
-    private Double leaveBalance;
-    private Double unusedLeave;
+    private BigDecimal leaveBalance;
+    private BigDecimal unusedLeave;
 
     // Constructor with parameters
-    public Employee(String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, Date dateOfEmployment) {
-        this.employeeId = 0;  // Assuming employeeId is generated elsewhere
+    public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, Date dateOfEmployment) {
+        this.employeeId = employeeId; 
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -54,8 +57,8 @@ public class Employee {
     }
 
     // Constructor for payroll calculations
-    public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, String imagePath, Double ratePerHour,
-                    Double netSalary, Double philHealthDeduction, Double sssDeduction, Double pagIbigDeduction, Double incomeTax) {
+    public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, String imagePath, BigDecimal ratePerHour,
+                    BigDecimal netSalary, BigDecimal philHealthDeduction, BigDecimal sssDeduction, BigDecimal pagIbigDeduction, BigDecimal incomeTax) {
         this.employeeId = employeeId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -72,9 +75,12 @@ public class Employee {
         this.incomeTax = incomeTax;
     }
 
-    public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, String imagePath, Double ratePerHour,
-                    Double netSalary, Double philHealthDeduction, Double sssDeduction, Double pagIbigDeduction, Double incomeTax, Double unpaidLeaveDays, Double sickLeave, 
-                    Double emergencyLeave, Double vacationLeave, Double sickLeaveUsed, Double emergencyLeaveUsed, Double vacationLeaveUsed, String payrollMonth, Double leaveBalance, Double unusedLeave) {
+    public Employee(int employeeId, String firstname, String lastname, String email, String gender, String jobtitle, String departmentName, String imagePath, BigDecimal ratePerHour,
+                    BigDecimal netSalary, BigDecimal philHealthDeduction, BigDecimal sssDeduction, BigDecimal pagIbigDeduction, BigDecimal incomeTax, 
+                    BigDecimal unpaidLeaveDays, BigDecimal sickLeave, BigDecimal emergencyLeave, BigDecimal vacationLeave, 
+                    BigDecimal sickLeaveUsed, BigDecimal emergencyLeaveUsed, BigDecimal vacationLeaveUsed, String payrollMonth, 
+                    BigDecimal leaveBalance, BigDecimal unusedLeave) {
+        
         this.employeeId = employeeId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -83,22 +89,22 @@ public class Employee {
         this.jobtitle = jobtitle;
         this.departmentName = departmentName;
         this.imagePath = imagePath;
-        this.ratePerHour = ratePerHour;
-        this.netSalary = netSalary;
-        this.philHealthDeduction = philHealthDeduction;
-        this.sssDeduction = sssDeduction;
-        this.pagIbigDeduction = pagIbigDeduction;
-        this.incomeTax = incomeTax;
-        this.unpaidLeaveDays = unpaidLeaveDays != null ? unpaidLeaveDays : 0.0;
-        this.sickLeave = sickLeave != null ? sickLeave : 0.0;
-        this.emergencyLeave = emergencyLeave != null ? emergencyLeave : 0.0;
-        this.vacationLeave = vacationLeave != null ? vacationLeave : 0.0;
-        this.sickLeaveUsed = sickLeaveUsed != null ? sickLeaveUsed : 0.0;
-        this.emergencyLeaveUsed = emergencyLeaveUsed != null ? emergencyLeaveUsed : 0.0;
-        this.vacationLeaveUsed = vacationLeaveUsed != null ? vacationLeaveUsed : 0.0;
+        this.ratePerHour = ratePerHour != null ? ratePerHour : BigDecimal.ZERO;  // Ensure it's never null
+        this.netSalary = netSalary != null ? netSalary : BigDecimal.ZERO;  // Ensure it's never null
+        this.philHealthDeduction = philHealthDeduction != null ? philHealthDeduction : BigDecimal.ZERO;  // Ensure it's never null
+        this.sssDeduction = sssDeduction != null ? sssDeduction : BigDecimal.ZERO;  // Ensure it's never null
+        this.pagIbigDeduction = pagIbigDeduction != null ? pagIbigDeduction : BigDecimal.ZERO;  // Ensure it's never null
+        this.incomeTax = incomeTax != null ? incomeTax : BigDecimal.ZERO;  // Ensure it's never null
+        this.unpaidLeaveDays = unpaidLeaveDays != null ? unpaidLeaveDays : BigDecimal.ZERO;  // Ensure it's never null
+        this.sickLeave = sickLeave != null ? sickLeave : BigDecimal.ZERO;  // Ensure it's never null
+        this.emergencyLeave = emergencyLeave != null ? emergencyLeave : BigDecimal.ZERO;  // Ensure it's never null
+        this.vacationLeave = vacationLeave != null ? vacationLeave : BigDecimal.ZERO;  // Ensure it's never null
+        this.sickLeaveUsed = sickLeaveUsed != null ? sickLeaveUsed : BigDecimal.ZERO;  // Ensure it's never null
+        this.emergencyLeaveUsed = emergencyLeaveUsed != null ? emergencyLeaveUsed : BigDecimal.ZERO;  // Ensure it's never null
+        this.vacationLeaveUsed = vacationLeaveUsed != null ? vacationLeaveUsed : BigDecimal.ZERO;  // Ensure it's never null
         this.payrollMonth = payrollMonth != null ? payrollMonth : "January";  // Default payroll month
-        this.leaveBalance = leaveBalance;
-        this.unusedLeave = unusedLeave;
+        this.leaveBalance = leaveBalance != null ? leaveBalance : BigDecimal.ZERO;  // Ensure it's never null
+        this.unusedLeave = unusedLeave != null ? unusedLeave : BigDecimal.ZERO;  // Ensure it's never null
     }
 
     Employee() {
@@ -113,6 +119,14 @@ public class Employee {
         this.employeeId = employeeId;
     }
 
+    public String getEmployeeID() {
+        return employeeID;
+    }
+
+    public void setEmployeeId(String employeeID) {
+        this.employeeID = employeeID;
+    }
+    
     public String getFirstname() {
         return firstname;
     }
@@ -164,7 +178,7 @@ public class Employee {
     public String getImagePath() {
         return imagePath;
     }
-
+ 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
@@ -177,107 +191,107 @@ public class Employee {
         this.dateOfEmployment = dateOfEmployment;
     }
 
-    public Double getRatePerHour() {
+    public BigDecimal getRatePerHour() {
         return ratePerHour;
     }
 
-    public void setRatePerHour(Double ratePerHour) {
+    public void setRatePerHour(BigDecimal ratePerHour) {
         this.ratePerHour = ratePerHour;
     }
 
-    public Double getNetSalary() {
+    public BigDecimal getNetSalary() {
         return netSalary;
     }
 
-    public void setNetSalary(Double netSalary) {
+    public void setNetSalary(BigDecimal netSalary) {
         this.netSalary = netSalary;
     }
 
-    public Double getPhilHealthDeduction() {
+    public BigDecimal getPhilHealthDeduction() {
         return philHealthDeduction;
     }
 
-    public void setPhilHealthDeduction(Double philHealthDeduction) {
+    public void setPhilHealthDeduction(BigDecimal philHealthDeduction) {
         this.philHealthDeduction = philHealthDeduction;
     }
 
-    public Double getSSSDeduction() {
+    public BigDecimal getSSSDeduction() {
         return sssDeduction;
     }
 
-    public void setSSSDeduction(Double sssDeduction) {
+    public void setSSSDeduction(BigDecimal sssDeduction) {
         this.sssDeduction = sssDeduction;
     }
 
-    public Double getPagIbigDeduction() {
+    public BigDecimal getPagIbigDeduction() {
         return pagIbigDeduction;
     }
 
-    public void setPagIbigDeduction(Double pagIbigDeduction) {
+    public void setPagIbigDeduction(BigDecimal pagIbigDeduction) {
         this.pagIbigDeduction = pagIbigDeduction;
     }
 
-    public Double getIncomeTax() {
+    public BigDecimal getIncomeTax() {
         return incomeTax;
     }
 
-    public void setIncomeTax(Double incomeTax) {
+    public void setIncomeTax(BigDecimal incomeTax) {
         this.incomeTax = incomeTax;
     }
 
-    public Double getUnpaidLeaveDays() {
+    public BigDecimal getUnpaidLeaveDays() {
         return unpaidLeaveDays;
     }
 
-    public void setUnpaidLeaveDays(Double unpaidLeaveDays) {
+    public void setUnpaidLeaveDays(BigDecimal unpaidLeaveDays) {
         this.unpaidLeaveDays = unpaidLeaveDays;
     }
 
-    public Double getSickLeave() {
+    public BigDecimal getSickLeave() {
         return sickLeave;
     }
 
-    public void setSickLeave(Double sickLeave) {
+    public void setSickLeave(BigDecimal sickLeave) {
         this.sickLeave = sickLeave;
     }
 
-    public Double getSickLeaveUsed() {
+    public BigDecimal getSickLeaveUsed() {
         return sickLeaveUsed;
     }
 
-    public void setSickLeaveUsed(Double sickLeaveUsed) {
+    public void setSickLeaveUsed(BigDecimal sickLeaveUsed) {
         this.sickLeaveUsed = sickLeaveUsed;
     }
 
-    public Double getEmergencyLeave() {
+    public BigDecimal getEmergencyLeave() {
         return emergencyLeave;
     }
 
-    public void setEmergencyLeave(Double emergencyLeave) {
+    public void setEmergencyLeave(BigDecimal emergencyLeave) {
         this.emergencyLeave = emergencyLeave;
     }
 
-    public Double getEmergencyLeaveUsed() {
+    public BigDecimal getEmergencyLeaveUsed() {
         return emergencyLeaveUsed;
     }
 
-    public void setEmergencyLeaveUsed(Double emergencyLeaveUsed) {
+    public void setEmergencyLeaveUsed(BigDecimal emergencyLeaveUsed) {
         this.emergencyLeaveUsed = emergencyLeaveUsed;
     }
 
-    public Double getVacationLeave() {
+    public BigDecimal getVacationLeave() {
         return vacationLeave;
     }
 
-    public void setVacationLeave(Double vacationLeave) {
+    public void setVacationLeave(BigDecimal vacationLeave) {
         this.vacationLeave = vacationLeave;
     }
 
-    public Double getVacationLeaveUsed() {
+    public BigDecimal getVacationLeaveUsed() {
         return vacationLeaveUsed;
     }
 
-    public void setVacationLeaveUsed(Double vacationLeaveUsed) {
+    public void setVacationLeaveUsed(BigDecimal vacationLeaveUsed) {
         this.vacationLeaveUsed = vacationLeaveUsed;
     }
 
@@ -289,12 +303,16 @@ public class Employee {
         this.payrollMonth = payrollMonth;
     }
 
-
-
-    // Method to calculate 13th month pay
-    public double calculateThirteenthMonthPay(double totalSalary) {
-        return totalSalary / 12;  // Simplified formula for 13th-month pay
+    public BigDecimal getLeaveBalance() {
+        return leaveBalance;
     }
+
+   // Method to calculate 13th month pay
+    public BigDecimal calculateThirteenthMonthPay(BigDecimal totalSalary) {
+        // Dividing totalSalary by 12 for the 13th month pay, using HALF_UP rounding mode
+        return totalSalary.divide(BigDecimal.valueOf(12), RoundingMode.HALF_UP);
+    }
+
 
     @Override
     public String toString() {

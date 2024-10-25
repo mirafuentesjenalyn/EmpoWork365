@@ -692,7 +692,7 @@ public final class AddAccount extends javax.swing.JFrame {
     private void resetImageSelection() {
         imageLocation = null;
         imageSelected = false;
-        imageLabel.setIcon(null);  
+        imageLabel.setIcon(new ImageIcon("src/Users/user.png"));  
     }
 
     

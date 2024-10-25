@@ -4,9 +4,16 @@
  */
 package EmpoWork365;
 
-import EmpoWork365.Employee;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,8 +21,8 @@ import java.util.Locale;
  */
 public class Receipt extends javax.swing.JFrame {
 
-        private double unpaidLeaveCost;
-    private double totalDeductions;
+    private BigDecimal  unpaidLeaveCost;
+    private BigDecimal totalDeductions;
 
     /**
      * Creates new form Receipt
@@ -24,27 +31,34 @@ public class Receipt extends javax.swing.JFrame {
         initComponents();
         receiptTextArea1.setEditable(false); 
     }
- public void setPayrollDetails(Employee employee, double totalSalary, double totalHoursWorked,
-                                  double overtimeHours, double totalDeductions, double netSalary,
-                                  double unusedLeave, double thirteenthMonthPay, int selectedMonth,
-                                  int totalAbsences) {
-        boolean isDecember = (selectedMonth == 12); // Check if it's December
+    
+    public void setPayrollDetails(Employee employee, BigDecimal totalSalary, BigDecimal ratePerHour, 
+                               BigDecimal totalHoursWorked, BigDecimal overtimeHours, 
+                               BigDecimal totalDeductions, BigDecimal netSalary, 
+                               BigDecimal unusedLeave, BigDecimal thirteenthMonthPay, 
+                               int selectedMonth) {
+        // Ensure all values are initialized
+        this.unpaidLeaveCost = BigDecimal.ZERO; // Assume it will be passed for December
+        // Remove the deduction calculation here since it's already done
+        this.totalDeductions = totalDeductions; // Use passed value directly
+
+        boolean isDecember = (selectedMonth == 12);
 
         // Generate payroll receipt content
         String receiptContent = generatePayrollReceipt(
-            employee, totalSalary, totalHoursWorked, overtimeHours, unpaidLeaveCost, netSalary,
-            unusedLeave, thirteenthMonthPay, isDecember, selectedMonth, totalAbsences
+            employee, totalSalary, ratePerHour, totalHoursWorked, overtimeHours, netSalary,
+            unusedLeave, thirteenthMonthPay, isDecember, selectedMonth
         );
 
         // Set the text content to the JTextArea
         receiptTextArea1.setText(receiptContent);
     }
 
-    // Generate the payroll receipt content
-    private String generatePayrollReceipt(Employee employee, double totalSalary, double totalHoursWorked,
-                                          double overtimeHours, double unpaidLeaveCost, double netSalary,
-                                          double unusedLeave, double thirteenthMonthPay, boolean isDecember,
-                                          int selectedMonth, int totalAbsences) {
+     private String generatePayrollReceipt(Employee employee, BigDecimal totalSalary, BigDecimal ratePerHour, 
+                                           BigDecimal totalHoursWorked, BigDecimal overtimeHours, 
+                                           BigDecimal netSalary, BigDecimal unusedLeave, 
+                                           BigDecimal thirteenthMonthPay, boolean isDecember,
+                                           int selectedMonth) {
         StringBuilder receipt = new StringBuilder();
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "PH"));
 
@@ -57,63 +71,57 @@ public class Receipt extends javax.swing.JFrame {
 
         // Employee details
         receipt.append("---- Payroll Receipt ----\n");
+        receipt.append("Employee ID: ").append(employee.getEmployeeId()).append("\n");
         receipt.append("Employee Name: ").append(employee.getFirstname()).append(" ").append(employee.getLastname()).append("\n");
         receipt.append("Job Title: ").append(employee.getJobtitle()).append("\n");
         receipt.append("Department: ").append(employee.getDepartmentName()).append("\n");
 
         // Payroll month
-        receipt.append("Payroll Month: ").append(monthName).append("\n");
-        receipt.append("\n");
+        receipt.append("\nMONTHLY").append("\n").append(monthName.toUpperCase()).append("\n");
 
         // Salary details
-        receipt.append("Total Hours Worked: ").append(String.format("%.2f hrs", totalHoursWorked)).append("\n");
-        receipt.append("Overtime Hours: ").append(String.format("%.2f hrs", overtimeHours)).append("\n");
-        receipt.append("Total Salary: ").append(currencyFormat.format(totalSalary)).append("\n");
+        receipt.append("\nSALARY/MONTH: ").append(currencyFormat.format(totalSalary != null ? totalSalary : BigDecimal.ZERO)).append("\n");
+        receipt.append("Rate/Hour: ").append(String.format("%.2f hrs", ratePerHour != null ? ratePerHour : BigDecimal.ZERO)).append("\n");
+        receipt.append("Total Hours Worked: ").append(String.format("%.2f hrs", totalHoursWorked != null ? totalHoursWorked : BigDecimal.ZERO)).append("\n");
+        receipt.append("Overtime Hours: ").append(String.format("%.2f hrs", overtimeHours != null ? overtimeHours : BigDecimal.ZERO)).append("\n");
 
-        receipt.append("\nDeductions:\n");
+        // Deductions
+        receipt.append("\nDEDUCTIONS: ").append(currencyFormat.format(totalDeductions)).append("\n");
         receipt.append("PhilHealth: ").append(currencyFormat.format(calculatePhilHealthDeduction(totalSalary))).append("\n");
         receipt.append("SSS: ").append(currencyFormat.format(calculateSSSDeduction(totalSalary))).append("\n");
-        receipt.append("Income Tax: ").append(currencyFormat.format(totalDeductions)).append("\n");
         receipt.append("Pag-Ibig: ").append(currencyFormat.format(calculatePagIbigDeduction(totalSalary))).append("\n");
-        receipt.append("Total Deductions: ").append(currencyFormat.format(calculateIncomeTax(totalSalary))).append("\n");
-
-        receipt.append("Net Salary: ").append(currencyFormat.format(netSalary)).append("\n");
 
         if (isDecember) {
-            // December-specific details
+            receipt.append("\nOTHERS:").append("\n");
             receipt.append("Unpaid Leave Deduction: ").append(currencyFormat.format(unpaidLeaveCost)).append("\n");
-            receipt.append("Unused Leave: ").append(currencyFormat.format(unusedLeave)).append("\n");
-            receipt.append("13th Month Pay: ").append(currencyFormat.format(thirteenthMonthPay)).append("\n");
-            receipt.append("Total Absences: ").append(totalAbsences).append("\n");
+            receipt.append("Unused Leave: ").append(currencyFormat.format(unusedLeave != null ? unusedLeave : BigDecimal.ZERO)).append("\n");
+            receipt.append("Bonus: ").append(currencyFormat.format(thirteenthMonthPay != null ? thirteenthMonthPay : BigDecimal.ZERO)).append("\n");
 
-            // Add unused leave and 13th month pay to salary
-            double totalDecemberSalary = netSalary + unusedLeave + thirteenthMonthPay;
-            receipt.append("Total December Salary: ").append(currencyFormat.format(totalDecemberSalary)).append("\n");
+            // Total calculation for December
+            BigDecimal totalDecemberSalary = netSalary.add(unusedLeave != null ? unusedLeave : BigDecimal.ZERO)
+                .add(thirteenthMonthPay != null ? thirteenthMonthPay : BigDecimal.ZERO)
+                .subtract(unpaidLeaveCost); // Deduct unpaid leave from total salary
+            receipt.append("\nTOTAL: ").append(currencyFormat.format(totalDecemberSalary)).append("\n");
+        } else {
+            receipt.append("\nTOTAL: ").append(currencyFormat.format(netSalary != null ? netSalary : BigDecimal.ZERO)).append("\n");
         }
-
 
         return receipt.toString();
     }
 
-    // Additional helper methods for calculating deductions
- private double calculatePhilHealthDeduction(double totalSalary) {
-        return 0.01 * totalSalary; // Example calculation
+    private BigDecimal calculatePhilHealthDeduction(BigDecimal totalSalary) {
+        return totalSalary.multiply(BigDecimal.valueOf(0.01)); // Example calculation
     }
 
-    private double calculateSSSDeduction(double totalSalary) {
-        return 0.02 * totalSalary; // Example calculation
+    private BigDecimal calculateSSSDeduction(BigDecimal totalSalary) {
+        return totalSalary.multiply(BigDecimal.valueOf(0.02)); // Example calculation
     }
 
-    private double calculatePagIbigDeduction(double totalSalary) {
-        return totalSalary <= 200 ? 0.01 * totalSalary : 0.02 * totalSalary; // Example calculation
+    private BigDecimal calculatePagIbigDeduction(BigDecimal totalSalary) {
+        return totalSalary.compareTo(BigDecimal.valueOf(200)) <= 0 
+            ? totalSalary.multiply(BigDecimal.valueOf(0.01)) 
+            : totalSalary.multiply(BigDecimal.valueOf(0.02)); // Example calculation
     }
-
-    private double calculateIncomeTax(double totalSalary) {
-        // Example calculation for income tax, adjust according to your requirements
-        return totalSalary * 0.1; // Example 10% tax
-    }
-    
-
 
 
     /**
@@ -131,14 +139,14 @@ public class Receipt extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         receiptTextArea1 = new javax.swing.JTextArea();
         btnPrint = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Payroll Receipt");
 
         receiptTextArea1.setColumns(20);
-        receiptTextArea1.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
+        receiptTextArea1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         receiptTextArea1.setRows(5);
         jScrollPane1.setViewportView(receiptTextArea1);
 
@@ -168,7 +176,12 @@ public class Receipt extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Close");
+        btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -183,7 +196,7 @@ public class Receipt extends javax.swing.JFrame {
                         .addGap(109, 109, 109)
                         .addComponent(btnPrint)
                         .addGap(107, 107, 107)
-                        .addComponent(jButton2))
+                        .addComponent(btnClose))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -198,7 +211,7 @@ public class Receipt extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnClose)
                     .addComponent(btnPrint))
                 .addGap(40, 40, 40))
         );
@@ -207,63 +220,59 @@ public class Receipt extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-//        PrinterJob printerJob = PrinterJob.getPrinterJob();
-//
-//        printerJob.setPrintable((Graphics g, PageFormat pf, int pageIndex) -> {
-//            // Set margins
-//            int margin = 50; // Top and left margin
-//            int bottomMargin = 100; // Bottom margin
-//            int lineHeight = g.getFontMetrics().getHeight();
-//            int pageHeight = (int) pf.getImageableHeight();
-//            int y1 = margin;
-//            // Calculate total content height and lines
-//            String receiptText = receiptTextArea1.getText();
-//            String[] lines = receiptText.split("\n");
-//            int totalContentHeight = (lines.length + 4) * lineHeight; // 4 extra lines for the header
-//            // Calculate lines per page, considering bottom margin
-//            int linesPerPage = (pageHeight - margin - bottomMargin) / lineHeight;
-//            int numPages = (int) Math.ceil((double) totalContentHeight / lineHeight / linesPerPage);
-//            if (pageIndex >= numPages) {
-//                return Printable.NO_SUCH_PAGE; // No more pages
-//            }
-//            //                // Draw header on each page
-////                g.setFont(jLabel1.getFont());
-////                g.drawString(jLabel1.getText(), margin, y);
-////                y += lineHeight;
-////
-////                g.setFont(jLabel2.getFont());
-////                g.drawString(jLabel2.getText(), margin, y);
-////                y += lineHeight;
-////
-////                g.drawString(jLabel3.getText(), margin, y);
-////                y += lineHeight;
-////
-////                g.drawString(jLabel4.getText(), margin, y);
-////                y += lineHeight;
-//
-//        // Draw receipt content
-//        g.setFont(receiptTextArea1.getFont());
-//        int startLine = pageIndex * linesPerPage;
-//        int endLine = Math.min(lines.length, startLine + linesPerPage);
-//                    for (int i = startLine; i < endLine; i++) {
-//                        if (y1 + lineHeight > pageHeight - bottomMargin) {
-//                            break; // Stop drawing if we reach the bottom margin
-//                        }
-//                        g.drawString(lines[i], margin, y1);
-//                        y1 += lineHeight;
-//                    }
-//                    return Printable.PAGE_EXISTS; // Indicate that the page exists
-//                });
-//
-//        boolean doPrint = printerJob.printDialog(); // Show the print dialog
-//        if (doPrint) {
-//            try {
-//                printerJob.print(); // Print the document
-//            } catch (PrinterException ex) {
-//                JOptionPane.showMessageDialog(this, "Printing error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+
+        printerJob.setPrintable((Graphics g, PageFormat pf, int pageIndex) -> {
+            // Set margins
+            int margin = 50; // Top and left margin
+            int bottomMargin = 100; // Bottom margin
+            int lineHeight = g.getFontMetrics().getHeight();
+            int pageHeight = (int) pf.getImageableHeight();
+            int y = margin;
+
+            // Get the text from the receipt
+            String receiptText = receiptTextArea1.getText();
+            String[] lines = receiptText.split("\n");
+
+            // Total height of all lines and lines per page
+            int totalContentHeight = lines.length * lineHeight; 
+            int linesPerPage = (pageHeight - margin - bottomMargin) / lineHeight;
+            int numPages = (int) Math.ceil((double) totalContentHeight / lineHeight / linesPerPage);
+
+            // Check if the requested page index is out of bounds
+            if (pageIndex >= numPages) {
+                return Printable.NO_SUCH_PAGE; // No more pages
+            }
+
+            // Draw the content
+            g.setFont(receiptTextArea1.getFont()); // Set the same font as the JTextArea
+            g.setColor(Color.BLACK); // Set text color
+
+            // Draw each line of the receipt
+            int startLine = pageIndex * linesPerPage;
+            int endLine = Math.min(lines.length, startLine + linesPerPage);
+            for (int i = startLine; i < endLine; i++) {
+                g.drawString(lines[i], margin, y);
+                y += lineHeight; // Move down for the next line
+            }
+
+            return Printable.PAGE_EXISTS; // Indicate that the page exists
+        });
+
+        boolean doPrint = printerJob.printDialog(); // Show the print dialog
+        if (doPrint) {
+            try {
+                printerJob.print();
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(this, "Printing error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        this.dispose();
     }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -301,8 +310,8 @@ public class Receipt extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClose;
     private javax.swing.JButton btnPrint;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

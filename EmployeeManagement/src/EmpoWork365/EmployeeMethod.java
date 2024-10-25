@@ -1,5 +1,6 @@
 package EmpoWork365;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Connection;
@@ -67,59 +68,62 @@ public class EmployeeMethod {
     return model; 
 }
 
-  public List<Employee> searchEmployeeMethod(String searchTerm) {
-    List<Employee> employeeList = new ArrayList<>();
+    public List<Employee> searchEmployeeMethod(String searchTerm) {
+        List<Employee> employeeList = new ArrayList<>();
 
-    String sql = "SELECT e.fld_employee_id, "
-                 + "e.fld_first_name, "
-                 + "e.fld_last_name, "
-                 + "e.fld_email, "
-                 + "e.fld_gender, "
-                 + "e.fld_date_of_employment, "
-                 + "jt.fld_job_title, " 
-                 + "d.fld_department_name "
-                 + "FROM tbl_employees e "
-                 + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
-                 + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
-                 + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id " // Join with roles table
-                 + "WHERE r.fld_role_name <> 'Admin' " // Exclude Admin role
-                 + "AND (LOWER(CONCAT(e.fld_first_name, ' ', e.fld_last_name)) LIKE ? "
-                 + "OR LOWER(e.fld_first_name) LIKE ? "
-                 + "OR LOWER(e.fld_last_name) LIKE ? "
-                 + "OR LOWER(e.fld_email) LIKE ? "
-                 + "OR LOWER(e.fld_gender) LIKE ? "
-                 + "OR LOWER(e.fld_date_of_employment) LIKE ?)";
+        String sql = "SELECT e.fld_employee_id, "
+                     + "e.fld_first_name, "
+                     + "e.fld_last_name, "
+                     + "e.fld_email, "
+                     + "e.fld_gender, "
+                     + "e.fld_date_of_employment, "
+                     + "jt.fld_job_title, " 
+                     + "d.fld_department_name "
+                     + "FROM tbl_employees e "
+                     + "JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                     + "JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
+                     + "JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id " // Join with roles table
+                     + "WHERE r.fld_role_name <> 'Admin' " // Exclude Admin role
+                     + "AND (LOWER(CONCAT(e.fld_first_name, ' ', e.fld_last_name)) LIKE ? "
+                        + "OR LOWER(e.fld_employee_id) LIKE ? "
+                     + "OR LOWER(e.fld_first_name) LIKE ? "
+                     + "OR LOWER(e.fld_last_name) LIKE ? "
+                     + "OR LOWER(e.fld_email) LIKE ? "
+                     + "OR LOWER(e.fld_gender) LIKE ? "
+                     + "OR LOWER(e.fld_date_of_employment) LIKE ?)";
 
-    String searchPattern = "%" + searchTerm.toLowerCase() + "%";
+        String searchPattern = "%" + searchTerm.toLowerCase() + "%";
 
-    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-        pstmt.setString(1, searchPattern);
-        pstmt.setString(2, searchPattern);
-        pstmt.setString(3, searchPattern);
-        pstmt.setString(4, searchPattern);
-        pstmt.setString(5, searchPattern);
-        pstmt.setString(6, searchPattern);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            pstmt.setString(3, searchPattern);
+            pstmt.setString(4, searchPattern);
+            pstmt.setString(5, searchPattern);
+            pstmt.setString(6, searchPattern);
+            pstmt.setString(7, searchPattern);
 
-        try (ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Employee employee = new Employee(
-                                        rs.getString("fld_first_name"), 
-                    rs.getString("fld_last_name"),   
-                    rs.getString("fld_email"), 
-                    rs.getString("fld_gender"),        
-                    rs.getString("fld_job_title"),   
-                    rs.getString("fld_department_name"),
-                    rs.getDate("fld_date_of_employment")
-                );
-                employeeList.add(employee);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Employee employee = new Employee(
+                        rs.getInt("fld_employee_id"),
+                        rs.getString("fld_first_name"), 
+                        rs.getString("fld_last_name"),   
+                        rs.getString("fld_email"), 
+                        rs.getString("fld_gender"),        
+                        rs.getString("fld_job_title"),   
+                        rs.getString("fld_department_name"),
+                        rs.getDate("fld_date_of_employment")
+                    );
+                    employeeList.add(employee);
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace(); 
         }
-    } catch (SQLException e) {
-        e.printStackTrace(); 
-    }
 
-    return employeeList;
-}
+        return employeeList;
+    }
 
 
     public boolean deleteEmployeeById(int employeeId) {
@@ -155,7 +159,7 @@ public class EmployeeMethod {
             statement.setInt(1, employeeId);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
                 SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
 
                 while (resultSet.next()) {
@@ -197,7 +201,7 @@ public class EmployeeMethod {
 
        try (PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery()) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
             
            while (resultSet.next()) {
@@ -385,7 +389,7 @@ public class EmployeeMethod {
             statement.setDate(1, selectedDate);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
                 SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
 
                 while (resultSet.next()) {
@@ -452,7 +456,7 @@ public class EmployeeMethod {
                         rs.getString("fld_job_title"),
                         rs.getString("fld_department_name"),
                         rs.getString("fld_image_path"),
-                        rs.getDouble("fld_rate_per_hour"),
+                        rs.getBigDecimal("fld_rate_per_hour"),
                         null,
                         null,
                         null,
@@ -505,7 +509,7 @@ public class EmployeeMethod {
                         rs.getString("fld_job_title"),
                         rs.getString("fld_department_name"),
                         rs.getString("fld_image_path"),
-                        rs.getDouble("fld_rate_per_hour"),
+                        rs.getBigDecimal("fld_rate_per_hour"),
                         null,
                         null,
                         null,
@@ -550,7 +554,7 @@ public class EmployeeMethod {
                         rs.getString("fld_job_title"),
                         rs.getString("fld_department_name"),
                         rs.getString("fld_image_path"),
-                        rs.getDouble("fld_rate_per_hour"),
+                        rs.getBigDecimal("fld_rate_per_hour"),
                         null,
                         null,
                         null,
@@ -632,31 +636,35 @@ public class EmployeeMethod {
                        "FROM tbl_attendance " +
                        "WHERE fld_employee_id = ?";
 
-        if (status.equals("Absent")) {
-            query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
-        } else if (status.equals("Incomplete")) {
-            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
-        } else if (status.equals("Present")) {
-            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
+        switch (status) {
+            case "Absent" -> query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
+            case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
+            case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
+            default -> {
+            }
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, employeeId);
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Object[] row = {
-                    resultSet.getInt("fld_employee_id"),
-                    resultSet.getDate("fld_attendance_date"),
-                    resultSet.getTime("fld_time_in"),
-                    resultSet.getTime("fld_time_out"),
-                    status
-                };
-                model.addRow(row);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+                        
+                while (resultSet.next()) {
+                    Object[] row = {
+                        resultSet.getInt("fld_employee_id"),
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
+                        status
+                    };
+                    model.addRow(row);
+                }
+            } catch (SQLException e) {
+                throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
             }
+            return model;
         }
-
-        return model;
     }
     
     public DefaultTableModel getFilteredAttendanceByDateAndStatus(int employeeId, String date, String status) throws SQLException {
@@ -668,28 +676,34 @@ public class EmployeeMethod {
                        "FROM tbl_attendance " +
                        "WHERE fld_employee_id = ? AND fld_attendance_date = ?";
 
-        if (status.equals("Absent")) {
-            query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
-        } else if (status.equals("Incomplete")) {
-            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
-        } else if (status.equals("Present")) {
-            query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
+        switch (status) {
+            case "Absent" -> query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
+            case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
+            case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
+            default -> {
+            }
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, employeeId);
             statement.setString(2, date);
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Object[] row = {
-                    resultSet.getInt("fld_employee_id"),
-                    resultSet.getDate("fld_attendance_date"),
-                    resultSet.getTime("fld_time_in"),
-                    resultSet.getTime("fld_time_out"),
-                    status
-                };
-                model.addRow(row);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+                
+                while (resultSet.next()) {
+                    Object[] row = {
+                        resultSet.getInt("fld_employee_id"),
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
+                        formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
+                        status
+                    };
+                    model.addRow(row);
+                }
+            } catch (SQLException e) {
+                throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
             }
         }
 
@@ -956,7 +970,7 @@ public class EmployeeMethod {
         return remainingDaysMap; 
     }
     
-    public double getUnpaidLeaveCost(Employee employee, int year) throws SQLException {
+    public BigDecimal getUnpaidLeaveCost(Employee employee, int year) throws SQLException {
         // SQL query to fetch unpaid leave count for a year
         String query = "SELECT e.fld_employee_id, e.fld_first_name, e.fld_last_name, lt.fld_leave_type_name, " +
                        "l.fld_remaining_days, COALESCE(SUM(CASE " +
@@ -979,15 +993,15 @@ public class EmployeeMethod {
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
 
-        double unpaidLeaveCost = 0;
+        BigDecimal unpaidLeaveCost = BigDecimal.ZERO; // Change to BigDecimal
 
         if (rs.next()) {
             int unpaidLeaveCount = rs.getInt("unpaid_leave_count");
 
             // Calculate unpaid leave cost (assuming 8 hours workday)
-            double ratePerHour = employee.getRatePerHour();
+            BigDecimal ratePerHour = employee.getRatePerHour();
             final int HOURS_PER_DAY = 8;
-            unpaidLeaveCost = ratePerHour * HOURS_PER_DAY * unpaidLeaveCount;
+            unpaidLeaveCost = ratePerHour.multiply(BigDecimal.valueOf(HOURS_PER_DAY)).multiply(BigDecimal.valueOf(unpaidLeaveCount));
         }
 
         return unpaidLeaveCost;

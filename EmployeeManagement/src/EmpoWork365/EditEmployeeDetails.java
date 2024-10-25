@@ -15,8 +15,13 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -373,9 +378,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error loading employee data: " + ex.getMessage());
         }
     }
-
-    
-
     
     private boolean isEmailDuplicate(String email, int employeeId) {
         String query = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ? AND fld_employee_id <> ?";
@@ -394,10 +396,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         return false; // Return false if no duplicate found
     }
 
-    
-
-
-    
     private void handleFocusGained(JTextField field, String placeholder) {
         if (field.getText().equals(placeholder)) {
             field.setText("");
@@ -851,7 +849,11 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
 
             displayImage(imagePath);
 
-            updateEmployeeImageInDatabase(imagePath, employeeId);
+            try {
+                updateEmployeeImageInDatabase(imagePath, employeeId);
+            } catch (IOException ex) {
+                Logger.getLogger(EditEmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -884,17 +886,41 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         }
         return -1; 
     }
+    
+    private void resetImageSelection() {
+        imagePath = null;
+        imageLabel.setIcon(new ImageIcon("src/Users/user.png"));  
+    }
 
     
-    private void updateEmployeeImageInDatabase(String imagePath, int userId) {
+    private String updateEmployeeImageInDatabase(String imagePath, int userId) throws IOException {
         String updateImageSQL = "UPDATE tbl_employees SET fld_image_path = ? WHERE fld_employee_id = ?";
+        String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
+       String fileExtension = imagePath.substring(imagePath.lastIndexOf(".")).toLowerCase();
+       boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
+
+       if (!isImage) {
+           JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
+           resetImageSelection(); 
+       }
+
+       String destinationFolder = "src/Users/";
+       String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
+       String destinationPath = destinationFolder + newFileName;
+
+       File sourceFile = new File(imagePath);
+       File destinationFile = new File(destinationPath);
         try (PreparedStatement pstmt = connection.prepareStatement(updateImageSQL)) {
             pstmt.setString(1, imagePath);
             pstmt.setInt(2, userId);
-            pstmt.executeUpdate(); 
+            pstmt.executeUpdate();
+            destinationFile.getParentFile().mkdirs(); 
+            Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+           return destinationPath; 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error updating employee image: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+        return null;
     }
 
     private void displayImage(String imagePath) {
@@ -917,7 +943,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error displaying image: " + e.getMessage(), "Image Error", JOptionPane.ERROR_MESSAGE);
-            imageLabel.setIcon(new ImageIcon("src/Users/")); 
+            imageLabel.setIcon(new ImageIcon("src/Users/user.png")); 
         }
     }
 

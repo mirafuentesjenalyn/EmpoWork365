@@ -13,8 +13,13 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -82,39 +87,7 @@ public final class EditUserDetails extends javax.swing.JFrame {
             notifyUserUpdated(); 
         }
     }
-    
-private void saveChanges() {
-    // Ensure the loggedInUser is available before proceeding
-    if (loggedInUser != null) {
-        // Create a new instance of UserAuthenticate with existing data
-        UserAuthenticate updatedUser = new UserAuthenticate(
-            loggedInUser.getId(), // Pass the existing ID
-            firstName.getText(),
-            lastName.getText(),
-            eMail.getText(),
-            String.valueOf(passWord.getPassword()), // Only update if needed
-            comboBoxGender.getSelectedItem().toString(),
-            loggedInUser.getJobtitle(), // Keep existing job title
-            loggedInUser.getDepartmentName(), // Keep existing department name
-            loggedInUser.getRoleName(), // Keep existing role name
-            imagePath // Updated image path if changed
-        );
-
-        // Call notify to update the MainAdmin with the updated user
-        notifyUserUpdated(); // Notify MainAdmin of the changes
-    } else {
-        JOptionPane.showMessageDialog(this, "User is not logged in.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-//    public void refreshUserDetails() {
-//      if (loggedInUser != null) {
-//            UpdateUserDetails(loggedInUser); // Refresh user details from the logged-in user
-//        }
-//    }
-
-
-    
+ 
     public void setEmployeeId(int userId) {
         this.userId = userId; 
         loadEmployeeData();
@@ -219,34 +192,20 @@ private void saveChanges() {
                 String originalGender = rs.getString("fld_gender");
                 String originalImagePath = rs.getString("fld_image_path");
 
-                // Debugging output
-                System.out.println("Original First Name: " + originalFirstName + " | Current First Name: " + firstName.getText());
-                System.out.println("Original Last Name: " + originalLastName + " | Current Last Name: " + lastName.getText());
-                System.out.println("Original Email: " + originalEmail + " | Current Email: " + eMail.getText());
-                System.out.println("Original Password: " + originalPassword + " | Current Password: " + String.valueOf(passWord.getPassword()));
-                System.out.println("Original Gender: " + originalGender + " | Current Gender: " + comboBoxGender.getSelectedItem());
-                System.out.println("Original Image Path: " + originalImagePath + " | Current Image Path: " + imagePath);
-
                 boolean isFirstNameChanged = !firstName.getText().equals(originalFirstName);
                 boolean isLastNameChanged = !lastName.getText().equals(originalLastName);
                 boolean isEmailChanged = !eMail.getText().equals(originalEmail);
                 boolean isPasswordChanged = !String.valueOf(passWord.getPassword()).equals(originalPassword);
-                boolean isGenderChanged = !comboBoxGender.getSelectedItem().toString().equals(originalGender);
+
+                boolean isGenderChanged = (comboBoxGender.getSelectedItem() == null) || 
+                                          !comboBoxGender.getSelectedItem().toString().equals(originalGender);
 
                 boolean isImagePathChanged = !imagePath.equals(originalImagePath);
 
-                // Debug output for image change detection
-                System.out.println("Image Path Changed: " + isImagePathChanged);
-                System.out.println("isFirstNameChanged: " + isFirstNameChanged);
-                System.out.println("isLastNameChanged: " + isLastNameChanged);
-                System.out.println("isEmailChanged: " + isEmailChanged);
-                System.out.println("isPasswordChanged: " + isPasswordChanged);
-                System.out.println("isGenderChanged: " + isGenderChanged);
 
                 return !(isFirstNameChanged || isLastNameChanged || isEmailChanged || 
                          isPasswordChanged || isGenderChanged || isImagePathChanged);
             } else {
-                System.out.println("No employee found with ID: " + targetEmployeeId);
                 return false; 
             }
         } catch (SQLException e) {
@@ -254,6 +213,8 @@ private void saveChanges() {
             return true;
         }
     }
+
+
 
     private void handleFocusGained(JTextField field, String placeholder) {
     if (field.getText().equals(placeholder)) {
@@ -733,19 +694,12 @@ private void saveChanges() {
     }//GEN-LAST:event_ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        JFileChooser fileChooser = new JFileChooser(); 
-        fileChooser.setDialogTitle("Select Employee Image");
+        selectImage(); 
 
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif"));
-        int userSelection = fileChooser.showOpenDialog(this);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile(); 
-            imagePath = selectedFile.getAbsolutePath(); 
-
-            displayImage(imagePath);
-
+        try {
             updateEmployeeImageInDatabase(imagePath, userId);
+        } catch (IOException ex) {
+            Logger.getLogger(EditUserDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -765,27 +719,63 @@ private void saveChanges() {
         this.setState(JFrame.ICONIFIED);
     }//GEN-LAST:event_btnMin1ActionPerformed
 
+    private void resetImageSelection() {
+        imagePath = null;
+        imageLabel.setIcon(new ImageIcon("src/Users/user.png"));  
+    }
 
-    private void updateEmployeeImageInDatabase(String imagePath, int userId) {
+    private String updateEmployeeImageInDatabase(String imagePath, int userId) throws IOException {
         String updateImageSQL = "UPDATE tbl_employees SET fld_image_path = ? WHERE fld_employee_id = ?";
+        String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
+
+        // Check if imagePath is null or empty
+        if (imagePath == null || imagePath.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No image path provided.", "Error", JOptionPane.ERROR_MESSAGE);
+            resetImageSelection(); 
+            return null;
+        }
+
+        String fileExtension = imagePath.substring(imagePath.lastIndexOf(".")).toLowerCase();
+        boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
+
+        if (!isImage) {
+            JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
+            resetImageSelection(); 
+            return null; // Return here if invalid image
+        }
+
+        String destinationFolder = "src/Users/";
+        String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
+        String destinationPath = destinationFolder + newFileName;
+
+        File sourceFile = new File(imagePath);
+        File destinationFile = new File(destinationPath);
+
         try (PreparedStatement pstmt = connection.prepareStatement(updateImageSQL)) {
-            pstmt.setString(1, imagePath);
+            pstmt.setString(1, destinationPath); // Make sure to set the correct destination path in the database
             pstmt.setInt(2, userId);
-            pstmt.executeUpdate(); 
+            pstmt.executeUpdate();
+
+            // Ensure the destination folder exists
+            destinationFile.getParentFile().mkdirs(); 
+            Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return destinationPath; 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error updating employee image: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
+
+        return null; // Ensure to return null in case of failure
     }
 
+
+
     private void displayImage(String imagePath) {
-        BufferedImage img = null;
         try {
-            // Ensure the path is valid
             File imageFile = new File(imagePath);
             if (imageFile.exists()) {
-                img = ImageIO.read(imageFile);
+                BufferedImage img = ImageIO.read(imageFile);
                 if (img != null) {
-                    int width = 120; 
+                    int width = 120;
                     int height = 120;
                     Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                     imageLabel.setIcon(new ImageIcon(scaledImg));
@@ -797,21 +787,22 @@ private void saveChanges() {
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error displaying image: " + e.getMessage(), "Image Error", JOptionPane.ERROR_MESSAGE);
-            imageLabel.setIcon(new ImageIcon("src/Users/")); 
+            imageLabel.setIcon(new ImageIcon("src/Users/user.png")); 
         }
     }
+
 
     public void selectImage() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg", "gif"));
 
-        int response = fileChooser.showOpenDialog(null);
-        if (response == JFileChooser.APPROVE_OPTION) {
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            imagePath = selectedFile.getAbsolutePath(); // Update the image path
+            imagePath = selectedFile.getAbsolutePath(); // Store the selected image path
             displayImage(imagePath); // Display the selected image
         }
     }
+
 
     
     private void clearFields() {
