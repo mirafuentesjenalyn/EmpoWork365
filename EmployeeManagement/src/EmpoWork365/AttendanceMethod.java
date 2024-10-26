@@ -5,49 +5,69 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class AttendanceMethod {
     private final Connection connection;
 
-    
     public AttendanceMethod(Connection connection) {
         this.connection = connection;
     }
 
     public void clockIn(int employeeId) throws SQLException {
-
-        String sql = "INSERT INTO tbl_attendance (fld_employee_id, fld_attendance_date, fld_time_in) VALUES (?, ?, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, employeeId);
-            preparedStatement.setDate(2, java.sql.Date.valueOf(LocalDate.now())); 
-            preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis())); 
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("Clock-in failed, no rows affected.");
+        // Check if the current day is a weekday (Monday to Friday)
+        if (isWeekday()) {
+            // Check if already clocked in for today
+            if (hasClockedIn(employeeId)) {
+                throw new SQLException("Already clocked in for today.");
             }
+
+            String sql = "INSERT INTO tbl_attendance (fld_employee_id, fld_attendance_date, fld_time_in) VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, employeeId);
+                preparedStatement.setDate(2, java.sql.Date.valueOf(LocalDate.now())); 
+                preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis())); 
+
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Clock-in failed, no rows affected.");
+                }
+            }
+        } else {
+            throw new SQLException("Clock-in is only allowed on weekdays (Monday to Friday).");
         }
     }
-   
+
     public void clockOut(int employeeId) throws SQLException {
-
-        String sql = "UPDATE tbl_attendance SET fld_time_out = ? "
-                + "WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE() AND fld_time_out IS NULL";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setTimestamp(1, new Timestamp(System.currentTimeMillis())); 
-            preparedStatement.setInt(2, employeeId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("Clock-out failed, no rows affected or already clocked out today.");
+        // Check if the current day is a weekday (Monday to Friday)
+        if (isWeekday()) {
+            // Check if already clocked out for today
+            if (hasClockedOut(employeeId)) {
+                throw new SQLException("Already clocked out for today.");
             }
+
+            // Ensure that the employee has clocked in for today
+            if (!hasClockedIn(employeeId)) {
+                throw new SQLException("Cannot clock out without clocking in first.");
+            }
+
+            String sql = "UPDATE tbl_attendance SET fld_time_out = ? "
+                    + "WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE() AND fld_time_out IS NULL";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setTimestamp(1, new Timestamp(System.currentTimeMillis())); 
+                preparedStatement.setInt(2, employeeId);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Clock-out failed, no rows affected or already clocked out today.");
+                }
+            }
+        } else {
+            throw new SQLException("Clock-out is only allowed on weekdays (Monday to Friday).");
         }
     }
-     
+    
     public void recordTimeIn(int employeeId) throws SQLException {
         clockIn(employeeId); 
     }
@@ -55,6 +75,7 @@ public class AttendanceMethod {
     public void recordTimeOut(int employeeId) throws SQLException {
         clockOut(employeeId); 
     }
+
 
     public boolean hasClockedIn(int employeeId) {
         String sql = "SELECT COUNT(*) FROM tbl_attendance WHERE fld_employee_id = ? AND DATE(fld_time_in) = CURDATE()";
@@ -80,7 +101,7 @@ public class AttendanceMethod {
         }
         return 0;
     }
-   
+
     public double getTotalHoursWorkedInMonth(int employeeId, int month, int year) throws SQLException {
         String sql = "SELECT fld_time_in, fld_time_out FROM tbl_attendance " +
                      "WHERE fld_employee_id = ? AND MONTH(fld_attendance_date) = ? AND YEAR(fld_attendance_date) = ?";
@@ -107,7 +128,6 @@ public class AttendanceMethod {
         return totalHours;
     }
 
-    
     public int getUnpaidLeaveDays(int employeeId, int month, int year) throws SQLException {
         String sql = "SELECT COUNT(*) FROM tbl_leave_applications WHERE fld_employee_id = ? AND fld_leave_type_id = 4 AND fld_status = 'Approved' AND MONTH(fld_date_leave_request) = ? AND YEAR(fld_date_leave_request) = ?";  
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -142,10 +162,10 @@ public class AttendanceMethod {
             deductionStatement.executeUpdate();
         }
     }
-    
 
-
-
-
-
+    // Helper method to check if today is a weekday
+    private boolean isWeekday() {
+        DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
+        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+    }
 }

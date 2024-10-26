@@ -10,6 +10,10 @@ import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class EmployeeMethod {
     private final Connection connection;
-    private Employee loggedInEmployee; 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
 
 
     public EmployeeMethod(Connection connection) {
@@ -222,124 +226,6 @@ public class EmployeeMethod {
 
        return model; 
     }
-    
-//    public DefaultTableModel getAttendanceDataByDate(java.sql.Date selectedDate) throws SQLException {
-//        String[] columnNames = {
-//            "Employee ID", "Full Name", "Job Title", "Department", 
-//            "Time In", "Time Out", "Date", "Status"
-//        };
-//
-//        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-//
-//        String query = "SELECT e.fld_employee_id, "
-//                     + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
-//                     + "jt.fld_job_title, "
-//                     + "d.fld_department_name, "
-//                     + "a.fld_time_in, a.fld_time_out, a.fld_attendance_date, "
-//                     + "CASE "
-//                     + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL THEN 'Present' "
-//                     + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL THEN 'Incomplete' "
-//                     + "ELSE 'Absent' END AS status "
-//                     + "FROM tbl_employees e "
-//                     + "LEFT JOIN tbl_attendance a ON e.fld_employee_id = a.fld_employee_id "
-//                     + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
-//                     + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
-//                     + "WHERE a.fld_attendance_date = ? "
-//                     + "ORDER BY e.fld_employee_id ASC";
-//
-//        try (PreparedStatement statement = connection.prepareStatement(query)) {
-//            statement.setDate(1, selectedDate);
-//
-//            try (ResultSet resultSet = statement.executeQuery()) {
-//                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
-//
-//                while (resultSet.next()) {
-//                    String timeIn = formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat);
-//                    String timeOut = formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat);
-//                    String attendanceDate = formatDate(resultSet.getDate("fld_attendance_date"), dateFormat);
-//
-//                    Object[] row = {
-//                        resultSet.getInt("fld_employee_id"),
-//                        resultSet.getString("full_name"),
-//                        resultSet.getString("fld_job_title"),
-//                        resultSet.getString("fld_department_name"),
-//                        (timeIn != null) ? timeIn : "",
-//                        (timeOut != null) ? timeOut : "",
-//                        (attendanceDate != null) ? attendanceDate : "",
-//                        resultSet.getString("status")
-//                    };
-//                    model.addRow(row);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new SQLException("Error fetching attendance data by date: " + e.getMessage(), e);
-//        }
-//
-//        return model;
-//    }
-//    
-//    public DefaultTableModel getAttendanceDataByStatus(String statusFilter) throws SQLException {
-//       String[] columnNames = {
-//           "Employee ID", "Full Name", "Job Title", "Department", 
-//           "Time In", "Time Out", "Date", "Status"
-//       };
-//
-//       DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-//
-//       String query = "SELECT e.fld_employee_id, "
-//                    + "CONCAT(e.fld_first_name, ' ', e.fld_last_name) AS full_name, "
-//                    + "jt.fld_job_title, "
-//                    + "d.fld_department_name, "
-//                    + "a.fld_time_in, a.fld_time_out, a.fld_attendance_date, "
-//                    + "CASE "
-//                    + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL THEN 'Present' "
-//                    + "WHEN a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL THEN 'Incomplete' "
-//                    + "ELSE 'Absent' END AS status "
-//                    + "FROM tbl_employees e "
-//                    + "LEFT JOIN tbl_attendance a ON e.fld_employee_id = a.fld_employee_id "
-//                    + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
-//                    + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
-//                    + "WHERE (a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL AND ? = 'Present') "
-//                    + "OR (a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL AND ? = 'Incomplete') "
-//                    + "OR (? = 'Absent' AND a.fld_time_in IS NULL) "
-//                    + "ORDER BY e.fld_employee_id ASC";
-//
-//       try (PreparedStatement statement = connection.prepareStatement(query)) {
-//           statement.setString(1, statusFilter);
-//           statement.setString(2, statusFilter);
-//           statement.setString(3, statusFilter);
-//
-//           try (ResultSet resultSet = statement.executeQuery()) {
-//               SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//               SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
-//
-//               while (resultSet.next()) {
-//                   String timeIn = formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat);
-//                   String timeOut = formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat);
-//                   String attendanceDate = formatDate(resultSet.getDate("fld_attendance_date"), dateFormat);
-//
-//                   Object[] row = {
-//                       resultSet.getInt("fld_employee_id"),
-//                       resultSet.getString("full_name"),
-//                       resultSet.getString("fld_job_title"),
-//                       resultSet.getString("fld_department_name"),
-//                       (timeIn != null) ? timeIn : "",
-//                       (timeOut != null) ? timeOut : "",
-//                       (attendanceDate != null) ? attendanceDate : "",
-//                       resultSet.getString("status")
-//                   };
-//                   model.addRow(row);
-//               }
-//           }
-//       } catch (SQLException e) {
-//           e.printStackTrace(); // Log the exception
-//           throw new SQLException("Error fetching attendance data by status: " + e.getMessage(), e);
-//       }
-//
-//       return model;
-//   }
-
     
     public DefaultTableModel getAttendanceDataByDateAndStatus(java.sql.Date selectedDate, String statusFilter) throws SQLException {
         String[] columnNames = {
@@ -628,77 +514,248 @@ public class EmployeeMethod {
         return model;
     }
     
+    public List<String> getExpectedWorkdays(String startDate, String endDate) {
+        List<String> workdays = new ArrayList<>();
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+
+        // Parse the input dates
+        start.setTime(java.sql.Date.valueOf(startDate));
+        end.setTime(java.sql.Date.valueOf(endDate));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        int month = -1;
+        int weekdayCount = 0;
+
+        while (!start.after(end)) {
+            if (start.get(Calendar.MONTH) != month) {
+                month = start.get(Calendar.MONTH);
+                weekdayCount = 0; // Reset the count for each new month
+            }
+
+            int dayOfWeek = start.get(Calendar.DAY_OF_WEEK);
+            if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY) { // Exclude weekends
+                if (weekdayCount < 20) { // Cap weekdays to 20 per month
+                    workdays.add(dateFormat.format(start.getTime()));
+                    weekdayCount++;
+                }
+            }
+            start.add(Calendar.DATE, 1);
+        }
+        return workdays;
+    }
+
+
+    public List<AbsenceRecord> getAbsenceRecords(int employeeId, String startDate, String endDate) throws SQLException {
+        List<AbsenceRecord> absences = new ArrayList<>();
+
+        // Get expected workdays for the specified range
+        List<String> expectedWorkdays = getExpectedWorkdays(startDate, endDate);
+
+        // Fetch attendance records for the employee in the same date range
+        List<String> attendanceRecords = getAttendanceDates(employeeId, startDate, endDate);
+
+        // Identify absences
+        for (String workday : expectedWorkdays) {
+            if (!attendanceRecords.contains(workday)) {
+                absences.add(new AbsenceRecord(employeeId, workday)); // Log the absence
+            }
+        }
+
+        return absences;
+    }
+
+    private List<String> getAttendanceDates(int employeeId, String startDate, String endDate) throws SQLException {
+        List<String> attendanceDates = new ArrayList<>();
+        String query = "SELECT fld_attendance_date FROM tbl_attendance " +
+                       "WHERE fld_employee_id = ? AND fld_attendance_date BETWEEN ? AND ?";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Standardized date format
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, employeeId);
+            statement.setString(2, startDate);
+            statement.setString(3, endDate);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    String formattedDate = dateFormat.format(resultSet.getDate("fld_attendance_date"));
+                    attendanceDates.add(formattedDate); // Add the formatted date to the list
+                }
+            }
+        }
+        return attendanceDates;
+    }
+
+    public int getTotalAbsences(Employee employee) {
+        if (employee == null) {
+            throw new IllegalArgumentException("Employee data is null");
+        }
+        int totalAbsences = 0;
+        try {
+            int employeeId = employee.getEmployeeId();
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            String startDate = currentYear + "-01-01"; // January 1
+            String endDate = currentYear + "-12-31";   // December 31
+
+            List<String> expectedWorkdays = getExpectedWorkdays(startDate, endDate);
+            List<String> attendanceRecords = getAttendanceDates(employeeId, startDate, endDate);
+
+            // Debugging output
+            System.out.println("Expected Workdays Count: " + expectedWorkdays.size());
+            System.out.println("Attendance Records Count: " + attendanceRecords.size());
+
+            // Counting absences
+            for (String workday : expectedWorkdays) {
+                if (!attendanceRecords.contains(workday)) {
+                    totalAbsences++;
+                }
+            }
+
+            // Debugging output for total absences
+            System.out.println("Total Absences: " + totalAbsences);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while retrieving total absences: " + e.getMessage(), e);
+        }
+
+        return totalAbsences;
+    }
+
+    private void generateAbsenceRecords(DefaultTableModel model, int employeeId) throws SQLException {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        String startDate = currentYear + "-01-01";
+        String endDate = currentYear + "-12-31";
+
+        // Debugging output
+        System.out.println("Generating absence records for Employee ID: " + employeeId);
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End Date: " + endDate);
+
+        List<String> workdays = getExpectedWorkdays(startDate, endDate);
+        List<String> attendanceDates = getAttendanceDates(employeeId, startDate, endDate);
+
+        // Clear the model before adding new absence records
+        model.setRowCount(0); // Clear existing records
+        int count = 1; // Start count from 1
+
+        // Create date format for displaying absence records
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Desired date format
+
+        // Debugging output
+        System.out.println("Workdays Count: " + workdays.size());
+        System.out.println("Attendance Dates Count: " + attendanceDates.size());
+
+        for (String workday : workdays) {
+            if (!attendanceDates.contains(workday)) {
+                // Format the workday date
+                String formattedWorkday = dateFormat.format(java.sql.Date.valueOf(workday));
+                model.addRow(new Object[]{count++, employeeId, formattedWorkday, null, null, "Absent"});
+                // Debugging output for each absent workday added to the model
+                System.out.println("Added Absent Workday to Model: " + formattedWorkday);
+            }
+        }
+    }
+
     public DefaultTableModel getAttendanceByStatus(int employeeId, String status) throws SQLException {
-        String[] columnNames = {"Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
+        String[] columnNames = {"No.", "Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
+        // Build the SQL query
         String query = "SELECT fld_employee_id, fld_attendance_date, fld_time_in, fld_time_out " +
                        "FROM tbl_attendance " +
                        "WHERE fld_employee_id = ?";
 
+        // Add filters for status
         switch (status) {
-            case "Absent" -> query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
-            case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
-            case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
-            default -> {
-            }
+            case "Absent":
+                query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
+                break;
+            case "Incomplete":
+                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
+                          "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
+                break;
+            case "Present":
+                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
+                          "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid status: " + status);
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, employeeId);
             try (ResultSet resultSet = statement.executeQuery()) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
-                        
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Desired date format
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+                int count = 1;
+
                 while (resultSet.next()) {
                     Object[] row = {
+                        count++,
                         resultSet.getInt("fld_employee_id"),
-                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat),
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat), // Ensure date formatting
                         formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
                         formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
-                        status
+                        status // Status from method argument
                     };
                     model.addRow(row);
                 }
             } catch (SQLException e) {
                 throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
             }
-            return model;
         }
-    }
-    
-    public DefaultTableModel getFilteredAttendanceByDateAndStatus(int employeeId, String date, String status) throws SQLException {
-        String[] columnNames = {"Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
 
+        // Generate absence records if needed
+        if (status.equals("Absent")) {
+            generateAbsenceRecords(model, employeeId);
+        }
+
+        return model;
+    }
+
+    public DefaultTableModel getFilteredAttendanceByDateAndStatus(int employeeId, String date, String status) throws SQLException {
+        String[] columnNames = {"No.", "Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         String query = "SELECT fld_employee_id, fld_attendance_date, fld_time_in, fld_time_out " +
                        "FROM tbl_attendance " +
                        "WHERE fld_employee_id = ? AND fld_attendance_date = ?";
 
+        // Add filters for status
         switch (status) {
-            case "Absent" -> query += " AND fld_time_in IS NULL"; // Assuming absence means no time-in record
-            case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL"; // Incomplete = Time-in but no Time-out
-            case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL"; // Present = Both Time-in and Time-out exist
-            default -> {
-            }
+            case "Absent":
+                query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
+                break;
+            case "Incomplete":
+                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
+                          "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
+                break;
+            case "Present":
+                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
+                          "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid status: " + status);
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, employeeId);
             statement.setString(2, date);
-            
+
             try (ResultSet resultSet = statement.executeQuery()) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
-                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Desired date format
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+                int count = 1;
+
                 while (resultSet.next()) {
                     Object[] row = {
+                        count++,
                         resultSet.getInt("fld_employee_id"),
-                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat),
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat), // Ensure date formatting
                         formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
                         formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
-                        status
+                        status // Status from method argument
                     };
                     model.addRow(row);
                 }
@@ -710,10 +767,77 @@ public class EmployeeMethod {
         return model;
     }
 
-    
+    public DefaultTableModel getAllAttendanceRecords(int employeeId) throws SQLException {
+        String[] columnNames = {"No.", "Employee ID", "Attendance Date", "Time In", "Time Out", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        String startDate = currentYear + "-01-01"; // January 1 of the current year
+        String endDate = currentYear + "-12-31";   // December 31 of the current year
+
+        // Get expected workdays for the current year
+        List<String> expectedWorkdays = getExpectedWorkdays(startDate, endDate);
+
+        // Fetch attendance records for the employee
+        List<String> attendanceRecords = getAttendanceDates(employeeId, startDate, endDate);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Desired date format
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+        int count = 1;
+
+        // Loop through expected workdays to check attendance
+        for (String workday : expectedWorkdays) {
+            // Create a new row for each workday
+            Object[] row = new Object[6];
+            row[0] = count++;
+            row[1] = employeeId;
+            row[2] = dateFormat.format(java.sql.Date.valueOf(workday)); // Format workday date
+
+            // Check if the workday exists in the attendance records
+            if (attendanceRecords.contains(workday)) {
+                // If attendance exists, get the time in and time out
+                try (PreparedStatement statement = connection.prepareStatement(
+                        "SELECT fld_time_in, fld_time_out FROM tbl_attendance WHERE fld_employee_id = ? AND fld_attendance_date = ?")) {
+                    statement.setInt(1, employeeId);
+                    statement.setString(2, workday);
+
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            row[3] = formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat); // Time In
+                            row[4] = formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat); // Time Out
+                        }
+                    }
+                }
+                row[5] = determineStatus(row[3], row[4]); // Determine status based on time in/out
+            } else {
+                // If no attendance record exists for the workday, mark as Absent
+                row[3] = null; // Time In
+                row[4] = null; // Time Out
+                row[5] = "Absent"; // Mark as Absent
+            }
+
+            // Add the row to the model
+            model.addRow(row);
+        }
+
+        return model;
+    }
+
+    private String determineStatus(Object timeIn, Object timeOut) {
+        if (timeIn == null) {
+            return "Absent";
+        } else if (timeOut == null) {
+            return "Incomplete";
+        } else {
+            return "Present";
+        }
+    }
+
+
+
     public DefaultTableModel searchLeaveApplications(int employeeId, String searchTerm) throws SQLException {
         String[] columnNames = {
-            "Application ID", "Employee ID", "Full Name", "Leave Type", 
+            "No.", "Application ID", "Employee ID", "Full Name", "Leave Type", 
             "Leave Request", "Reason", "Status", "Date Applied"
         };
 
@@ -1007,41 +1131,6 @@ public class EmployeeMethod {
         return unpaidLeaveCost;
     }
     
-    public int getTotalAbsences(Employee employee) {
-        if (employee == null) {
-            throw new IllegalArgumentException("Employee data is null");
-        }
-
-        int totalAbsences = 0;
-
-        try {
-            int employeeId = employee.getEmployeeId();
-
-            String query = "SELECT COUNT(a.fld_attendance_id) AS total_absences " +
-                           "FROM tbl_employees e " +
-                           "LEFT JOIN tbl_attendance a ON e.fld_employee_id = a.fld_employee_id " +
-                           "AND YEAR(a.fld_attendance_date) = YEAR(CURDATE()) " + // Current year's attendance
-                           "WHERE e.fld_employee_id = ? " +  // Employee ID
-                           "AND (a.fld_attendance_id IS NULL " +  // No attendance record
-                           "OR a.fld_time_in IS NULL)"; // No time-out recorded (correctly closed parentheses)
-
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, employeeId); // Set employee ID to the query
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                totalAbsences = resultSet.getInt("total_absences");  // Get the total absences
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while retrieving total absences: " + e.getMessage(), e);
-        }
-
-        return totalAbsences; 
-    }
-
-
 
 
 }
-
-

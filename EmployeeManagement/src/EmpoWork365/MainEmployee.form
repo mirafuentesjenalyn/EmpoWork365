@@ -1729,7 +1729,7 @@
                                       <Component id="unusedLeaveLabel" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
                                       <Component id="unusedLeaveTextField" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace pref="24" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="thirteenthMonthPayLabel" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
                                       <Component id="thirteenthMonthPayTextField" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -1742,7 +1742,7 @@
                                           <Component id="netSalaryTextField" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                                  <EmptySpace pref="34" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>

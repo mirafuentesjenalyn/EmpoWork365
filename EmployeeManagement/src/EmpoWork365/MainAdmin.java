@@ -2416,7 +2416,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         // Calculate unpaid leave
         int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employee.getEmployeeId(), 12, year);
-        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, BigDecimal.valueOf(unpaidLeaveDays)); // Use the BigDecimal rate directly
+        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, BigDecimal.valueOf(unpaidLeaveDays));
         unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
 
         // Deductions (PhilHealth, SSS, PagIbig, Income Tax)
@@ -2555,8 +2555,11 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
     private BigDecimal calculateUnpaidLeave(BigDecimal ratePerHour, BigDecimal unpaidLeaveDays) {
         final BigDecimal HOURS_PER_DAY = BigDecimal.valueOf(8.0);
-        return ratePerHour.multiply(HOURS_PER_DAY).multiply(unpaidLeaveDays).setScale(4, RoundingMode.HALF_UP);
+        BigDecimal totalUnpaidLeaveCost = ratePerHour.multiply(HOURS_PER_DAY).multiply(unpaidLeaveDays);
+        return totalUnpaidLeaveCost.setScale(4, RoundingMode.HALF_UP);
     }
+
+
 
     private String formatCurrency(BigDecimal amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount.setScale(4, RoundingMode.HALF_UP));

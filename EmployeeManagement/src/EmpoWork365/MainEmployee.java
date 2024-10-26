@@ -1463,7 +1463,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(unusedLeaveLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(unusedLeaveTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(thirteenthMonthPayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(thirteenthMonthPayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1473,7 +1473,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(netSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(16, 16, 16))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         managePayroll.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(26, 157, -1, 680));
@@ -1772,17 +1772,26 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         }
     }
     
-    private void fetchDataBasedOnStatusOnly(String selectedStatus) {
+   private void fetchDataBasedOnStatusOnly(String selectedStatus) {
         try {
             int employeeId = loggedInUser.getId();
             EmployeeMethod employeeMethod = new EmployeeMethod(connection);
-            DefaultTableModel modelTable = employeeMethod.getAttendanceByStatus(employeeId, selectedStatus); // Implement this method in EmployeeMethod
+            DefaultTableModel modelTable;
+
+            // Check for the "All" status
+            if ("All".equals(selectedStatus)) {
+                // Fetch all attendance records without filtering by status
+                modelTable = employeeMethod.getAllAttendanceRecords(employeeId); // Implement this method in EmployeeMethod
+            } else {
+                modelTable = employeeMethod.getAttendanceByStatus(employeeId, selectedStatus); // Existing method for Present, Absent, Incomplete
+            }
 
             setTableModel(modelTable, jTable2);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Failed to filter attendance data by status: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private void comboBoxPresentAbsentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxPresentAbsentActionPerformed
         if (loggedInUser == null) {
             return; 
