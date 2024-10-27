@@ -5,8 +5,11 @@
 package EmpoWork365;
 
 import com.toedter.calendar.JMonthChooser;
+import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -29,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JSpinner;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -63,7 +65,19 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
      */
     public MainEmployee() {
         setUndecorated(true);
-        setResizable(false);  
+        setResizable(false);
+        TitleBar titleBar = new TitleBar(this);
+
+        titleBar.setPreferredSize(new Dimension(1000, 83)); // Adjust height as needed
+
+        // Add title bar and content panel to the frame
+        setLayout(new BorderLayout());
+        add(titleBar, BorderLayout.NORTH);
+
+        setSize(1000, 800);
+        setLocationRelativeTo(null);
+
+        
         ImageIcon icon = IconLoader.getIcon();
         Image img = icon.getImage();
         
@@ -120,7 +134,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 }
             }
         });
-        
+
     }
     
     public void performSearchSafely() {
@@ -186,7 +200,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         if (user != null) {
             System.out.println("Setting user details for: " + user.getFirstname() + " " + user.getLastname());
             fullName.setText(user.getFirstname().toUpperCase() + " " + user.getLastname().toUpperCase());
-            userWelcome.setText(user.getFirstname());
+            userWelcome.setText(user.getFirstname() + "!");
             userJobTitle.setText(user.getJobtitle().toUpperCase());
             userRole.setText(user.getRoleName().toUpperCase() + " PROFILE");
             employeeIdLabel.setText(String.valueOf(user.getId()));
@@ -285,17 +299,17 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     
     private void addButtonHoverEffect(javax.swing.JButton button) {
         button.setOpaque(true);
-        button.setBackground(new Color(0,36,57));
+        button.setBackground(new Color(10,60,89));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(33,77,104));
+                button.setBackground(new Color(0,36,57));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(0,36,57));
+                button.setBackground(new Color(10,60,89));
             }
         });
     }
@@ -386,15 +400,10 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         jPanel1 = new javax.swing.JPanel();
         userImageIcon = new javax.swing.JLabel();
         logout = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         home = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
-        btnMin1 = new javax.swing.JButton();
-        btnClose1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         userWelcome = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -421,8 +430,6 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         btnLeave = new javax.swing.JButton();
         trackingAttendance = new javax.swing.JPanel();
         jPanel14 = new javax.swing.JPanel();
-        btnMin2 = new javax.swing.JButton();
-        btnClose2 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         comboBoxPresentAbsent = new javax.swing.JComboBox<>();
         datePanelPicker = new javax.swing.JPanel();
@@ -431,20 +438,14 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         totalCountAbsentLabel = new javax.swing.JLabel();
         totalCountAbsent = new javax.swing.JLabel();
         leave = new javax.swing.JPanel();
-        jPanel15 = new javax.swing.JPanel();
-        btnMin3 = new javax.swing.JButton();
-        btnClose3 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         searchNameTxt = new javax.swing.JTextField();
         searchBarEmployeeName = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         leaveTable = new javax.swing.JTable();
+        jPanel17 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
         managePayroll = new javax.swing.JPanel();
-        jPanel16 = new javax.swing.JPanel();
-        btnMin4 = new javax.swing.JButton();
-        btnClose4 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         incomeTaxLabel = new javax.swing.JLabel();
         SSSTextField = new javax.swing.JTextField();
@@ -502,19 +503,24 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         btnClear2 = new javax.swing.JButton();
         monthChooser = new com.toedter.calendar.JMonthChooser();
         btnReceiptPayroll = new javax.swing.JButton();
+        jPanel18 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
+
+        jPanel11.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        sideBar.setBackground(new java.awt.Color(0, 36, 57));
+        sideBar.setBackground(new java.awt.Color(10, 60, 89));
         sideBar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel3.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel3.setBackground(new java.awt.Color(10, 60, 89));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel2.setBackground(new java.awt.Color(10, 60, 89));
 
         btnHome.setBackground(new java.awt.Color(102, 102, 102));
         btnHome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -611,7 +617,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         fullName.setText("NAME");
         jPanel3.add(fullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 204, -1));
 
-        jPanel1.setBackground(new java.awt.Color(0, 36, 57));
+        jPanel1.setBackground(new java.awt.Color(10, 60, 89));
 
         userImageIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userImageIcon.setMaximumSize(new java.awt.Dimension(100, 100));
@@ -628,58 +634,20 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 logoutMouseClicked(evt);
             }
         });
-        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 580, -1, -1));
+        jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 610, -1, -1));
 
-        sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, -1, 740));
+        sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
 
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logo.png"))); // NOI18N
-        sideBar.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, 40));
+        jPanel5.add(sideBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
 
-        jLabel9.setFont(new java.awt.Font("Viner Hand ITC", 1, 18)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Work");
-        sideBar.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 70, -1));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel8.setFont(new java.awt.Font("Perpetua", 1, 24)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("EMPOWER");
-        sideBar.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, -1, 60));
-
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("for 365");
-        sideBar.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, 70, 30));
-
-        jPanel5.add(sideBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, -1, -1));
+        jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
 
         home.setBackground(new java.awt.Color(255, 255, 255));
         home.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel13.setBackground(new java.awt.Color(5, 52, 80));
-
-        btnMin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
-        btnMin1.setContentAreaFilled(false);
-        btnMin1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnMin1.setFocusable(false);
-        btnMin1.setRequestFocusEnabled(false);
-        btnMin1.setRolloverEnabled(false);
-        btnMin1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMin1ActionPerformed(evt);
-            }
-        });
-
-        btnClose1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
-        btnClose1.setContentAreaFilled(false);
-        btnClose1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose1.setFocusable(false);
-        btnClose1.setRequestFocusEnabled(false);
-        btnClose1.setRolloverEnabled(false);
-        btnClose1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClose1ActionPerformed(evt);
-            }
-        });
+        jPanel13.setBackground(new java.awt.Color(64, 116, 147));
 
         jLabel1.setBackground(new java.awt.Color(192, 213, 249));
         jLabel1.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
@@ -716,32 +684,23 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                         .addComponent(jLabel6)
                         .addGap(6, 6, 6)
                         .addComponent(employeeIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
-                .addComponent(btnMin1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(btnClose1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addContainerGap(461, Short.MAX_VALUE))
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
+                .addContainerGap(83, Short.MAX_VALUE)
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel13Layout.createSequentialGroup()
-                        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(userWelcome))
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(employeeIdLabel)))
-                    .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnClose1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMin1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
-                .addGap(10, 10, 10))
+                    .addComponent(jLabel1)
+                    .addComponent(userWelcome))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(employeeIdLabel))
+                .addGap(29, 29, 29))
         );
 
-        home.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
+        home.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 170));
 
         jPanel7.setBackground(new java.awt.Color(240, 240, 240));
 
@@ -847,17 +806,17 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 .addGap(20, 20, 20))
         );
 
-        home.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, -1, -1));
+        home.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, -1, -1));
 
         attendanceLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         attendanceLabel.setForeground(new java.awt.Color(9, 53, 53));
         attendanceLabel.setText("DAILY WORK LOG");
-        home.add(attendanceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 160, 405, 42));
+        home.add(attendanceLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(55, 200, 410, 42));
 
         userRole.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         userRole.setForeground(new java.awt.Color(9, 53, 53));
         userRole.setText("ROLE");
-        home.add(userRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 397, -1));
+        home.add(userRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 370, 397, -1));
 
         btnEditProfile.setBackground(new java.awt.Color(8, 127, 127));
         btnEditProfile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -870,11 +829,11 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 btnEditProfileActionPerformed(evt);
             }
         });
-        home.add(btnEditProfile, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 330, 151, 45));
+        home.add(btnEditProfile, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 350, 151, 45));
 
         jSeparator1.setBackground(new java.awt.Color(20, 165, 165));
         jSeparator1.setForeground(new java.awt.Color(20, 165, 165));
-        home.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 692, 19));
+        home.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 319, 692, 10));
 
         btnTimeIn.setBackground(new java.awt.Color(34, 165, 102));
         btnTimeIn.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -887,7 +846,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 btnTimeInActionPerformed(evt);
             }
         });
-        home.add(btnTimeIn, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 116, 43));
+        home.add(btnTimeIn, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 250, 116, 43));
 
         btnTimeOut.setBackground(new java.awt.Color(165, 61, 33));
         btnTimeOut.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -900,7 +859,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 btnTimeOutActionPerformed(evt);
             }
         });
-        home.add(btnTimeOut, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 210, 111, 43));
+        home.add(btnTimeOut, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 250, 111, 43));
 
         btnLeave.setBackground(new java.awt.Color(235, 168, 80));
         btnLeave.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -913,40 +872,16 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 btnLeaveActionPerformed(evt);
             }
         });
-        home.add(btnLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 210, 150, 43));
+        home.add(btnLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 250, 150, 43));
 
         jTabbedPane1.addTab("tab1", home);
 
         trackingAttendance.setBackground(new java.awt.Color(255, 255, 255));
         trackingAttendance.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel14.setBackground(new java.awt.Color(5, 52, 80));
+        jPanel14.setBackground(new java.awt.Color(64, 116, 147));
 
-        btnMin2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
-        btnMin2.setContentAreaFilled(false);
-        btnMin2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnMin2.setFocusable(false);
-        btnMin2.setRequestFocusEnabled(false);
-        btnMin2.setRolloverEnabled(false);
-        btnMin2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMin2ActionPerformed(evt);
-            }
-        });
-
-        btnClose2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
-        btnClose2.setContentAreaFilled(false);
-        btnClose2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose2.setFocusable(false);
-        btnClose2.setRequestFocusEnabled(false);
-        btnClose2.setRolloverEnabled(false);
-        btnClose2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClose2ActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Track Attendance");
@@ -957,23 +892,15 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
                 .addContainerGap(233, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(153, 153, 153)
-                .addComponent(btnMin2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(btnClose2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(251, 251, 251))
         );
         jPanel14Layout.setVerticalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
-                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnClose2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMin2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
-                .addGap(18, 18, 18))
+                .addContainerGap(75, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         trackingAttendance.add(jPanel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
@@ -983,7 +910,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 comboBoxPresentAbsentActionPerformed(evt);
             }
         });
-        trackingAttendance.add(comboBoxPresentAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 180, -1, 30));
+        trackingAttendance.add(comboBoxPresentAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 160, -1, 30));
 
         datePanelPicker.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -998,7 +925,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             .addGap(0, 30, Short.MAX_VALUE)
         );
 
-        trackingAttendance.add(datePanelPicker, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 180, -1, -1));
+        trackingAttendance.add(datePanelPicker, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 160, -1, -1));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1017,78 +944,22 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             jTable2.getColumnModel().getColumn(0).setMaxWidth(30);
         }
 
-        trackingAttendance.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 234, 772, 590));
+        trackingAttendance.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 214, 772, 550));
 
         totalCountAbsentLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        totalCountAbsentLabel.setForeground(new java.awt.Color(10, 60, 89));
         totalCountAbsentLabel.setText("Total Count of Absence:");
-        trackingAttendance.add(totalCountAbsentLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
+        trackingAttendance.add(totalCountAbsentLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, -1, -1));
 
         totalCountAbsent.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        totalCountAbsent.setForeground(new java.awt.Color(10, 60, 89));
         totalCountAbsent.setText("jLabel");
-        trackingAttendance.add(totalCountAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 180, -1, -1));
+        trackingAttendance.add(totalCountAbsent, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 160, -1, -1));
 
         jTabbedPane1.addTab("tab3", trackingAttendance);
 
         leave.setBackground(new java.awt.Color(255, 255, 255));
         leave.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jPanel15.setBackground(new java.awt.Color(5, 52, 80));
-
-        btnMin3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
-        btnMin3.setContentAreaFilled(false);
-        btnMin3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnMin3.setFocusable(false);
-        btnMin3.setRequestFocusEnabled(false);
-        btnMin3.setRolloverEnabled(false);
-        btnMin3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMin3ActionPerformed(evt);
-            }
-        });
-
-        btnClose3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
-        btnClose3.setContentAreaFilled(false);
-        btnClose3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose3.setFocusable(false);
-        btnClose3.setRequestFocusEnabled(false);
-        btnClose3.setRolloverEnabled(false);
-        btnClose3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClose3ActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Leave Summary");
-
-        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
-        jPanel15.setLayout(jPanel15Layout);
-        jPanel15Layout.setHorizontalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addContainerGap(233, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(141, 141, 141)
-                .addComponent(btnMin3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(btnClose3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
-        );
-        jPanel15Layout.setVerticalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
-                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnClose3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMin3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
-                .addGap(18, 18, 18))
-        );
-
-        leave.add(jPanel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
         jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(1, 113, 132)));
@@ -1120,7 +991,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         });
         jPanel6.add(searchBarEmployeeName, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 7, 50, -1));
 
-        leave.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(493, 157, -1, 43));
+        leave.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 160, -1, 43));
 
         leaveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1135,70 +1006,38 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         ));
         jScrollPane1.setViewportView(leaveTable);
 
-        leave.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 218, 765, 610));
+        leave.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 228, 770, 540));
+
+        jPanel17.setBackground(new java.awt.Color(64, 116, 147));
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("Leave Request Summary");
+
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
+                .addContainerGap(233, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(251, 251, 251))
+        );
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
+                .addContainerGap(75, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        leave.add(jPanel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
 
         jTabbedPane1.addTab("tab1", leave);
 
         managePayroll.setBackground(new java.awt.Color(255, 255, 255));
         managePayroll.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jPanel16.setBackground(new java.awt.Color(5, 52, 80));
-
-        btnMin4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
-        btnMin4.setContentAreaFilled(false);
-        btnMin4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnMin4.setFocusable(false);
-        btnMin4.setRequestFocusEnabled(false);
-        btnMin4.setRolloverEnabled(false);
-        btnMin4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMin4ActionPerformed(evt);
-            }
-        });
-
-        btnClose4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
-        btnClose4.setContentAreaFilled(false);
-        btnClose4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose4.setFocusable(false);
-        btnClose4.setRequestFocusEnabled(false);
-        btnClose4.setRolloverEnabled(false);
-        btnClose4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClose4ActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Access Payroll");
-
-        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
-        jPanel16.setLayout(jPanel16Layout);
-        jPanel16Layout.setHorizontalGroup(
-            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
-                .addContainerGap(240, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(163, 163, 163)
-                .addComponent(btnMin4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(btnClose4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
-        );
-        jPanel16Layout.setVerticalGroup(
-            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel16Layout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
-                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnClose4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMin4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)))
-                .addGap(18, 18, 18))
-        );
-
-        managePayroll.add(jPanel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 130));
 
         jPanel9.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1477,7 +1316,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
                 .addContainerGap(34, Short.MAX_VALUE))
         );
 
-        managePayroll.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(26, 157, -1, 680));
+        managePayroll.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, -1, 680));
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
         jPanel10.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1541,6 +1380,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         jPanel10.add(monthChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 4, 120, -1));
 
         btnReceiptPayroll.setText("Print");
+        btnReceiptPayroll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnReceiptPayroll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReceiptPayrollActionPerformed(evt);
@@ -1548,34 +1388,43 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         });
         jPanel10.add(btnReceiptPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 40, 120, 20));
 
-        managePayroll.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(396, 161, 364, 430));
+        managePayroll.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, 364, 430));
+
+        jPanel18.setBackground(new java.awt.Color(64, 116, 147));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("Access Payroll");
+
+        javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
+        jPanel18.setLayout(jPanel18Layout);
+        jPanel18Layout.setHorizontalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
+                .addContainerGap(233, Short.MAX_VALUE)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(251, 251, 251))
+        );
+        jPanel18Layout.setVerticalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
+                .addContainerGap(77, Short.MAX_VALUE)
+                .addComponent(jLabel8)
+                .addContainerGap())
+        );
+
+        managePayroll.add(jPanel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 110));
 
         jTabbedPane1.addTab("tab4", managePayroll);
 
-        jPanel5.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(212, 0, 1400, 900));
+        jPanel4.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, 1000, 980));
 
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1000, Short.MAX_VALUE)
-            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel11Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 1000, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 902, Short.MAX_VALUE)
-            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel11Layout.createSequentialGroup()
-                    .addGap(0, 1, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 1, Short.MAX_VALUE)))
-        );
+        jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, -40, 790, 840));
 
-        getContentPane().add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, -1, -1));
+        jPanel11.add(jPanel5, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel11, java.awt.BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
@@ -1825,6 +1674,10 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private void btnReceiptPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceiptPayrollActionPerformed
         Receipt receiptFrame = new Receipt();
         Map<String, String> payrollDetails = getPayrollDetailsForReceipt();
+        
+        int selectedMonth = monthChooser.getMonth() + 1; // Adjust to 1-based month
+        payrollDetails.put("Month", getMonthName(selectedMonth));
+        
         receiptFrame.setPayrollDetails(payrollDetails);
 
         receiptFrame.setVisible(true);
@@ -1857,38 +1710,6 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         return payrollDetails;
     }
     
-    private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
-        this.setState(JFrame.ICONIFIED);
-    }//GEN-LAST:event_btnMin1ActionPerformed
-
-    private void btnClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose1ActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_btnClose1ActionPerformed
-
-    private void btnMin2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin2ActionPerformed
-        this.setState(JFrame.ICONIFIED);
-    }//GEN-LAST:event_btnMin2ActionPerformed
-
-    private void btnClose2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose2ActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_btnClose2ActionPerformed
-
-    private void btnMin3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin3ActionPerformed
-        this.setState(JFrame.ICONIFIED);
-    }//GEN-LAST:event_btnMin3ActionPerformed
-
-    private void btnClose3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose3ActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_btnClose3ActionPerformed
-
-    private void btnMin4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin4ActionPerformed
-        this.setState(JFrame.ICONIFIED);
-    }//GEN-LAST:event_btnMin4ActionPerformed
-
-    private void btnClose4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose4ActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_btnClose4ActionPerformed
-
     private void loadPayrollDetails() {
         if (loggedInUser == null) {
             return;
@@ -1938,7 +1759,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error loading payroll details: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
+        } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -2106,11 +1927,11 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
 
         // Calculate total absences
-        int totalAbsences = employeeOption.getTotalAbsences(employee);
-        totalAbsenceTextField.setText(String.valueOf(totalAbsences)); // Display total absences
+        int totalAbsence = employeeOption.getTotalAbsences(employee);
+        totalAbsenceTextField.setText(String.valueOf(totalAbsence)); // Display total absences
 
         // Calculate unpaid leave cost, including total absences
-        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, totalAbsences).setScale(4, RoundingMode.HALF_UP);
+        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, totalAbsence).setScale(4, RoundingMode.HALF_UP);
         unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
 
         // Calculate deductions
@@ -2271,9 +2092,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     }
 
     private BigDecimal calculateUnpaidLeave(BigDecimal ratePerHour, int totalAbsences) {
-        final BigDecimal HOURS_PER_DAY_SUBTRACTED_BY_ONE_FOR_LUNCH_BREAK = BigDecimal.valueOf(7.0);
+        final BigDecimal HOURS_PER_DAY = BigDecimal.valueOf(8.0);
         // Multiply rate per hour by hours worked per day and by the total number of absences
-        BigDecimal totalUnpaidLeaveCost = ratePerHour.multiply(HOURS_PER_DAY_SUBTRACTED_BY_ONE_FOR_LUNCH_BREAK)
+        BigDecimal totalUnpaidLeaveCost = ratePerHour.multiply(HOURS_PER_DAY)
                                                      .multiply(BigDecimal.valueOf(totalAbsences))
                                                      .setScale(2, RoundingMode.HALF_UP);
         return totalUnpaidLeaveCost;
@@ -2309,7 +2130,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         genderTextField.setText("");
         jobTitleTextField.setText("");
         departmentTextField.setText("");
-        userImagePayroll.setIcon(new ImageIcon("src/Users/user.png"));
+        userImagePayroll.setIcon(new ImageIcon("src/icon/user.png"));
     }
     
     
@@ -2357,18 +2178,10 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private javax.swing.JLabel attendanceLabel;
     private javax.swing.JButton btnAttSum;
     private javax.swing.JButton btnClear2;
-    private javax.swing.JButton btnClose1;
-    private javax.swing.JButton btnClose2;
-    private javax.swing.JButton btnClose3;
-    private javax.swing.JButton btnClose4;
     private javax.swing.JButton btnEditProfile;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnLeave;
     private javax.swing.JButton btnLeaveSum;
-    private javax.swing.JButton btnMin1;
-    private javax.swing.JButton btnMin2;
-    private javax.swing.JButton btnMin3;
-    private javax.swing.JButton btnMin4;
     private javax.swing.JButton btnPayroll;
     private javax.swing.JButton btnReceiptPayroll;
     private javax.swing.JButton btnTimeIn;
@@ -2392,8 +2205,6 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private javax.swing.JLabel incomeTaxLabel;
     private javax.swing.JTextField incomeTaxTextField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel26;
@@ -2404,20 +2215,19 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
-    private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;

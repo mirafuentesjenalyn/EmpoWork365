@@ -4,8 +4,11 @@
  */
 package EmpoWork365;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -15,6 +18,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -27,7 +31,25 @@ public class Receipt extends javax.swing.JFrame {
      * Creates new form Receipt
      */
     public Receipt() {
+        setUndecorated(true);
+        setResizable(false);
+        TitleBar titleBar = new TitleBar(this);
+
+        titleBar.setPreferredSize(new Dimension(520, 83)); // Adjust height as needed
+
+        // Add title bar and content panel to the frame
+        setLayout(new BorderLayout());
+        add(titleBar, BorderLayout.NORTH);
+
+        setSize(520, 866);
+        setLocationRelativeTo(null);
+        
         initComponents();
+        ImageIcon icon = IconLoader.getIcon();
+        Image img = icon.getImage();
+        
+        setIconImage(img);
+        
         receiptTextArea1.setEditable(false); 
     }
     
@@ -35,13 +57,17 @@ public class Receipt extends javax.swing.JFrame {
         StringBuilder receipt = new StringBuilder();
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "PH"));
 
-        receipt.append("---- Payroll Receipt ----\n");
+        receipt.append("----------------------- Employee Details -----------------------\n");
         receipt.append("Employee ID: ").append(payrollDetails.getOrDefault("Employee ID", "")).append("\n");
         receipt.append("Employee Name: ").append(payrollDetails.getOrDefault("Full Name", "")).append("\n");
         receipt.append("Email: ").append(payrollDetails.getOrDefault("Email", "")).append("\n");
         receipt.append("Job Title: ").append(payrollDetails.getOrDefault("Job Title", "")).append("\n");
         receipt.append("Department: ").append(payrollDetails.getOrDefault("Department", "")).append("\n");
 
+        receipt.append("\n---------------------------- MONTH ----------------------------\n");
+        receipt.append("                            ").append(payrollDetails.getOrDefault("Month", "").toUpperCase()).append("\n");
+
+        
         int hoursPerMonth = parseInt(payrollDetails.get("Regular Hours/Month"));
         int leaveBalance = parseInt(payrollDetails.get("Leave Balance"));
         BigDecimal totalSalary = parseBigDecimal(payrollDetails.get("Total Salary"));
@@ -59,26 +85,26 @@ public class Receipt extends javax.swing.JFrame {
         BigDecimal thirteenthMonthPay = parseBigDecimal(payrollDetails.get("13th Month Pay"));
 
         // Fill in receipt details with parsed values
-        receipt.append("\nSALARY/MONTH: ").append(currencyFormat.format(totalSalary)).append("\n");
-        receipt.append("Rate/Hour: ").append(ratePerHour).append(" hrs\n");
-        receipt.append("Regular Hours/Month: ").append(hoursPerMonth).append(" hrs\n");
-        receipt.append("Total Hours Worked: ").append(totalHoursWorked).append(" hrs\n");
-        receipt.append("Overtime Hours: ").append(overtimeHours).append(" hrs\n");
+        receipt.append("\nSALARY/MONTH: ").append("                                    ").append(currencyFormat.format(totalSalary)).append("\n");
+        receipt.append("Rate/Hour: ").append("                                       ").append(ratePerHour).append(" hrs\n");
+        receipt.append("Regular Hours/Month: ").append("                                ").append(hoursPerMonth).append(" hrs\n");
+        receipt.append("Total Hours Worked: ").append("                              ").append(totalHoursWorked).append(" hrs\n");
+        receipt.append("Overtime Hours: ").append("                                    ").append(overtimeHours).append(" hrs\n");
 
         // Deductions
-        receipt.append("\nDEDUCTIONS: ").append(currencyFormat.format(totalDeductions)).append("\n");
-        receipt.append("PhilHealth: ").append(currencyFormat.format(philHealth)).append("\n");
-        receipt.append("SSS: ").append(currencyFormat.format(sss)).append("\n");
-        receipt.append("Pag-Ibig: ").append(currencyFormat.format(pagibig)).append("\n");
-        receipt.append("Income Tax: ").append(currencyFormat.format(incomeTax)).append("\n");
+        receipt.append("\nDEDUCTIONS: ").append("                                      ").append(currencyFormat.format(totalDeductions)).append("\n");
+        receipt.append("PhilHealth: ").append("                                      ").append(currencyFormat.format(philHealth)).append("\n");
+        receipt.append("SSS: ").append("                                             ").append(currencyFormat.format(sss)).append("\n");
+        receipt.append("Pag-ibig: ").append("                                        ").append(currencyFormat.format(pagibig)).append("\n");
+        receipt.append("Income Tax: ").append("                                      ").append(currencyFormat.format(incomeTax)).append("\n");
         
-        receipt.append("Unpaid Leave: ").append(currencyFormat.format(unpaidLeaveCost)).append("\n");
-        receipt.append("Leave Balance: ").append(leaveBalance).append("\n");
-        receipt.append("Unused Leave: ").append(currencyFormat.format(unusedLeave)).append("\n");
-        receipt.append("13th Month Pay: ").append(currencyFormat.format(thirteenthMonthPay)).append("\n");
+        receipt.append("Unpaid Leave: ").append("                                    ").append(currencyFormat.format(unpaidLeaveCost)).append("\n");
+        receipt.append("Leave Balance: ").append("                                   ").append(leaveBalance).append("\n");
+        receipt.append("Unused Leave: ").append("                                    ").append(currencyFormat.format(unusedLeave)).append("\n");
+        receipt.append("13th Month Pay: ").append("                                  ").append(currencyFormat.format(thirteenthMonthPay)).append("\n");
 
         // Total / Net Salary
-        receipt.append("\nNET SALARY: ").append(currencyFormat.format(netSalary)).append("\n");
+        receipt.append("\nNET SALARY: ").append("                                      ").append(currencyFormat.format(netSalary)).append("\n");
 
         // Set the text content to the JTextArea
         receiptTextArea1.setText(receipt.toString());
@@ -127,90 +153,116 @@ public class Receipt extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         receiptTextArea1 = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
         btnPrint = new javax.swing.JButton();
-        btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setText("Payroll Receipt");
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setForeground(new java.awt.Color(2, 98, 154));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel2.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel2.setText("4506 - Polangui, Albay");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 220, -1));
+
+        jLabel3.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel3.setText("Centro Oriental, San Juan St.");
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 220, -1));
+
+        jLabel5.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel5.setText("Salary Slip");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 20, 142, 44));
+
+        jSeparator1.setBackground(new java.awt.Color(9, 36, 48));
+        jSeparator1.setForeground(new java.awt.Color(9, 36, 48));
+        jSeparator1.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
+        jSeparator1.setMinimumSize(new java.awt.Dimension(60, 20));
+        jSeparator1.setPreferredSize(new java.awt.Dimension(60, 20));
+        jPanel2.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 280, -1));
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        receiptTextArea1.setEditable(false);
+        receiptTextArea1.setBackground(new java.awt.Color(255, 255, 255));
         receiptTextArea1.setColumns(20);
         receiptTextArea1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         receiptTextArea1.setRows(5);
+        receiptTextArea1.setBorder(null);
         jScrollPane1.setViewportView(receiptTextArea1);
 
-        jScrollPane2.setViewportView(jScrollPane1);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
+        jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 460, 590));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        btnPrint.setBackground(new java.awt.Color(10, 60, 89));
+        btnPrint.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        btnPrint.setForeground(new java.awt.Color(255, 255, 255));
         btnPrint.setText("Print");
+        btnPrint.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPrint.setFocusable(false);
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPrintActionPerformed(evt);
             }
         });
 
-        btnClose.setText("Close");
-        btnClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCloseActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(44, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnPrint)
+                .addContainerGap(69, Short.MAX_VALUE))
+        );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(160, 160, 160)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(109, 109, 109)
-                        .addComponent(btnPrint)
-                        .addGap(107, 107, 107)
-                        .addComponent(btnClose))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnClose)
-                    .addComponent(btnPrint))
-                .addGap(40, 40, 40))
-        );
+        jPanel2.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 730, 250, 110));
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
@@ -264,10 +316,6 @@ public class Receipt extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnPrintActionPerformed
 
-    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_btnCloseActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -304,12 +352,15 @@ public class Receipt extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnClose;
     private javax.swing.JButton btnPrint;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea receiptTextArea1;
     // End of variables declaration//GEN-END:variables
 }

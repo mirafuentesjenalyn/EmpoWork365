@@ -4,11 +4,13 @@
  */
 package EmpoWork365;
 
+import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -46,9 +48,21 @@ public final class SignUp extends javax.swing.JFrame {
      * Creates new form SignUp
      */
     public SignUp() {
-        initComponents();
+                
         setUndecorated(true);
-        setResizable(false);  
+        setResizable(false);
+        TitleBar titleBar = new TitleBar(this);
+
+        titleBar.setPreferredSize(new Dimension(1051, 83)); // Adjust height as needed
+
+        // Add title bar and content panel to the frame
+        setLayout(new BorderLayout());
+        add(titleBar, BorderLayout.NORTH);
+
+        setSize(1051, 754);
+        setLocationRelativeTo(null);
+        
+        initComponents();  
         
         ImageIcon icon = IconLoader.getIcon();
         Image img = icon.getImage();
@@ -341,15 +355,8 @@ public final class SignUp extends javax.swing.JFrame {
         btnCreateAccount = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         btnSignIn = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        btnClose = new javax.swing.JButton();
-        btnMin = new javax.swing.JButton();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -546,68 +553,30 @@ public final class SignUp extends javax.swing.JFrame {
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 560, 690));
 
-        jPanel3.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 100, 690, 740));
-
-        jSeparator1.setBackground(new java.awt.Color(240, 240, 240));
-        jSeparator1.setForeground(new java.awt.Color(240, 240, 240));
-        jSeparator1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 1100, -1));
+        jPanel3.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 0, 690, 760));
 
         jPanel2.setBackground(new java.awt.Color(0, 36, 57));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/bg4.jpg"))); // NOI18N
-        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 110, 1100, 780));
 
-        btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
-        btnClose.setContentAreaFilled(false);
-        btnClose.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose.setFocusable(false);
-        btnClose.setRequestFocusEnabled(false);
-        btnClose.setRolloverEnabled(false);
-        btnClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCloseActionPerformed(evt);
-            }
-        });
-        jPanel2.add(btnClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(970, 50, 50, 40));
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 780, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
-        btnMin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
-        btnMin.setContentAreaFilled(false);
-        btnMin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnMin.setFocusable(false);
-        btnMin.setRequestFocusEnabled(false);
-        btnMin.setRolloverEnabled(false);
-        btnMin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMinActionPerformed(evt);
-            }
-        });
-        jPanel2.add(btnMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 50, 50, 40));
-
-        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logo.png"))); // NOI18N
-        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, 50));
-
-        jLabel1.setFont(new java.awt.Font("Perpetua", 1, 28)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("EMPOWER");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 40, -1, 60));
-
-        jLabel15.setFont(new java.awt.Font("Viner Hand ITC", 1, 24)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel15.setText("Work");
-        jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 40, 70, 60));
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel14.setText("for 365");
-        jPanel2.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 60, 40));
-
-        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 1090, 850));
+        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1090, 760));
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(1067, 846));
+        pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -750,14 +719,6 @@ public final class SignUp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxGenderActionPerformed
 
-    private void btnMinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinActionPerformed
-        this.setState(JFrame.ICONIFIED);
-    }//GEN-LAST:event_btnMinActionPerformed
-
-    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        System.exit(0); // Close the application
-    }//GEN-LAST:event_btnCloseActionPerformed
-
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
@@ -891,9 +852,7 @@ public final class SignUp extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear1;
-    private javax.swing.JButton btnClose;
     private javax.swing.JButton btnCreateAccount;
-    private javax.swing.JButton btnMin;
     private javax.swing.JButton btnSignIn;
     private javax.swing.JComboBox<Department> comboBoxDepartment;
     private javax.swing.JComboBox<String> comboBoxGender;
@@ -903,12 +862,8 @@ public final class SignUp extends javax.swing.JFrame {
     private javax.swing.JTextField firstName;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -922,7 +877,6 @@ public final class SignUp extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField lastName;
     private javax.swing.JPasswordField passWord;
     // End of variables declaration//GEN-END:variables

@@ -4,11 +4,13 @@
  */
 package EmpoWork365;
 
+import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -27,7 +29,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -40,8 +41,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     private final MainAdmin mainAdmin;
     private Connection connection;    
     private final List<JobTitle> jobTitles = new ArrayList<>();
-    private final List<Role> roles = new ArrayList<>();
-    private final List<Department> departments = new ArrayList<>();
     private int employeeId; 
     private String imagePath; 
     
@@ -50,8 +49,27 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
      * @param mainAdmin
      */
     public EditEmployeeDetails(MainAdmin mainAdmin) {
-        this.mainAdmin = mainAdmin;
+                
+        setUndecorated(true);
+        setResizable(false);
+        TitleBar titleBar = new TitleBar(this);
+
+        titleBar.setPreferredSize(new Dimension(776, 83)); // Adjust height as needed
+
+        // Add title bar and content panel to the frame
+        setLayout(new BorderLayout());
+        add(titleBar, BorderLayout.NORTH);
+
+        setSize(776, 886);
+        setLocationRelativeTo(null);
         
+        ImageIcon icon = IconLoader.getIcon();
+        Image img = icon.getImage();
+        
+        setIconImage(img);
+        
+        this.mainAdmin = mainAdmin;
+
         initComponents();
         this.employeeId = -1;
         this.imagePath = "";
@@ -447,14 +465,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         btnConfirmEdit = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
-        btnClose1 = new javax.swing.JButton();
-        btnMin1 = new javax.swing.JButton();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -490,7 +500,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Email");
-        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 240, 121, -1));
+        jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 420, 121, -1));
 
         eMail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         eMail.setForeground(new java.awt.Color(126, 138, 150));
@@ -508,12 +518,12 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
                 ActionPerformed(evt);
             }
         });
-        jPanel4.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 246, 45));
+        jPanel4.add(eMail, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 450, 246, 45));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Password");
-        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 330, 121, -1));
+        jPanel4.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 510, 121, -1));
 
         passWord.setForeground(new java.awt.Color(126, 138, 150));
         passWord.setText("Password");
@@ -525,7 +535,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
                 passWordFocusLost(evt);
             }
         });
-        jPanel4.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 360, 246, 45));
+        jPanel4.add(passWord, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 540, 246, 45));
 
         btnClear.setBackground(new java.awt.Color(71, 146, 146));
         btnClear.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -543,7 +553,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("First Name");
-        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 420, 239, -1));
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 240, 239, -1));
 
         firstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         firstName.setForeground(new java.awt.Color(126, 138, 150));
@@ -556,12 +566,12 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
                 firstNameFocusLost(evt);
             }
         });
-        jPanel4.add(firstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 450, 246, 45));
+        jPanel4.add(firstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 246, 45));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Last Name");
-        jPanel4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 510, 120, -1));
+        jPanel4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 330, 120, -1));
 
         lastName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lastName.setForeground(new java.awt.Color(126, 138, 150));
@@ -574,7 +584,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
                 lastNameFocusLost(evt);
             }
         });
-        jPanel4.add(lastName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 540, 246, 45));
+        jPanel4.add(lastName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 360, 246, 45));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
@@ -666,60 +676,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         );
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
-
-        jPanel7.setBackground(new java.awt.Color(0, 36, 57));
-        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        btnClose1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
-        btnClose1.setContentAreaFilled(false);
-        btnClose1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose1.setFocusable(false);
-        btnClose1.setRequestFocusEnabled(false);
-        btnClose1.setRolloverEnabled(false);
-        btnClose1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClose1ActionPerformed(evt);
-            }
-        });
-        jPanel7.add(btnClose1, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 50, 50, 40));
-
-        btnMin1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/minimize.png"))); // NOI18N
-        btnMin1.setContentAreaFilled(false);
-        btnMin1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnMin1.setFocusable(false);
-        btnMin1.setRequestFocusEnabled(false);
-        btnMin1.setRolloverEnabled(false);
-        btnMin1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMin1ActionPerformed(evt);
-            }
-        });
-        jPanel7.add(btnMin1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 50, 50, 40));
-
-        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logo.png"))); // NOI18N
-        jPanel7.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, 50));
-
-        jLabel3.setFont(new java.awt.Font("Perpetua", 1, 28)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("EMPOWER");
-        jPanel7.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 40, -1, 60));
-
-        jLabel17.setFont(new java.awt.Font("Viner Hand ITC", 1, 24)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel17.setText("Work");
-        jPanel7.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 40, 70, 60));
-
-        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel18.setText("for 365");
-        jPanel7.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 60, 40));
-
-        jSeparator1.setBackground(new java.awt.Color(240, 240, 240));
-        jSeparator1.setForeground(new java.awt.Color(240, 240, 240));
-        jSeparator1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel7.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 780, -1));
-
-        getContentPane().add(jPanel7, java.awt.BorderLayout.PAGE_START);
 
         setSize(new java.awt.Dimension(792, 895));
         setLocationRelativeTo(null);
@@ -865,14 +821,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         clearFields();
     }//GEN-LAST:event_btnClearActionPerformed
 
-    private void btnClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose1ActionPerformed
-        System.exit(0); // Close the application
-    }//GEN-LAST:event_btnClose1ActionPerformed
-
-    private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
-        this.setState(JFrame.ICONIFIED);
-    }//GEN-LAST:event_btnMin1ActionPerformed
-
     private int getUserIdFromEmployeeId(int employeeId) {
         String query = "SELECT fld_employee_id FROM tbl_employees WHERE fld_employee_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -968,16 +916,10 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         comboBoxJobTitle.setSelectedIndex(-1);
         comboBoxDepartment.setSelectedIndex(-1);
         comboBoxRole.setSelectedIndex(-1);
-        imageLabel.setIcon(null); 
+        imageLabel.setIcon(new ImageIcon("src/Users/user.png")); 
         imagePath = ""; 
     }
-    
-    
-    
-    
-     
-     
-     
+
      
     /**
      * @param args the command line arguments
@@ -1021,9 +963,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnClear;
-    private javax.swing.JButton btnClose1;
     private javax.swing.JButton btnConfirmEdit;
-    private javax.swing.JButton btnMin1;
     private javax.swing.JComboBox<Department> comboBoxDepartment;
     private javax.swing.JComboBox<String> comboBoxGender;
     private javax.swing.JComboBox<JobTitle> comboBoxJobTitle;
@@ -1034,11 +974,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1049,8 +985,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField lastName;
     private javax.swing.JPasswordField passWord;
     // End of variables declaration//GEN-END:variables
