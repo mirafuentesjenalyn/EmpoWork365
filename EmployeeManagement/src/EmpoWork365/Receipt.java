@@ -10,9 +10,11 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,9 +22,6 @@ import javax.swing.JOptionPane;
  * @author jenal
  */
 public class Receipt extends javax.swing.JFrame {
-
-    private BigDecimal  unpaidLeaveCost;
-    private BigDecimal totalDeductions;
 
     /**
      * Creates new form Receipt
@@ -32,97 +31,92 @@ public class Receipt extends javax.swing.JFrame {
         receiptTextArea1.setEditable(false); 
     }
     
-    public void setPayrollDetails(Employee employee, BigDecimal totalSalary, BigDecimal ratePerHour, 
-                               BigDecimal totalHoursWorked, BigDecimal overtimeHours, 
-                               BigDecimal totalDeductions, BigDecimal netSalary, 
-                               BigDecimal unusedLeave, BigDecimal thirteenthMonthPay, 
-                               int selectedMonth) {
-        // Ensure all values are initialized
-        this.unpaidLeaveCost = BigDecimal.ZERO; // Assume it will be passed for December
-        // Remove the deduction calculation here since it's already done
-        this.totalDeductions = totalDeductions; // Use passed value directly
-
-        boolean isDecember = (selectedMonth == 12);
-
-        // Generate payroll receipt content
-        String receiptContent = generatePayrollReceipt(
-            employee, totalSalary, ratePerHour, totalHoursWorked, overtimeHours, netSalary,
-            unusedLeave, thirteenthMonthPay, isDecember, selectedMonth
-        );
-
-        // Set the text content to the JTextArea
-        receiptTextArea1.setText(receiptContent);
-    }
-
-     private String generatePayrollReceipt(Employee employee, BigDecimal totalSalary, BigDecimal ratePerHour, 
-                                           BigDecimal totalHoursWorked, BigDecimal overtimeHours, 
-                                           BigDecimal netSalary, BigDecimal unusedLeave, 
-                                           BigDecimal thirteenthMonthPay, boolean isDecember,
-                                           int selectedMonth) {
+    public void setPayrollDetails(Map<String, String> payrollDetails) {
         StringBuilder receipt = new StringBuilder();
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "PH"));
 
-        // Month names array
-        String[] monthNames = {
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        };
-        String monthName = monthNames[selectedMonth - 1];  // Adjust for zero-based index
-
-        // Employee details
         receipt.append("---- Payroll Receipt ----\n");
-        receipt.append("Employee ID: ").append(employee.getEmployeeId()).append("\n");
-        receipt.append("Employee Name: ").append(employee.getFirstname()).append(" ").append(employee.getLastname()).append("\n");
-        receipt.append("Job Title: ").append(employee.getJobtitle()).append("\n");
-        receipt.append("Department: ").append(employee.getDepartmentName()).append("\n");
+        receipt.append("Employee ID: ").append(payrollDetails.getOrDefault("Employee ID", "")).append("\n");
+        receipt.append("Employee Name: ").append(payrollDetails.getOrDefault("Full Name", "")).append("\n");
+        receipt.append("Email: ").append(payrollDetails.getOrDefault("Email", "")).append("\n");
+        receipt.append("Job Title: ").append(payrollDetails.getOrDefault("Job Title", "")).append("\n");
+        receipt.append("Department: ").append(payrollDetails.getOrDefault("Department", "")).append("\n");
 
-        // Payroll month
-        receipt.append("\nMONTHLY").append("\n").append(monthName.toUpperCase()).append("\n");
+        int hoursPerMonth = parseInt(payrollDetails.get("Regular Hours/Month"));
+        int leaveBalance = parseInt(payrollDetails.get("Leave Balance"));
+        BigDecimal totalSalary = parseBigDecimal(payrollDetails.get("Total Salary"));
+        BigDecimal ratePerHour = parseBigDecimal(payrollDetails.get("Rate per Hour"));
+        BigDecimal totalHoursWorked = parseBigDecimal(payrollDetails.get("Total Hours Worked"));
+        BigDecimal overtimeHours = parseBigDecimal(payrollDetails.get("Overtime Hours"));
+        BigDecimal philHealth = parseBigDecimal(payrollDetails.get("PhilHealth Deduction"));
+        BigDecimal sss = parseBigDecimal(payrollDetails.get("SSS Deduction"));
+        BigDecimal pagibig = parseBigDecimal(payrollDetails.get("Pag-IBIG Deduction"));
+        BigDecimal incomeTax = parseBigDecimal(payrollDetails.get("Income Tax"));
+        BigDecimal unpaidLeaveCost = parseBigDecimal(payrollDetails.get("Unpaid Leave Cost"));
+        BigDecimal netSalary = parseBigDecimal(payrollDetails.get("Net Salary"));
+        BigDecimal totalDeductions = parseBigDecimal(payrollDetails.get("Total Deductions"));
+        BigDecimal unusedLeave = parseBigDecimal(payrollDetails.get("Unused Leave"));
+        BigDecimal thirteenthMonthPay = parseBigDecimal(payrollDetails.get("13th Month Pay"));
 
-        // Salary details
-        receipt.append("\nSALARY/MONTH: ").append(currencyFormat.format(totalSalary != null ? totalSalary : BigDecimal.ZERO)).append("\n");
-        receipt.append("Rate/Hour: ").append(String.format("%.2f hrs", ratePerHour != null ? ratePerHour : BigDecimal.ZERO)).append("\n");
-        receipt.append("Total Hours Worked: ").append(String.format("%.2f hrs", totalHoursWorked != null ? totalHoursWorked : BigDecimal.ZERO)).append("\n");
-        receipt.append("Overtime Hours: ").append(String.format("%.2f hrs", overtimeHours != null ? overtimeHours : BigDecimal.ZERO)).append("\n");
+        // Fill in receipt details with parsed values
+        receipt.append("\nSALARY/MONTH: ").append(currencyFormat.format(totalSalary)).append("\n");
+        receipt.append("Rate/Hour: ").append(ratePerHour).append(" hrs\n");
+        receipt.append("Regular Hours/Month: ").append(hoursPerMonth).append(" hrs\n");
+        receipt.append("Total Hours Worked: ").append(totalHoursWorked).append(" hrs\n");
+        receipt.append("Overtime Hours: ").append(overtimeHours).append(" hrs\n");
 
         // Deductions
         receipt.append("\nDEDUCTIONS: ").append(currencyFormat.format(totalDeductions)).append("\n");
-        receipt.append("PhilHealth: ").append(currencyFormat.format(calculatePhilHealthDeduction(totalSalary))).append("\n");
-        receipt.append("SSS: ").append(currencyFormat.format(calculateSSSDeduction(totalSalary))).append("\n");
-        receipt.append("Pag-Ibig: ").append(currencyFormat.format(calculatePagIbigDeduction(totalSalary))).append("\n");
+        receipt.append("PhilHealth: ").append(currencyFormat.format(philHealth)).append("\n");
+        receipt.append("SSS: ").append(currencyFormat.format(sss)).append("\n");
+        receipt.append("Pag-Ibig: ").append(currencyFormat.format(pagibig)).append("\n");
+        receipt.append("Income Tax: ").append(currencyFormat.format(incomeTax)).append("\n");
+        
+        receipt.append("Unpaid Leave: ").append(currencyFormat.format(unpaidLeaveCost)).append("\n");
+        receipt.append("Leave Balance: ").append(leaveBalance).append("\n");
+        receipt.append("Unused Leave: ").append(currencyFormat.format(unusedLeave)).append("\n");
+        receipt.append("13th Month Pay: ").append(currencyFormat.format(thirteenthMonthPay)).append("\n");
 
-        if (isDecember) {
-            receipt.append("\nOTHERS:").append("\n");
-            receipt.append("Unpaid Leave Deduction: ").append(currencyFormat.format(unpaidLeaveCost)).append("\n");
-            receipt.append("Unused Leave: ").append(currencyFormat.format(unusedLeave != null ? unusedLeave : BigDecimal.ZERO)).append("\n");
-            receipt.append("Bonus: ").append(currencyFormat.format(thirteenthMonthPay != null ? thirteenthMonthPay : BigDecimal.ZERO)).append("\n");
+        // Total / Net Salary
+        receipt.append("\nNET SALARY: ").append(currencyFormat.format(netSalary)).append("\n");
 
-            // Total calculation for December
-            BigDecimal totalDecemberSalary = netSalary.add(unusedLeave != null ? unusedLeave : BigDecimal.ZERO)
-                .add(thirteenthMonthPay != null ? thirteenthMonthPay : BigDecimal.ZERO)
-                .subtract(unpaidLeaveCost); // Deduct unpaid leave from total salary
-            receipt.append("\nTOTAL: ").append(currencyFormat.format(totalDecemberSalary)).append("\n");
-        } else {
-            receipt.append("\nTOTAL: ").append(currencyFormat.format(netSalary != null ? netSalary : BigDecimal.ZERO)).append("\n");
+        // Set the text content to the JTextArea
+        receiptTextArea1.setText(receipt.toString());
+    }
+
+    private BigDecimal parseBigDecimal(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return BigDecimal.ZERO; // Return 0 if the value is empty or null
         }
-
-        return receipt.toString();
+        try {
+            // Remove any non-numeric characters except . and - for valid decimal representation
+            String sanitizedValue = value.replaceAll("[^\\d.-]", "").trim();
+            if (sanitizedValue.isEmpty() || sanitizedValue.equals(".") || sanitizedValue.equals("-")) {
+                return BigDecimal.ZERO; // Return 0 if the sanitized value is still invalid
+            }
+            return new BigDecimal(sanitizedValue);
+        } catch (NumberFormatException e) {
+            System.err.println("Failed to parse BigDecimal from value: " + value + ". Defaulting to 0.");
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    private int parseInt(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return 0; // Return 0 if the value is empty or null
+        }
+        try {
+            // Remove any non-numeric characters except for minus sign
+            String sanitizedValue = value.replaceAll("[^\\d-]", "").trim();
+            return Integer.parseInt(sanitizedValue);
+        } catch (NumberFormatException e) {
+            System.err.println("Failed to parse Integer from value: " + value + ". Defaulting to 0.");
+            return 0;
+        }
     }
 
-    private BigDecimal calculatePhilHealthDeduction(BigDecimal totalSalary) {
-        return totalSalary.multiply(BigDecimal.valueOf(0.01)); // Example calculation
-    }
 
-    private BigDecimal calculateSSSDeduction(BigDecimal totalSalary) {
-        return totalSalary.multiply(BigDecimal.valueOf(0.02)); // Example calculation
-    }
-
-    private BigDecimal calculatePagIbigDeduction(BigDecimal totalSalary) {
-        return totalSalary.compareTo(BigDecimal.valueOf(200)) <= 0 
-            ? totalSalary.multiply(BigDecimal.valueOf(0.01)) 
-            : totalSalary.multiply(BigDecimal.valueOf(0.02)); // Example calculation
-    }
-
+ 
 
     /**
      * This method is called from within the constructor to initialize the form.

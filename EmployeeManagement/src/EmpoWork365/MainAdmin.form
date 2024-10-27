@@ -2390,7 +2390,7 @@
                         <Container class="javax.swing.JPanel" name="jPanel8">
                           <Properties>
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="cc" red="cc" type="rgb"/>
+                              <Color blue="e0" green="e0" red="e0" type="rgb"/>
                             </Property>
                           </Properties>
                           <Constraints>
@@ -2405,6 +2405,9 @@
                           <SubComponents>
                             <Component class="javax.swing.JLabel" name="userImagePayroll">
                               <Properties>
+                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                  <Color blue="e0" green="e0" red="e0" type="rgb"/>
+                                </Property>
                                 <Property name="horizontalAlignment" type="int" value="0"/>
                                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                   <Dimension value="[100, 100]"/>

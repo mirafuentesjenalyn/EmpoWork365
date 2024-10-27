@@ -519,7 +519,6 @@ public class EmployeeMethod {
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
 
-        // Parse the input dates
         start.setTime(java.sql.Date.valueOf(startDate));
         end.setTime(java.sql.Date.valueOf(endDate));
 
@@ -529,22 +528,30 @@ public class EmployeeMethod {
         int weekdayCount = 0;
 
         while (!start.after(end)) {
-            if (start.get(Calendar.MONTH) != month) {
-                month = start.get(Calendar.MONTH);
-                weekdayCount = 0; // Reset the count for each new month
+            int dayOfWeek = start.get(Calendar.DAY_OF_WEEK);
+            String currentDate = dateFormat.format(start.getTime());
+
+            if (currentDate.equals(start.get(Calendar.YEAR) + "-11-01")) {
+                start.add(Calendar.DATE, 1); // Skip November 1
+                continue;
             }
 
-            int dayOfWeek = start.get(Calendar.DAY_OF_WEEK);
-            if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY) { // Exclude weekends
-                if (weekdayCount < 20) { // Cap weekdays to 20 per month
-                    workdays.add(dateFormat.format(start.getTime()));
-                    weekdayCount++;
-                }
+            if (start.get(Calendar.MONTH) != month) {
+                month = start.get(Calendar.MONTH);
+                weekdayCount = 0;
             }
+
+            if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY && weekdayCount < 20) {
+                workdays.add(currentDate);
+                weekdayCount++;
+            }
+
             start.add(Calendar.DATE, 1);
         }
+
         return workdays;
     }
+
 
 
     public List<AbsenceRecord> getAbsenceRecords(int employeeId, String startDate, String endDate) throws SQLException {
@@ -596,31 +603,25 @@ public class EmployeeMethod {
         try {
             int employeeId = employee.getEmployeeId();
             int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            String startDate = currentYear + "-01-01"; // January 1
-            String endDate = currentYear + "-12-31";   // December 31
+            String startDate = currentYear + "-01-01";
+            String endDate = currentYear + "-12-31";
 
             List<String> expectedWorkdays = getExpectedWorkdays(startDate, endDate);
             List<String> attendanceRecords = getAttendanceDates(employeeId, startDate, endDate);
 
-            // Debugging output
-            System.out.println("Expected Workdays Count: " + expectedWorkdays.size());
-            System.out.println("Attendance Records Count: " + attendanceRecords.size());
-
-            // Counting absences
             for (String workday : expectedWorkdays) {
                 if (!attendanceRecords.contains(workday)) {
-                    totalAbsences++;
+                    totalAbsences++; // Count only days with no attendance record
                 }
             }
 
-            // Debugging output for total absences
-            System.out.println("Total Absences: " + totalAbsences);
         } catch (SQLException e) {
             throw new RuntimeException("Error occurred while retrieving total absences: " + e.getMessage(), e);
         }
 
         return totalAbsences;
     }
+
 
     private void generateAbsenceRecords(DefaultTableModel model, int employeeId) throws SQLException {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -832,8 +833,6 @@ public class EmployeeMethod {
             return "Present";
         }
     }
-
-
 
     public DefaultTableModel searchLeaveApplications(int employeeId, String searchTerm) throws SQLException {
         String[] columnNames = {

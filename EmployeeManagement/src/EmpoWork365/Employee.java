@@ -15,7 +15,7 @@ public class Employee {
     private String departmentName;
     private String imagePath;
     private Date dateOfEmployment;
-    private BigDecimal ratePerHour;
+    BigDecimal ratePerHour;
     private BigDecimal netSalary;
     private BigDecimal philHealthDeduction;
     private BigDecimal sssDeduction;

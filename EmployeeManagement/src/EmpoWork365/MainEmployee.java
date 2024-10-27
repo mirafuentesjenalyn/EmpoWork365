@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -1822,55 +1823,40 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     }//GEN-LAST:event_btnClear2ActionPerformed
 
     private void btnReceiptPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceiptPayrollActionPerformed
-       Receipt receiptFrame = new Receipt();
-
-        Employee employee = getEmployee(); 
-
-        if (employee == null) {
-            JOptionPane.showMessageDialog(null, "Please select a month.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        int selectedMonth = monthChooser.getMonth() + 1;  
-        getMonthName(selectedMonth);
-
-        BigDecimal ratePerHour = employee.getRatePerHour();
-        BigDecimal totalHoursWorked = calculateTotalHoursWorked(employee, selectedMonth, (int) yearSpinner.getValue());
-        BigDecimal overtimeHours = calculateOvertimeHours(totalHoursWorked);
-        BigDecimal totalSalary = calculateTotalSalary(employee.getRatePerHour(), overtimeHours); 
-
-        BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
-        BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
-        BigDecimal pagibigDeduction = calculatePagIbigDeduction(totalSalary);
-        BigDecimal incomeTaxDeduction = calculateIncomeTax(totalSalary);
-
-        BigDecimal totalDeductions = philHealthDeduction.add(sssDeduction).add(pagibigDeduction).add(incomeTaxDeduction);
-
-        // Assuming 0 unpaid leave for January-November
-        BigDecimal unpaidLeaveCost = BigDecimal.ZERO; 
-        // Calculate net salary after deductions
-        BigDecimal netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost); 
-
-        BigDecimal unusedLeave = BigDecimal.ZERO;
-        BigDecimal thirteenthMonthPay = BigDecimal.ZERO;
-        if (selectedMonth == 12) {
-            BigDecimal basicSalaryForYear = ratePerHour.multiply(BigDecimal.valueOf(REGULAR_HOURS_PER_MONTH)).multiply(BigDecimal.valueOf(12));
-            thirteenthMonthPay = basicSalaryForYear.divide(BigDecimal.valueOf(12), RoundingMode.HALF_UP);
-
-            try {
-                unusedLeave = calculateUnusedLeave(employee); 
-            } catch (SQLException ex) {
-                Logger.getLogger(MainAdmin.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } 
-        receiptFrame.setPayrollDetails(employee, totalSalary, ratePerHour, totalHoursWorked, 
-                                   overtimeHours, totalDeductions, netSalary, unusedLeave, 
-                                   thirteenthMonthPay, selectedMonth);
-
+        Receipt receiptFrame = new Receipt();
+        Map<String, String> payrollDetails = getPayrollDetailsForReceipt();
+        receiptFrame.setPayrollDetails(payrollDetails);
 
         receiptFrame.setVisible(true);
     }//GEN-LAST:event_btnReceiptPayrollActionPerformed
 
+    private Map<String, String> getPayrollDetailsForReceipt() {
+        Map<String, String> payrollDetails = new HashMap<>();
+
+        payrollDetails.put("Employee ID", getIdPayroll.getText());
+        payrollDetails.put("Full Name", nameTextField.getText());
+        payrollDetails.put("Email", emailTextField.getText());
+        payrollDetails.put("Job Title", jobTitleTextField.getText());
+        payrollDetails.put("Department", departmentTextField.getText());
+        payrollDetails.put("Total Salary", totalSalaryPerMonthTextField.getText());
+        payrollDetails.put("Rate per Hour", rateHourTextField.getText());
+        payrollDetails.put("Regular Hours/Month", HrsMonthTextField.getText());
+        payrollDetails.put("Total Hours Worked", totalHrsWorkedTextField.getText());
+        payrollDetails.put("Overtime Hours", overtimeHrsTextField.getText());
+        payrollDetails.put("Total Deductions", totalDeducTextField.getText());
+        payrollDetails.put("PhilHealth Deduction", philHealthTextField.getText());
+        payrollDetails.put("SSS Deduction", SSSTextField.getText());
+        payrollDetails.put("Pag-IBIG Deduction", pagibigTextField.getText());
+        payrollDetails.put("Income Tax", incomeTaxTextField.getText());
+        payrollDetails.put("Unpaid Leave Cost", unpaidLeaveTextField.getText());
+        payrollDetails.put("Leave Balance", leaveBalanceTextField.getText());
+        payrollDetails.put("Unused Leave", unusedLeaveTextField.getText());
+        payrollDetails.put("13th Month Pay", thirteenthMonthPayTextField.getText());
+        payrollDetails.put("Net Salary", netSalaryTextField.getText());
+
+        return payrollDetails;
+    }
+    
     private void btnMin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMin1ActionPerformed
         this.setState(JFrame.ICONIFIED);
     }//GEN-LAST:event_btnMin1ActionPerformed
@@ -1902,7 +1888,6 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private void btnClose4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClose4ActionPerformed
         System.exit(0);
     }//GEN-LAST:event_btnClose4ActionPerformed
-
 
     private void loadPayrollDetails() {
         if (loggedInUser == null) {
@@ -2015,7 +2000,6 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
 
 
     private void clearDetails(boolean isDecember) {
-        // These fields are common for all months
         totalSalaryPerMonthTextField.setText("");
         totalHrsWorkedTextField.setText("");
         overtimeHrsTextField.setText("");
@@ -2025,18 +2009,16 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         pagibigTextField.setText("");
         incomeTaxTextField.setText("");
         netSalaryTextField.setText("");
-
+        unpaidLeaveTextField.setText("");
+        totalAbsenceTextField.setText("");
+        sickLeaveTextField.setText("");
+        emergencyLeaveTextField.setText("");
+        vacationLeaveTextField.setText("");
+        leaveBalanceTextField.setText("");
+        unusedLeaveTextField.setText("");
+        thirteenthMonthPayTextField.setText("");
+        
         if (isDecember) {
-            // Clear leave-related fields only for December
-            unpaidLeaveTextField.setText("");
-            totalAbsenceTextField.setText("");
-            sickLeaveTextField.setText("");
-            emergencyLeaveTextField.setText("");
-            vacationLeaveTextField.setText("");
-            leaveBalanceTextField.setText("");
-            unusedLeaveTextField.setText("");
-            thirteenthMonthPayTextField.setText("");
-
             // Make these fields visible in December
             unpaidLeaveTextField.setEnabled(true);
             totalAbsenceTextField.setEnabled(true);
@@ -2060,6 +2042,8 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     }
 
     private void updateEmployeeDetailsForSelectedMonth(int selectedMonth, int selectedYear) throws SQLException {     
+        System.out.println("update employee details: " + selectedMonth + ", Year: " + selectedYear);
+
         Employee employee = getEmployee(); 
         if (employee != null) {
             loadPayrollDetails(); 
@@ -2077,19 +2061,23 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         }
     }
 
-     private void updateRegularPayroll(Employee employee, int month, int year, BigDecimal ratePerHour) {
+    private void updateRegularPayroll(Employee employee, int month, int year, BigDecimal ratePerHour) {
+        // Calculate total hours worked using BigDecimal
         BigDecimal totalHoursWorked = calculateTotalHoursWorked(employee, month, year).setScale(4, RoundingMode.HALF_UP);
-        totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHoursWorked.doubleValue()));
+        totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHoursWorked.doubleValue())); // Display as double
 
+        // Calculate overtime hours
         BigDecimal overtimeHours = calculateOvertimeHours(totalHoursWorked).setScale(4, RoundingMode.HALF_UP);
-        overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours.doubleValue()));
+        overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours.doubleValue())); // Display as double
 
+        // Calculate total salary using BigDecimal
         BigDecimal totalSalary = calculateTotalSalary(ratePerHour, overtimeHours).setScale(4, RoundingMode.HALF_UP);
         totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
-
-        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, BigDecimal.ZERO).setScale(4, RoundingMode.HALF_UP);
-        BigDecimal netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost).setScale(4, RoundingMode.HALF_UP);
+        
+        // Calculate net salary without unpaid leave cost for months January to November
+        BigDecimal netSalary = calculateNetSalary(totalSalary, BigDecimal.ZERO, false).setScale(4, RoundingMode.HALF_UP);
         netSalaryTextField.setText(formatCurrency(netSalary));
+
 
         // Set deductions with proper formatting
         philHealthTextField.setText(formatCurrency(calculatePhilHealthDeduction(totalSalary)));
@@ -2103,56 +2091,62 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
 
         EmployeeMethod employeeOption = new EmployeeMethod(connection);
         AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
-        
-        // Fetch December details (12 in 1-based, 11 in 0-based)
-        BigDecimal totalHoursWorked = BigDecimal.valueOf(attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), 12, year));
-        totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHoursWorked.doubleValue())); // Convert to double for display
 
-        BigDecimal overtimeHours = calculateOvertimeHours(totalHoursWorked);
-        overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours.doubleValue())); // Convert to double for display
+        // Fetch total hours worked in December using BigDecimal
+        BigDecimal totalHoursWorked = BigDecimal.valueOf(attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), 12, year))
+                                                .setScale(4, RoundingMode.HALF_UP);
+        totalHrsWorkedTextField.setText(String.format("%.2f hrs", totalHoursWorked.doubleValue())); // Display as double
 
-        BigDecimal ratePerHour = employee.getRatePerHour(); // Get rate per hour as BigDecimal directly
-        BigDecimal totalSalary = calculateTotalSalary(ratePerHour, overtimeHours);
+        // Calculate overtime hours
+        BigDecimal overtimeHours = calculateOvertimeHours(totalHoursWorked).setScale(4, RoundingMode.HALF_UP);
+        overtimeHrsTextField.setText(String.format("%.2f hrs", overtimeHours.doubleValue())); // Display as double
+
+        BigDecimal ratePerHour = employee.getRatePerHour(); // Get rate per hour as BigDecimal
+        BigDecimal totalSalary = calculateTotalSalary(ratePerHour, overtimeHours).setScale(4, RoundingMode.HALF_UP);
         totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
 
-        // Calculate unpaid leave
-        int unpaidLeaveDays = attendanceMethod.getUnpaidLeaveDays(employee.getEmployeeId(), 12, year);
-        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, BigDecimal.valueOf(unpaidLeaveDays)); // Use the BigDecimal rate directly
+        // Calculate total absences
+        int totalAbsences = employeeOption.getTotalAbsences(employee);
+        totalAbsenceTextField.setText(String.valueOf(totalAbsences)); // Display total absences
+
+        // Calculate unpaid leave cost, including total absences
+        BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, totalAbsences).setScale(4, RoundingMode.HALF_UP);
         unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
 
-        // Deductions (PhilHealth, SSS, PagIbig, Income Tax)
-        philHealthTextField.setText(formatCurrency(calculatePhilHealthDeduction(totalSalary)));
-        SSSTextField.setText(formatCurrency(calculateSSSDeduction(totalSalary)));
-        pagibigTextField.setText(formatCurrency(calculatePagIbigDeduction(totalSalary)));
-        incomeTaxTextField.setText(formatCurrency(calculateIncomeTax(totalSalary)));
+        // Calculate deductions
+        BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
+        BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
+        BigDecimal pagibigDeduction = calculatePagIbigDeduction(totalSalary);
+        BigDecimal incomeTax = calculateIncomeTax(totalSalary);
 
+        // Display deductions
+        philHealthTextField.setText(formatCurrency(philHealthDeduction));
+        SSSTextField.setText(formatCurrency(sssDeduction));
+        pagibigTextField.setText(formatCurrency(pagibigDeduction));
+        incomeTaxTextField.setText(formatCurrency(incomeTax));
+
+        // Remaining leave days and leave balance
         Map<String, Integer> remainingLeaveDays = employeeOption.getRemainingLeaveDays(employee.getEmployeeId());
         sickLeaveTextField.setText(String.valueOf(remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE)));
         emergencyLeaveTextField.setText(String.valueOf(remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE)));
         vacationLeaveTextField.setText(String.valueOf(remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE)));
 
-        // Calculate total leave balance and display in leaveBalanceTextField
+        // Calculate total leave balance
         int totalLeaveBalance = remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE)
-                        + remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE)
-                        + remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
+                                    + remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE)
+                                    + remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
         leaveBalanceTextField.setText(totalLeaveBalance + " days");
 
-        BigDecimal unusedLeaveCost = calculateUnusedLeave(employee);
+        BigDecimal unusedLeaveCost = calculateUnusedLeave(employee).setScale(4, RoundingMode.HALF_UP);
         unusedLeaveTextField.setText(formatCurrency(unusedLeaveCost));
 
         // Calculate basic salary for the year and 13th month pay
-        BigDecimal basicSalaryForYear = ratePerHour.multiply(BigDecimal.valueOf(REGULAR_HOURS_PER_MONTH)).multiply(BigDecimal.valueOf(12)); // Ensure REGULAR_HOURS_PER_MONTH is of type BigDecimal
-        BigDecimal thirteenthMonthPay = basicSalaryForYear.divide(BigDecimal.valueOf(12), RoundingMode.HALF_UP);
+        BigDecimal basicSalaryForYear = ratePerHour.multiply(BigDecimal.valueOf(REGULAR_HOURS_PER_MONTH)).multiply(BigDecimal.valueOf(12)).setScale(4, RoundingMode.HALF_UP);
+        BigDecimal thirteenthMonthPay = basicSalaryForYear.divide(BigDecimal.valueOf(12), RoundingMode.HALF_UP).setScale(4, RoundingMode.HALF_UP);
         thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay));
 
-        // Total absence calculation
-        int totalAbsences = employeeOption.getTotalAbsences(employee);
-        totalAbsenceTextField.setText(String.valueOf(totalAbsences));
-
-        // Calculate net salary
-        BigDecimal netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost).add(unusedLeaveCost).add(thirteenthMonthPay);
-
-        // Update net salary field
+        // Calculate net salary including unpaid leave cost
+        BigDecimal netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost, true).add(thirteenthMonthPay).setScale(4, RoundingMode.HALF_UP);
         netSalaryTextField.setText(formatCurrency(netSalary));
     }
 
@@ -2180,9 +2174,10 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         BigDecimal totalHours = BigDecimal.ZERO;
 
         try {
-            totalHours = BigDecimal.valueOf(attendanceMethod.getTotalHoursWorkedInMonth(employee.getEmployeeId(), month, year));
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error retrieving total hours worked: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            // Get total hours worked, which should be fetched in a way that respects the 20 workdays rule
+            totalHours = BigDecimal.valueOf(attendanceMethod.getTotalHoursWorkedInWorkdays(employee.getEmployeeId(), month, year));
+        } catch (SQLException ex) {
+            Logger.getLogger(MainAdmin.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return totalHours;
@@ -2205,25 +2200,47 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         return totalSalary;
     }
 
-    private BigDecimal calculateNetSalary(BigDecimal totalSalary, BigDecimal unpaidLeaveCost) {
-        BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
-        BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
-        BigDecimal pagIbigDeduction = calculatePagIbigDeduction(totalSalary);
-        BigDecimal incomeTax = calculateIncomeTax(totalSalary);
-
-        BigDecimal totalDeductions = philHealthDeduction.add(sssDeduction).add(pagIbigDeduction).add(incomeTax).add(unpaidLeaveCost);
-
+    private void updateDeductionUI(BigDecimal philHealthDeduction, BigDecimal sssDeduction,
+        BigDecimal pagIbigDeduction, BigDecimal incomeTax, BigDecimal totalDeductions) {
         philHealthTextField.setText(formatCurrency(philHealthDeduction));
         SSSTextField.setText(formatCurrency(sssDeduction));
         pagibigTextField.setText(formatCurrency(pagIbigDeduction));
         incomeTaxTextField.setText(formatCurrency(incomeTax));
         totalDeducTextField.setText(formatCurrency(totalDeductions));
-
-        BigDecimal netSalary = totalSalary.subtract(totalDeductions);
-
-        return netSalary;
     }
 
+    private BigDecimal calculateNetSalary(BigDecimal totalSalary, BigDecimal unpaidLeaveCost, boolean isDecember) {
+       // Calculate deductions
+       BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
+       BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
+       BigDecimal pagIbigDeduction = calculatePagIbigDeduction(totalSalary);
+       BigDecimal incomeTax = calculateIncomeTax(totalSalary);
+
+       // Combine deductions
+       BigDecimal totalDeductions = philHealthDeduction
+               .add(sssDeduction)
+               .add(pagIbigDeduction)
+               .add(incomeTax);
+
+       // Include unpaid leave cost in December deductions
+       if (isDecember) {
+           totalDeductions = totalDeductions.add(unpaidLeaveCost);
+       }
+
+       // Update UI components with formatted deduction values
+       updateDeductionUI(philHealthDeduction, sssDeduction, pagIbigDeduction, incomeTax, totalDeductions);
+
+       // Calculate net salary
+       BigDecimal netSalary = totalSalary.subtract(totalDeductions);
+
+       // Optional: Validate netSalary
+       if (netSalary.compareTo(BigDecimal.ZERO) < 0) {
+           // Log error or handle negative net salary case
+           System.err.println("Error: Negative net salary calculated!");
+       }
+
+       return netSalary;
+   }
 
     private BigDecimal calculatePhilHealthDeduction(BigDecimal totalSalary) {
         return totalSalary.multiply(BigDecimal.valueOf(0.01)).setScale(2, RoundingMode.HALF_UP);
@@ -2253,11 +2270,15 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
             return BigDecimal.valueOf(1802500).add((salary.subtract(BigDecimal.valueOf(8000000.00))).multiply(BigDecimal.valueOf(0.35))).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateUnpaidLeave(BigDecimal ratePerHour, BigDecimal unpaidLeaveDays) {
-        final BigDecimal HOURS_PER_DAY = BigDecimal.valueOf(8.0);
-        return ratePerHour.multiply(HOURS_PER_DAY).multiply(unpaidLeaveDays).setScale(4, RoundingMode.HALF_UP);
+    private BigDecimal calculateUnpaidLeave(BigDecimal ratePerHour, int totalAbsences) {
+        final BigDecimal HOURS_PER_DAY_SUBTRACTED_BY_ONE_FOR_LUNCH_BREAK = BigDecimal.valueOf(7.0);
+        // Multiply rate per hour by hours worked per day and by the total number of absences
+        BigDecimal totalUnpaidLeaveCost = ratePerHour.multiply(HOURS_PER_DAY_SUBTRACTED_BY_ONE_FOR_LUNCH_BREAK)
+                                                     .multiply(BigDecimal.valueOf(totalAbsences))
+                                                     .setScale(2, RoundingMode.HALF_UP);
+        return totalUnpaidLeaveCost;
     }
-
+    
     private String formatCurrency(BigDecimal amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount.setScale(4, RoundingMode.HALF_UP));
     }
@@ -2275,6 +2296,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         pagibigTextField.setText("");
         incomeTaxTextField.setText("");
         unpaidLeaveTextField.setText("");
+        totalAbsenceTextField.setText("");
+        vacationLeaveTextField.setText("");
+        unusedLeaveTextField.setText("");
         leaveBalanceTextField.setText("");
         sickLeaveTextField.setText("");
         emergencyLeaveTextField.setText("");
@@ -2285,9 +2309,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         genderTextField.setText("");
         jobTitleTextField.setText("");
         departmentTextField.setText("");
-        userImagePayroll.setIcon(null);
-
+        userImagePayroll.setIcon(new ImageIcon("src/Users/user.png"));
     }
+    
     
     /**
      * @param args the command line arguments

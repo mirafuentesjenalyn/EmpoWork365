@@ -125,8 +125,14 @@ public class AttendanceMethod {
                 }
             }
         }
-        return totalHours;
+
+        // Subtract 20 hours for lunch breaks for the month
+        totalHours -= 20.0; // Adjust for lunch breaks
+
+        return Math.max(totalHours, 0); // Ensure total hours cannot be negative
     }
+
+
 
     public int getUnpaidLeaveDays(int employeeId, int month, int year) throws SQLException {
         String sql = "SELECT COUNT(*) FROM tbl_leave_applications WHERE fld_employee_id = ? AND fld_leave_type_id = 4 AND fld_status = 'Approved' AND MONTH(fld_date_leave_request) = ? AND YEAR(fld_date_leave_request) = ?";  
@@ -168,4 +174,36 @@ public class AttendanceMethod {
         DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
         return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
+    
+    public int getTotalHoursWorkedInWorkdays(int employeeId, int month, int year) throws SQLException {
+        double totalHours = 0.0;
+
+        String query = "SELECT fld_time_in, fld_time_out FROM tbl_attendance " +
+                       "WHERE fld_employee_id = ? AND MONTH(fld_attendance_date) = ? AND YEAR(fld_attendance_date) = ? " +
+                       "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // 2 = Monday, 6 = Friday
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, employeeId);
+            ps.setInt(2, month);
+            ps.setInt(3, year);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Timestamp timeIn = rs.getTimestamp("fld_time_in");
+                Timestamp timeOut = rs.getTimestamp("fld_time_out");
+
+                if (timeIn != null && timeOut != null) {
+                    long duration = timeOut.getTime() - timeIn.getTime(); // Calculate duration in milliseconds
+                    totalHours += duration / (1000.0 * 60 * 60); // Convert to hours
+                }
+            }
+        }
+
+        // Subtract 20 hours for lunch breaks for the month
+        totalHours -= 20.0; // Adjust for lunch breaks
+
+        return (int) Math.max(totalHours, 0); // Ensure total hours cannot be negative and return as int
+    }
+
+
 }
