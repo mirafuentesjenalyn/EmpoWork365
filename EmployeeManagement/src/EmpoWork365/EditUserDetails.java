@@ -41,6 +41,7 @@ public final class EditUserDetails extends javax.swing.JFrame {
     private int userId;
     private String imagePath;
     private UserUpdateListener userUpdateListener; 
+    private static final String PASSWORD_PLACEHOLDER = "Password";
 
     /**
      * Creates new form SignUp
@@ -567,23 +568,27 @@ public final class EditUserDetails extends javax.swing.JFrame {
     private void btnConfirmEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmEditActionPerformed
         System.out.println("currentUserId: " + userId);
 
-          String email = eMail.getText();
+        String email = eMail.getText();
 
-          if (isDataUnchanged(userId)) {
-              JOptionPane.showMessageDialog(this, "No changes detected. Please modify the fields before saving.", "No Changes", JOptionPane.WARNING_MESSAGE);
-              return;
-          }
+        if (isDataUnchanged(userId)) {
+            JOptionPane.showMessageDialog(this, "No changes detected. Please modify the fields before saving.", "No Changes", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-          if (isEmailDuplicateForLoggedInUser(email, userId)) {
-              JOptionPane.showMessageDialog(this, "Email already exists. Please use a different email.", "Duplicate Email", JOptionPane.WARNING_MESSAGE);
-              return; 
-          }
+        if (isEmailDuplicateForLoggedInUser(email, userId)) {
+            JOptionPane.showMessageDialog(this, "Email already exists. Please use a different email.", "Duplicate Email", JOptionPane.WARNING_MESSAGE);
+            return; 
+        }
           
-          
-          if (areFieldsEmpty()) {
-              JOptionPane.showMessageDialog(this, "Fields are empty.", "Duplicate Email", JOptionPane.WARNING_MESSAGE);
-              return; 
-          }
+        if (!isValidEmail(email)) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+                  
+        if (areFieldsEmpty()) {
+            JOptionPane.showMessageDialog(this, "Fields are empty.", "Duplicate Email", JOptionPane.WARNING_MESSAGE);
+            return; 
+        }
 
           String updateEmployeeSQL = "UPDATE tbl_employees SET fld_first_name = ?, fld_last_name = ?, "
                                    + "fld_email = ?, fld_password = ?, fld_gender = ?, fld_image_path = ? "
@@ -621,6 +626,11 @@ public final class EditUserDetails extends javax.swing.JFrame {
           }
     }//GEN-LAST:event_btnConfirmEditActionPerformed
 
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
+    
     private void firstNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusGained
         if (firstName.getText().equals("Enter First Name")) {
             firstName.setText("");

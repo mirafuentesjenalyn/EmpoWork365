@@ -74,7 +74,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         this.employeeId = -1;
         this.imagePath = "";
 
-        setTitle("Edit Employee");
         initializeConnection();
         initializeRoleComboBox(); 
         setupJobTitleComboBox();
@@ -180,8 +179,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             }
         });
     }
-
-            
+       
     private void filterJobTitles(JComboBox<JobTitle> comboBox, String input) {
        DefaultComboBoxModel<JobTitle> model = (DefaultComboBoxModel<JobTitle>) comboBox.getModel();
        model.removeAllElements();
@@ -342,25 +340,7 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             displayImage(imagePath); 
         }
     }
-    
-    public boolean isEmailDuplicate(String email) {
-        String checkEmailQuery = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ? AND fld_employee_id != ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(checkEmailQuery)) {
-            pstmt.setString(1, email);
-            pstmt.setInt(2, employeeId); 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
-                }
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error checking duplicate email: " + ex.getMessage());
-        }
-        return false;
-    }
-
- 
+   
     private void loadEmployeeData() {
         String selectEmployeeSQL = "SELECT e.fld_first_name, e.fld_last_name, e.fld_email, e.fld_password, "
                                   + "e.fld_gender, e.fld_job_title_id, jt.fld_job_title, "
@@ -379,11 +359,13 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             if (rs.next()) { 
                 String firstNameFromDB = rs.getString("fld_first_name");
                 String lastNameFromDB = rs.getString("fld_last_name");
+                String genderFromDB = rs.getString("fld_gender"); 
                 firstName.setText(firstNameFromDB); 
                 lastName.setText(lastNameFromDB); 
                 eMail.setText(rs.getString("fld_email")); 
                 passWord.setText(rs.getString("fld_password")); 
-
+                
+                comboBoxGender.setSelectedItem(genderFromDB); 
                 comboBoxJobTitle.setSelectedItem(new JobTitle(rs.getInt("fld_job_title_id"), rs.getString("fld_job_title")));
                 comboBoxDepartment.setSelectedItem(new Department(rs.getInt("fld_department_id"), rs.getString("fld_department_name")));
                 comboBoxRole.setSelectedItem(new Role(rs.getInt("fld_role_id"), rs.getString("fld_role_name")));
@@ -413,7 +395,12 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
         }
         return false; // Return false if no duplicate found
     }
-
+    
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
+        
     private void handleFocusGained(JTextField field, String placeholder) {
         if (field.getText().equals(placeholder)) {
             field.setText("");
@@ -427,8 +414,6 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             field.setForeground(new Color(153, 204, 188));
         }
     }
-
-    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -719,9 +704,13 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Empty Fields", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
+        if (!isValidEmail(email)) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-         // Check for duplicate email
-         if (isEmailDuplicate(email, employeeId)) {
+        if (isEmailDuplicate(email, employeeId)) {
              JOptionPane.showMessageDialog(this, "This email is already associated with another employee.", "Duplicate Email", JOptionPane.ERROR_MESSAGE);
              return;
          }
@@ -761,31 +750,19 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfirmEditActionPerformed
 
     private void firstNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusGained
-        if (firstName.getText().equals("Enter First Name")) {
-            firstName.setText("");
-            firstName.setForeground(new Color(17,94,94));
-        }
+        handleFocusGained(firstName, "Enter First Name");
     }//GEN-LAST:event_firstNameFocusGained
 
     private void firstNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusLost
-        if (firstName.getText().isEmpty()) {
-            firstName.setText("Enter First Name");
-            firstName.setForeground(new Color(153,204,188));
-        }
+        handleFocusLost(firstName, "Enter First Name");
     }//GEN-LAST:event_firstNameFocusLost
 
     private void eMailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusGained
-        if (eMail.getText().equals("Enter Email")) {
-            eMail.setText("");
-            eMail.setForeground(new Color(17,94,94));
-        }
+        handleFocusGained(eMail, "Enter Email");
     }//GEN-LAST:event_eMailFocusGained
 
     private void eMailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_eMailFocusLost
-        if (eMail.getText().isEmpty()) {
-            eMail.setText("Enter Email");
-            eMail.setForeground(new Color(153,204,188));
-        }
+        handleFocusLost(eMail, "Enter Email");
     }//GEN-LAST:event_eMailFocusLost
 
     private void ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActionPerformed
@@ -844,32 +821,40 @@ public final class EditEmployeeDetails extends javax.swing.JFrame {
     private String updateEmployeeImageInDatabase(String imagePath, int userId) throws IOException {
         String updateImageSQL = "UPDATE tbl_employees SET fld_image_path = ? WHERE fld_employee_id = ?";
         String[] acceptedImageExtensions = {".jpg", ".jpeg", ".png"};
-       String fileExtension = imagePath.substring(imagePath.lastIndexOf(".")).toLowerCase();
-       boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
+        String fileExtension = imagePath.substring(imagePath.lastIndexOf(".")).toLowerCase();
+        boolean isImage = Arrays.asList(acceptedImageExtensions).contains(fileExtension);
 
-       if (!isImage) {
-           JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
-           resetImageSelection(); 
-       }
+        if (!isImage) {
+            JOptionPane.showMessageDialog(this, "Please select a valid image file (jpg, jpeg, png).", "Invalid File Type", JOptionPane.ERROR_MESSAGE);
+            resetImageSelection(); 
+            return null;
+        }
 
-       String destinationFolder = "src/Users/";
-       String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
-       String destinationPath = destinationFolder + newFileName;
+        String destinationFolder = "src/Users/";
+        String newFileName = "employee_" + System.currentTimeMillis() + fileExtension;
+        String destinationPath = destinationFolder + newFileName;
 
-       File sourceFile = new File(imagePath);
-       File destinationFile = new File(destinationPath);
+        new File(destinationFolder).mkdirs(); // Ensure the directory exists
+
+        File sourceFile = new File(imagePath);
+        File destinationFile = new File(destinationPath);
+
         try (PreparedStatement pstmt = connection.prepareStatement(updateImageSQL)) {
-            pstmt.setString(1, imagePath);
+            pstmt.setString(1, destinationPath); 
             pstmt.setInt(2, userId);
-            pstmt.executeUpdate();
-            destinationFile.getParentFile().mkdirs(); 
+            pstmt.executeUpdate(); 
+
             Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-           return destinationPath; 
+            return destinationPath; 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error updating employee image: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error copying image file: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
+
+
 
     private void displayImage(String imagePath) {
         BufferedImage img = null;

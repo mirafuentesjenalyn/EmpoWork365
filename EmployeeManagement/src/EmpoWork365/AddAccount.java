@@ -78,7 +78,6 @@ public final class AddAccount extends javax.swing.JFrame {
         addEnterKeyListener(comboBoxJobTitle);
         addEnterKeyListener(comboBoxDepartment);
         addEnterKeyListener(comboBoxRole);
-
     }
 
         
@@ -522,11 +521,10 @@ public final class AddAccount extends javax.swing.JFrame {
         String imagePath = addImageToFolder();
         String dateOfEmployment = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-        if (firstNameInput.isEmpty() || lastNameInput.isEmpty() || genderInput == null ||
-            emailInput.isEmpty() || passwordInput.isEmpty() || imagePath == null ||
-            jobTitleId == -1 || departmentId == -1 || roleId == -1) {
-            JOptionPane.showMessageDialog(this, "Please fill in all required fields and select valid options.", "Missing Information", JOptionPane.ERROR_MESSAGE);
-            return;
+        // Validate inputs
+        if (!validateInputs(firstNameInput, lastNameInput, emailInput, passwordInput, 
+                            genderInput, jobTitleId, departmentId, roleId, imagePath)) {
+            return; // Stop execution if validation fails
         }
 
         if (isEmailDuplicate(emailInput)) {
@@ -539,10 +537,6 @@ public final class AddAccount extends javax.swing.JFrame {
             return;
         }
 
-        if (passwordInput.equals(PASSWORD_PLACEHOLDER)) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid password.", "Invalid Password", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
         SignUpMethod signUpMethod = new SignUpMethod();
         boolean accountCreated = signUpMethod.createAccount(firstNameInput, lastNameInput, emailInput, passwordInput,
             genderInput, jobTitleId, departmentId, roleId,
@@ -557,6 +551,77 @@ public final class AddAccount extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCreateAccountActionPerformed
 
+    private boolean validateInputs(String firstName, String lastName, String email, String password, 
+                               String gender, int jobTitleId, int departmentId, int roleId, String imagePath) {
+        if (firstName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "First name is required.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (lastName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Last name is required.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (gender == null) {
+            JOptionPane.showMessageDialog(this, "Please select a gender.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email is required.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (!isValidEmail(email)) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (isEmailDuplicate(email)) {
+            JOptionPane.showMessageDialog(this, "This email is already in use by another user. Please use a different email.", 
+                                          "Duplicate Email", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (password.isEmpty() || password.equals(PASSWORD_PLACEHOLDER)) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid password.", "Invalid Password", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (jobTitleId == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a job title.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (departmentId == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a department.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (roleId == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a role.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (imagePath == null) {
+            JOptionPane.showMessageDialog(this, "Please upload an image.", "Missing Information", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true; // All validations passed
+    }
+
+    private boolean isEmailDuplicate(String email) {
+        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSQL)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; 
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error checking email duplication: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false; 
+    }
+
+    
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
+    
     private void firstNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_firstNameFocusLost
         if (firstName.getText().isEmpty()) {
             firstName.setText("Enter First Name");
@@ -618,26 +683,6 @@ public final class AddAccount extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         selectImage();
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private boolean isEmailDuplicate(String email) {
-        String checkEmailSQL = "SELECT COUNT(*) FROM tbl_employees WHERE fld_email = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSQL)) {
-            pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0; 
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error checking email duplication: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return false; 
-    }
-
-    
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return email.matches(emailRegex);
-    }
     
     private void resetImageSelection() {
         imageLocation = null;

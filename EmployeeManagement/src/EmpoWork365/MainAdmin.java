@@ -1570,6 +1570,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnClear2.setForeground(new java.awt.Color(204, 255, 255));
         btnClear2.setText("Clear All");
         btnClear2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear2.setFocusable(false);
         btnClear2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClear2ActionPerformed(evt);
@@ -1581,6 +1582,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
         btnChangeRatePerHour.setForeground(new java.awt.Color(255, 255, 255));
         btnChangeRatePerHour.setText("Change rate/hr");
         btnChangeRatePerHour.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnChangeRatePerHour.setFocusable(false);
         btnChangeRatePerHour.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnChangeRatePerHourActionPerformed(evt);
@@ -1591,6 +1593,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
 
         btnReceiptPayroll.setText("Print");
         btnReceiptPayroll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnReceiptPayroll.setFocusable(false);
         btnReceiptPayroll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReceiptPayrollActionPerformed(evt);

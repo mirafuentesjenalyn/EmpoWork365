@@ -126,17 +126,54 @@ public class EmployeeMethod {
 
 
     public boolean deleteEmployeeById(int employeeId) {
+        // SQL to delete related attendance records
+        String deleteAttendanceSQL = "DELETE FROM tbl_attendance WHERE fld_employee_id = ?";
+        // SQL to delete the employee record
         String deleteEmployeeSQL = "DELETE FROM tbl_employees WHERE fld_employee_id = ?";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(deleteEmployeeSQL)) {
-            pstmt.setInt(1, employeeId);
-            int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0; 
+        try {
+            // Start a transaction
+            connection.setAutoCommit(false);
+
+            // First, delete related attendance records
+            try (PreparedStatement pstmtAttendance = connection.prepareStatement(deleteAttendanceSQL)) {
+                pstmtAttendance.setInt(1, employeeId);
+                pstmtAttendance.executeUpdate();
+            }
+
+            // Now, delete the employee
+            try (PreparedStatement pstmtEmployee = connection.prepareStatement(deleteEmployeeSQL)) {
+                pstmtEmployee.setInt(1, employeeId);
+                int rowsAffected = pstmtEmployee.executeUpdate();
+
+                // Commit the transaction if the employee was deleted
+                if (rowsAffected > 0) {
+                    connection.commit();
+                    return true; 
+                } else {
+                    connection.rollback();
+                    return false; 
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace(); 
+            try {
+                // Roll back the transaction in case of error
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
             return false; 
+        } finally {
+            try {
+                // Reset auto-commit to true for future transactions
+                connection.setAutoCommit(true);
+            } catch (SQLException resetEx) {
+                resetEx.printStackTrace();
+            }
         }
     }
+
     
     public DefaultTableModel getAttendanceDataById(int employeeId) throws SQLException {
         String[] columnNames = {
@@ -196,6 +233,8 @@ public class EmployeeMethod {
                     + "INNER JOIN tbl_employees e ON a.fld_employee_id = e.fld_employee_id "
                     + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
                     + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                    + "INNER JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id " // Join with roles table
+                    + "WHERE r.fld_role_name <> 'Admin' " // Exclude Admin role
                     + "ORDER BY a.fld_attendance_date DESC";
 
        try (PreparedStatement statement = connection.prepareStatement(query);
@@ -244,22 +283,24 @@ public class EmployeeMethod {
                      + "LEFT JOIN tbl_attendance a ON e.fld_employee_id = a.fld_employee_id "
                      + "AND a.fld_attendance_date = ? "
                      + "INNER JOIN tbl_job_titles jt ON e.fld_job_title_id = jt.fld_job_title_id "
-                     + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id ";
+                     + "INNER JOIN tbl_department d ON e.fld_department_id = d.fld_department_id "
+                     + "INNER JOIN tbl_roles r ON e.fld_role_id = r.fld_role_id " // Join with roles table
+                     + "WHERE r.fld_role_name <> 'Admin' "; // Exclude Admin role;
 
         // Add filter based on status selection from JComboBox
         switch (statusFilter) {
             case "Present":
-                query += "WHERE a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL ";
+                query += " AND a.fld_time_in IS NOT NULL AND a.fld_time_out IS NOT NULL ";
                 break;
             case "Incomplete":
-                query += "WHERE a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL ";
+                query += " AND a.fld_time_in IS NOT NULL AND a.fld_time_out IS NULL ";
                 break;
             case "Absent":
-                query += "WHERE a.fld_time_in IS NULL ";
+                query += " AND a.fld_time_in IS NULL ";
                 break;
             case "All":
             default:
-                // No additional WHERE clause needed for "All"
+                // No additional condition needed for "All"
                 break;
         }
 
@@ -468,7 +509,7 @@ public class EmployeeMethod {
     public DefaultTableModel viewLeaveApplications(int employeeId) throws SQLException {
             String[] columnNames = {
             "Application ID", "Employee ID", "Full Name", "Leave Type", 
-            "Leave Request", "Status", "Date Applied"
+            "Leave Request", "Reason", "Status", "Date Applied"
         };
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -479,6 +520,7 @@ public class EmployeeMethod {
                      + "lt.fld_leave_type_name, "
                      + "la.fld_date_leave_request, "
                      + "la.fld_status, "
+                     + "la.fld_reason, "
                      + "la.fld_request_date "
                      + "FROM tbl_leave_applications la "
                      + "INNER JOIN tbl_employees e ON la.fld_employee_id = e.fld_employee_id "
@@ -497,6 +539,7 @@ public class EmployeeMethod {
                     resultSet.getString("full_name"),
                     resultSet.getString("fld_leave_type_name"),
                     resultSet.getDate("fld_date_leave_request"),
+                    resultSet.getString("fld_reason"),
                     resultSet.getString("fld_status"),
                     resultSet.getDate("fld_request_date")
                 };
@@ -708,16 +751,16 @@ public class EmployeeMethod {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         String query = "SELECT fld_employee_id, fld_attendance_date, fld_time_in, fld_time_out " +
-                       "FROM tbl_attendance " +
-                       "WHERE fld_employee_id = ? AND fld_attendance_date = ?";
+                       "FROM tbl_attendance WHERE fld_employee_id = ? AND fld_attendance_date = ?";
 
-        // Add filters for status
+        // Handle different statuses including "All"
         switch (status) {
-            case "Absent" -> query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
+            case "Absent" -> query += " AND fld_time_in IS NULL AND fld_time_out IS NULL";
             case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
-                          "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
+                                           "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6";
             case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
-                          "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
+                                         "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6";
+            case "All" -> { /* No additional filtering needed for "All" */ }
             default -> throw new IllegalArgumentException("Invalid status: " + status);
         }
 
@@ -726,7 +769,7 @@ public class EmployeeMethod {
             statement.setString(2, date);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy"); // Desired date format
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
                 SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
                 int count = 1;
 
@@ -734,15 +777,13 @@ public class EmployeeMethod {
                     Object[] row = {
                         count++,
                         resultSet.getInt("fld_employee_id"),
-                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat), // Ensure date formatting
+                        formatDate(resultSet.getDate("fld_attendance_date"), dateFormat),
                         formatTimestamp(resultSet.getTimestamp("fld_time_in"), timeFormat),
                         formatTimestamp(resultSet.getTimestamp("fld_time_out"), timeFormat),
-                        status // Status from method argument
+                        status
                     };
                     model.addRow(row);
                 }
-            } catch (SQLException e) {
-                throw new SQLException("Error fetching attendance data: " + e.getMessage(), e);
             }
         }
 

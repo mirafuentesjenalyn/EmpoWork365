@@ -1371,6 +1371,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         btnClear2.setForeground(new java.awt.Color(204, 255, 255));
         btnClear2.setText("Clear All");
         btnClear2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear2.setFocusable(false);
         btnClear2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClear2ActionPerformed(evt);
@@ -1381,6 +1382,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
 
         btnReceiptPayroll.setText("Print");
         btnReceiptPayroll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnReceiptPayroll.setFocusable(false);
         btnReceiptPayroll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReceiptPayrollActionPerformed(evt);
