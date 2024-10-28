@@ -10,9 +10,6 @@ import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +18,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class EmployeeMethod {
     private final Connection connection;
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
-
 
     public EmployeeMethod(Connection connection) {
         this.connection = connection;
@@ -669,19 +664,12 @@ public class EmployeeMethod {
 
         // Add filters for status
         switch (status) {
-            case "Absent":
-                query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
-                break;
-            case "Incomplete":
-                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
+            case "Absent" -> query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
+            case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
                           "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
-                break;
-            case "Present":
-                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
+            case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
                           "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid status: " + status);
+            default -> throw new IllegalArgumentException("Invalid status: " + status);
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -725,19 +713,12 @@ public class EmployeeMethod {
 
         // Add filters for status
         switch (status) {
-            case "Absent":
-                query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
-                break;
-            case "Incomplete":
-                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
+            case "Absent" -> query += " AND fld_time_in IS NULL AND fld_attendance_id IS NULL "; // No clock-in means absent
+            case "Incomplete" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NULL " +
                           "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
-                break;
-            case "Present":
-                query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
+            case "Present" -> query += " AND fld_time_in IS NOT NULL AND fld_time_out IS NOT NULL " +
                           "AND DAYOFWEEK(fld_attendance_date) BETWEEN 2 AND 6"; // Monday to Friday
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid status: " + status);
+            default -> throw new IllegalArgumentException("Invalid status: " + status);
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -836,7 +817,7 @@ public class EmployeeMethod {
 
     public DefaultTableModel searchLeaveApplications(int employeeId, String searchTerm) throws SQLException {
         String[] columnNames = {
-            "No.", "Application ID", "Employee ID", "Full Name", "Leave Type", 
+            "Application ID", "Employee ID", "Full Name", "Leave Type", 
             "Leave Request", "Reason", "Status", "Date Applied"
         };
 

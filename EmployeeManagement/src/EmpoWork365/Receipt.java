@@ -7,13 +7,13 @@ package EmpoWork365;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -280,7 +280,29 @@ public class Receipt extends javax.swing.JFrame {
             String receiptText = receiptTextArea1.getText();
             String[] lines = receiptText.split("\n");
 
-            // Total height of all lines and lines per page
+            // Draw the labels
+            g.setFont(receiptTextArea1.getFont()); // Set the same font as the JTextArea
+            g.setColor(Color.BLACK); // Set text color
+
+            // Draw jLabel5 with its own font
+            g.setFont(jLabel5.getFont());
+            g.drawString(jLabel5.getText(), margin, y);
+            y += lineHeight;
+
+            // Add space between jLabel5 and jLabel2
+            y += 10; // Adjust this value as needed for the desired space
+
+            // Draw other labels with the JTextArea font
+            g.setFont(receiptTextArea1.getFont()); // Revert to JTextArea font
+            g.drawString(jLabel2.getText(), margin, y);
+            y += lineHeight; 
+            g.drawString(jLabel3.getText(), margin, y);
+            y += lineHeight; 
+
+            // Add space between jLabel3 and the employee JTextArea
+            y += 10; // Add 10 pixels of space (adjust as needed)
+
+            // Draw the receipt text
             int totalContentHeight = lines.length * lineHeight; 
             int linesPerPage = (pageHeight - margin - bottomMargin) / lineHeight;
             int numPages = (int) Math.ceil((double) totalContentHeight / lineHeight / linesPerPage);
@@ -290,14 +312,17 @@ public class Receipt extends javax.swing.JFrame {
                 return Printable.NO_SUCH_PAGE; // No more pages
             }
 
-            // Draw the content
-            g.setFont(receiptTextArea1.getFont()); // Set the same font as the JTextArea
-            g.setColor(Color.BLACK); // Set text color
-
             // Draw each line of the receipt
             int startLine = pageIndex * linesPerPage;
             int endLine = Math.min(lines.length, startLine + linesPerPage);
             for (int i = startLine; i < endLine; i++) {
+                // For currency lines, set the font to non-bold
+                if (lines[i].contains("SALARY/MONTH") || lines[i].contains("DEDUCTIONS") ||
+                    lines[i].contains("NET SALARY") || lines[i].contains("Unused Leave")) {
+                    g.setFont(receiptTextArea1.getFont().deriveFont(Font.PLAIN)); // Non-bold font
+                } else {
+                    g.setFont(receiptTextArea1.getFont()); // Default font
+                }
                 g.drawString(lines[i], margin, y);
                 y += lineHeight; // Move down for the next line
             }

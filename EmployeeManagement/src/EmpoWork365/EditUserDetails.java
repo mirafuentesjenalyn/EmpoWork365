@@ -26,9 +26,9 @@ import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 /**
@@ -121,9 +121,8 @@ public final class EditUserDetails extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Failed to connect to database.", "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private void populateGenderComboBox() {
-        SwingWorker<Void, String> worker = new SwingWorker<>() {
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {
                 String selectGenderSQL = "SELECT DISTINCT fld_gender FROM tbl_employees"; 
@@ -141,8 +140,15 @@ public final class EditUserDetails extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Error fetching gender values: " + ex.getMessage());
                 }
 
-                comboBoxGender.setModel(new DefaultComboBoxModel<>(genderList.toArray(String[]::new)));
+                // Update the ComboBox on the Event Dispatch Thread
+                SwingUtilities.invokeLater(() -> comboBoxGender.setModel(new DefaultComboBoxModel<>(genderList.toArray(new String[0]))));
                 return null;
+            }
+
+            @Override
+            protected void done() {
+                // Once ComboBox is populated, call loadEmployeeData to set selected gender
+                loadEmployeeData();
             }
         };
         worker.execute();
@@ -217,8 +223,7 @@ public final class EditUserDetails extends javax.swing.JFrame {
                 boolean isEmailChanged = !eMail.getText().equals(originalEmail);
                 boolean isPasswordChanged = !String.valueOf(passWord.getPassword()).equals(originalPassword);
 
-                boolean isGenderChanged = (comboBoxGender.getSelectedItem() == null) || 
-                                          !comboBoxGender.getSelectedItem().toString().equals(originalGender);
+                boolean isGenderChanged = !comboBoxGender.getSelectedItem().toString().trim().equalsIgnoreCase(originalGender.trim());
 
                 boolean isImagePathChanged = !imagePath.equals(originalImagePath);
 
@@ -233,8 +238,6 @@ public final class EditUserDetails extends javax.swing.JFrame {
             return true;
         }
     }
-
-
 
     private void handleFocusGained(JTextField field, String placeholder) {
     if (field.getText().equals(placeholder)) {

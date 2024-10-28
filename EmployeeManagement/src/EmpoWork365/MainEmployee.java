@@ -51,7 +51,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     private boolean hasClockedOut = false;
     private JDatePickerImpl datePickerStart;
     private JSpinner yearSpinner; 
-    private final double REGULAR_HOURS_PER_MONTH;
+    private final int REGULAR_HOURS_PER_MONTH;
     private static final int TOTAL_SICK_LEAVE = 5; 
     private static final int TOTAL_EMERGENCY_LEAVE = 5; 
     private static final int TOTAL_VACATION_LEAVE = 15; 
@@ -85,7 +85,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         
         
         initComponents();
-        this.REGULAR_HOURS_PER_MONTH  = 160.0;
+        this.REGULAR_HOURS_PER_MONTH  = 160;
         instance = this;
         
         this.loggedInUser = user;
@@ -636,9 +636,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         });
         jPanel3.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 610, -1, -1));
 
-        sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
+        sideBar.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 740));
 
-        jPanel5.add(sideBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 800));
+        jPanel5.add(sideBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 740));
 
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -1418,9 +1418,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
 
         jTabbedPane1.addTab("tab4", managePayroll);
 
-        jPanel4.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, 1000, 980));
+        jPanel4.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, 790, 820));
 
-        jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, -40, 790, 840));
+        jPanel5.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, -40, 790, 780));
 
         jPanel11.add(jPanel5, java.awt.BorderLayout.CENTER);
 
@@ -1896,15 +1896,11 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         totalSalaryPerMonthTextField.setText(formatCurrency(totalSalary));
         
         // Calculate net salary without unpaid leave cost for months January to November
-        BigDecimal netSalary = calculateNetSalary(totalSalary, BigDecimal.ZERO, false).setScale(4, RoundingMode.HALF_UP);
+        BigDecimal netSalary = calculateNetSalary(totalSalary, BigDecimal.ZERO, BigDecimal.ZERO, false).setScale(4, RoundingMode.HALF_UP);
         netSalaryTextField.setText(formatCurrency(netSalary));
 
 
-        // Set deductions with proper formatting
-        philHealthTextField.setText(formatCurrency(calculatePhilHealthDeduction(totalSalary)));
-        SSSTextField.setText(formatCurrency(calculateSSSDeduction(totalSalary)));
-        pagibigTextField.setText(formatCurrency(calculatePagIbigDeduction(totalSalary)));
-        incomeTaxTextField.setText(formatCurrency(calculateIncomeTax(totalSalary)));
+        updateDeductionUI(totalSalary, BigDecimal.ZERO);
     }
 
     private void updateDecemberDetails(Employee employee, int year) throws SQLException {
@@ -1934,18 +1930,8 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         BigDecimal unpaidLeaveCost = calculateUnpaidLeave(ratePerHour, totalAbsence).setScale(4, RoundingMode.HALF_UP);
         unpaidLeaveTextField.setText(formatCurrency(unpaidLeaveCost));
 
-        // Calculate deductions
-        BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
-        BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
-        BigDecimal pagibigDeduction = calculatePagIbigDeduction(totalSalary);
-        BigDecimal incomeTax = calculateIncomeTax(totalSalary);
-
-        // Display deductions
-        philHealthTextField.setText(formatCurrency(philHealthDeduction));
-        SSSTextField.setText(formatCurrency(sssDeduction));
-        pagibigTextField.setText(formatCurrency(pagibigDeduction));
-        incomeTaxTextField.setText(formatCurrency(incomeTax));
-
+        updateDeductionUI(totalSalary, unpaidLeaveCost);
+        
         // Remaining leave days and leave balance
         Map<String, Integer> remainingLeaveDays = employeeOption.getRemainingLeaveDays(employee.getEmployeeId());
         sickLeaveTextField.setText(String.valueOf(remainingLeaveDays.getOrDefault("Sick Leave", TOTAL_SICK_LEAVE)));
@@ -1967,10 +1953,9 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         thirteenthMonthPayTextField.setText(formatCurrency(thirteenthMonthPay));
 
         // Calculate net salary including unpaid leave cost
-        BigDecimal netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost, true).add(thirteenthMonthPay).setScale(4, RoundingMode.HALF_UP);
+        BigDecimal netSalary = calculateNetSalary(totalSalary, unpaidLeaveCost, unusedLeaveCost, true).add(thirteenthMonthPay).setScale(4, RoundingMode.HALF_UP);
         netSalaryTextField.setText(formatCurrency(netSalary));
     }
-
 
     private BigDecimal calculateUnusedLeave(Employee employee) throws SQLException {
         EmployeeMethod employeeMethod = new EmployeeMethod(connection);
@@ -1981,14 +1966,13 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         int emergencyLeaveBalance = remainingLeaveDays.getOrDefault("Emergency Leave", TOTAL_EMERGENCY_LEAVE);
         int vacationLeaveBalance = remainingLeaveDays.getOrDefault("Vacation Leave", TOTAL_VACATION_LEAVE);
 
-        // Total leave balance
-        int leaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
+        // Total unused leave balance
+        int unusedLeaveBalance = sickLeaveBalance + emergencyLeaveBalance + vacationLeaveBalance;
 
-        // Calculate the unused leave cost assuming 8 hours per day
-        BigDecimal dailyRate = employee.getRatePerHour().multiply(BigDecimal.valueOf(8)); // Rate per day (8 hours)
-        return BigDecimal.valueOf(leaveBalance).multiply(dailyRate); // Multiply by the total leave balance
+        // Calculate unused leave benefit (7 hours per day, excluding lunch)
+        BigDecimal dailyRate = employee.getRatePerHour().multiply(BigDecimal.valueOf(7)).setScale(4, RoundingMode.HALF_UP);
+        return dailyRate.multiply(BigDecimal.valueOf(unusedLeaveBalance)).setScale(4, RoundingMode.HALF_UP);
     }
-
 
     private BigDecimal calculateTotalHoursWorked(Employee employee, int month, int year) {
         AttendanceMethod attendanceMethod = new AttendanceMethod(connection);
@@ -2005,7 +1989,7 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
     }
 
     private BigDecimal calculateOvertimeHours(BigDecimal totalHoursWorked) {
-        BigDecimal overtimeHours = totalHoursWorked.subtract(BigDecimal.valueOf(REGULAR_HOURS_PER_MONTH)).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal overtimeHours = totalHoursWorked.subtract(BigDecimal.valueOf(REGULAR_HOURS_PER_MONTH)).setScale(4, RoundingMode.HALF_UP);
         return overtimeHours.max(BigDecimal.ZERO); // Ensure no negative overtime
     }
 
@@ -2021,60 +2005,63 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         return totalSalary;
     }
 
-    private void updateDeductionUI(BigDecimal philHealthDeduction, BigDecimal sssDeduction,
-        BigDecimal pagIbigDeduction, BigDecimal incomeTax, BigDecimal totalDeductions) {
+    private void updateDeductionUI(BigDecimal totalSalary, BigDecimal unpaidLeaveCost) {
+        BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
+        BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
+        BigDecimal pagibigDeduction = calculatePagIbigDeduction(totalSalary);
+        BigDecimal incomeTax = calculateIncomeTax(totalSalary);
+
+        BigDecimal totalDeductions = philHealthDeduction.add(sssDeduction).add(pagibigDeduction).add(incomeTax).add(unpaidLeaveCost).setScale(4, RoundingMode.HALF_UP);
+
         philHealthTextField.setText(formatCurrency(philHealthDeduction));
         SSSTextField.setText(formatCurrency(sssDeduction));
-        pagibigTextField.setText(formatCurrency(pagIbigDeduction));
+        pagibigTextField.setText(formatCurrency(pagibigDeduction));
         incomeTaxTextField.setText(formatCurrency(incomeTax));
         totalDeducTextField.setText(formatCurrency(totalDeductions));
     }
+    
+    private BigDecimal calculateTotalDeductions(BigDecimal totalSalary) {
+        BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
+        BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
+        BigDecimal pagibigDeduction = calculatePagIbigDeduction(totalSalary);
+        BigDecimal incomeTax = calculateIncomeTax(totalSalary);
 
-    private BigDecimal calculateNetSalary(BigDecimal totalSalary, BigDecimal unpaidLeaveCost, boolean isDecember) {
-       // Calculate deductions
-       BigDecimal philHealthDeduction = calculatePhilHealthDeduction(totalSalary);
-       BigDecimal sssDeduction = calculateSSSDeduction(totalSalary);
-       BigDecimal pagIbigDeduction = calculatePagIbigDeduction(totalSalary);
-       BigDecimal incomeTax = calculateIncomeTax(totalSalary);
+        // Sum up all deductions
+        return philHealthDeduction.add(sssDeduction).add(pagibigDeduction).add(incomeTax).setScale(4, RoundingMode.HALF_UP);
+    }
 
-       // Combine deductions
-       BigDecimal totalDeductions = philHealthDeduction
-               .add(sssDeduction)
-               .add(pagIbigDeduction)
-               .add(incomeTax);
+    private BigDecimal calculateNetSalary(BigDecimal totalSalary, BigDecimal unpaidLeaveCost, BigDecimal unusedLeaveCost, boolean isDecember) {
+        // Calculate total deductions
+        BigDecimal totalDeductions = calculateTotalDeductions(totalSalary); // Get base deductions without unpaid leave
 
-       // Include unpaid leave cost in December deductions
-       if (isDecember) {
-           totalDeductions = totalDeductions.add(unpaidLeaveCost);
-       }
+        // If it's December, include the unpaid leave cost in the total deductions
+        if (isDecember) {
+            totalDeductions = totalDeductions.add(unpaidLeaveCost).setScale(4, RoundingMode.HALF_UP);
+        }
 
-       // Update UI components with formatted deduction values
-       updateDeductionUI(philHealthDeduction, sssDeduction, pagIbigDeduction, incomeTax, totalDeductions);
+        // Calculate net salary
+        BigDecimal netSalary = totalSalary.subtract(totalDeductions).add(unusedLeaveCost).setScale(4, RoundingMode.HALF_UP); // Add unused leave cost
 
-       // Calculate net salary
-       BigDecimal netSalary = totalSalary.subtract(totalDeductions);
+        // Validate net salary
+        if (netSalary.compareTo(BigDecimal.ZERO) < 0) {
+            System.err.println("Error: Negative net salary calculated!");
+        }
 
-       // Optional: Validate netSalary
-       if (netSalary.compareTo(BigDecimal.ZERO) < 0) {
-           // Log error or handle negative net salary case
-           System.err.println("Error: Negative net salary calculated!");
-       }
-
-       return netSalary;
-   }
-
+        return netSalary;
+    }
+    
     private BigDecimal calculatePhilHealthDeduction(BigDecimal totalSalary) {
-        return totalSalary.multiply(BigDecimal.valueOf(0.01)).setScale(2, RoundingMode.HALF_UP);
+        return totalSalary.multiply(BigDecimal.valueOf(0.01)).setScale(4, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateSSSDeduction(BigDecimal totalSalary) {
-        return totalSalary.multiply(BigDecimal.valueOf(0.02)).setScale(2, RoundingMode.HALF_UP);
+        return totalSalary.multiply(BigDecimal.valueOf(0.02)).setScale(4, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculatePagIbigDeduction(BigDecimal totalSalary) {
         return totalSalary.compareTo(BigDecimal.valueOf(200.0)) <= 0
-            ? totalSalary.multiply(BigDecimal.valueOf(0.01)).setScale(2, RoundingMode.HALF_UP)
-            : totalSalary.multiply(BigDecimal.valueOf(0.02)).setScale(2, RoundingMode.HALF_UP);
+            ? totalSalary.multiply(BigDecimal.valueOf(0.01)).setScale(4, RoundingMode.HALF_UP)
+            : totalSalary.multiply(BigDecimal.valueOf(0.02)).setScale(4, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateIncomeTax(BigDecimal salary) {
@@ -2082,24 +2069,25 @@ public class MainEmployee extends javax.swing.JFrame implements UserUpdateListen
         else if (salary.compareTo(BigDecimal.valueOf(400000.00)) <= 0)
             return (salary.subtract(BigDecimal.valueOf(250000.00))).multiply(BigDecimal.valueOf(0.15)).setScale(4, RoundingMode.HALF_UP);
         else if (salary.compareTo(BigDecimal.valueOf(800000.00)) <= 0)
-            return BigDecimal.valueOf(22500).add((salary.subtract(BigDecimal.valueOf(400000.00))).multiply(BigDecimal.valueOf(0.20))).setScale(2, RoundingMode.HALF_UP);
+            return BigDecimal.valueOf(22500).add((salary.subtract(BigDecimal.valueOf(400000.00))).multiply(BigDecimal.valueOf(0.20))).setScale(4, RoundingMode.HALF_UP);
         else if (salary.compareTo(BigDecimal.valueOf(2000000.00)) <= 0)
-            return BigDecimal.valueOf(102500).add((salary.subtract(BigDecimal.valueOf(800000.00))).multiply(BigDecimal.valueOf(0.25))).setScale(2, RoundingMode.HALF_UP);
+            return BigDecimal.valueOf(102500).add((salary.subtract(BigDecimal.valueOf(800000.00))).multiply(BigDecimal.valueOf(0.25))).setScale(4, RoundingMode.HALF_UP);
         else if (salary.compareTo(BigDecimal.valueOf(8000000.00)) <= 0)
-            return BigDecimal.valueOf(402500).add((salary.subtract(BigDecimal.valueOf(2000000.00))).multiply(BigDecimal.valueOf(0.30))).setScale(2, RoundingMode.HALF_UP);
+            return BigDecimal.valueOf(402500).add((salary.subtract(BigDecimal.valueOf(2000000.00))).multiply(BigDecimal.valueOf(0.30))).setScale(4, RoundingMode.HALF_UP);
         else
-            return BigDecimal.valueOf(1802500).add((salary.subtract(BigDecimal.valueOf(8000000.00))).multiply(BigDecimal.valueOf(0.35))).setScale(2, RoundingMode.HALF_UP);
+            return BigDecimal.valueOf(1802500).add((salary.subtract(BigDecimal.valueOf(8000000.00))).multiply(BigDecimal.valueOf(0.35))).setScale(4, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateUnpaidLeave(BigDecimal ratePerHour, int totalAbsences) {
-        final BigDecimal HOURS_PER_DAY = BigDecimal.valueOf(8.0);
-        // Multiply rate per hour by hours worked per day and by the total number of absences
-        BigDecimal totalUnpaidLeaveCost = ratePerHour.multiply(HOURS_PER_DAY)
+        final BigDecimal WORK_HOURS_PER_DAY = BigDecimal.valueOf(7.0); // 8 hours minus 1-hour lunch break
+
+        // Calculate unpaid leave cost by considering only 7 work hours per day
+        BigDecimal totalUnpaidLeaveCost = ratePerHour.multiply(WORK_HOURS_PER_DAY)
                                                      .multiply(BigDecimal.valueOf(totalAbsences))
-                                                     .setScale(2, RoundingMode.HALF_UP);
+                                                     .setScale(4, RoundingMode.HALF_UP);
         return totalUnpaidLeaveCost;
     }
-    
+
     private String formatCurrency(BigDecimal amount) {
         return NumberFormat.getCurrencyInstance(new Locale("en", "PH")).format(amount.setScale(4, RoundingMode.HALF_UP));
     }
