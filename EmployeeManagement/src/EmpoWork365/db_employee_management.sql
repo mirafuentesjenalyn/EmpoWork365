@@ -326,12 +326,12 @@ CREATE TABLE `tbl_employees` (
 --
 
 INSERT INTO `tbl_employees` (`fld_employee_id`, `fld_first_name`, `fld_last_name`, `fld_email`, `fld_password`, `fld_gender`, `fld_department_id`, `fld_role_id`, `fld_job_title_id`, `fld_date_of_employment`, `fld_image_path`) VALUES
-(1, 'Chairman', 'Netero', 'admin@gmail.com', '123', 'Male', 1, 1, 1, '2024-10-12', 'C:\\Users\\jenal\\Documents\\Eduardo.jpg'),
-(2, 'Jenalyn', 'Mirafuentes', 'jm@gmail.com', '123', 'Female', 1, 4, 1, '2024-10-12', 'C:\\Users\\jenal\\Documents\\NetBeansProjects\\EmpoWork365\\EmployeeManagement\\src\\Users\\Jen.jpg'),
-(3, 'Jessica', 'Alvarez', 'Jessica@gmail.com', '123', 'Female', 1, 4, 9, '2024-10-12', 'src/Users/employee_1730115998413.jpg'),
-(4, 'Charlie', 'Puth', 'Charlie@gmail.com', '123', 'Male', 1, 4, 6, '2024-10-12', 'C:\\Users\\jenal\\Documents\\Charlie.jpg'),
-(5, 'Diana', 'Garcia', 'Diana@gmail.com', '1234', 'Female', 3, 3, 22, '2024-10-12', 'C:\\Users\\jenal\\Documents\\Diana.jpg'),
-(6, 'Eduardo', 'Dela Cruz', 'Eduardo@gmail.com', '123', 'Male', 5, 3, 19, '2024-10-12', 'C:\\Users\\jenal\\Documents\\Eduardo.jpg');
+(1, 'Chairman', 'Netero', 'admin@gmail.com', '123', 'Male', 1, 1, 1, '2024-10-12', 'src/Users/Eduardo.jpg'),
+(2, 'Jenalyn', 'Mirafuentes', 'jm@gmail.com', '123', 'Female', 1, 4, 1, '2024-10-12', 'src/Users/UsersJen.jpg'),
+(3, 'Jessica', 'Alvarez', 'Jessica@gmail.com', '123', 'Female', 1, 4, 9, '2024-10-12', 'src/Users/Jessica.jpg'),
+(4, 'Charlie', 'Puth', 'Charlie@gmail.com', '123', 'Male', 1, 4, 6, '2024-10-12', 'src/Users/Charlie.jpg'),
+(5, 'Diana', 'Garcia', 'Diana@gmail.com', '1234', 'Female', 3, 3, 22, '2024-10-12', 'src/Users/Diana.jpg'),
+(6, 'Eduardo', 'Dela Cruz', 'Eduardo@gmail.com', '123', 'Male', 5, 3, 19, '2024-10-12', 'src/Users/Eduardo.jpg');
 
 -- --------------------------------------------------------
 
