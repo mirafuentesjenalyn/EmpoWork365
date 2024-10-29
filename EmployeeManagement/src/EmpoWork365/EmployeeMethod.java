@@ -126,47 +126,63 @@ public class EmployeeMethod {
 
 
     public boolean deleteEmployeeById(int employeeId) {
-        // SQL to delete related attendance records
+        String deleteRejectedLeaveSQL = "DELETE FROM tbl_rejected_leave_applications WHERE fld_employee_id = ?";
+        String deleteLeaveApplicationSQL = "DELETE FROM tbl_leave_applications WHERE fld_employee_id = ?";
+        String deleteLeaveBalanceSQL = "DELETE FROM tbl_leave_balances WHERE fld_employee_id = ?";
         String deleteAttendanceSQL = "DELETE FROM tbl_attendance WHERE fld_employee_id = ?";
-        // SQL to delete the employee record
         String deleteEmployeeSQL = "DELETE FROM tbl_employees WHERE fld_employee_id = ?";
 
         try {
             // Start a transaction
             connection.setAutoCommit(false);
 
-            // First, delete related attendance records
+            // Delete records in `tbl_rejected_leave_applications` first
+            try (PreparedStatement pstmtRejectedLeave = connection.prepareStatement(deleteRejectedLeaveSQL)) {
+                pstmtRejectedLeave.setInt(1, employeeId);
+                pstmtRejectedLeave.executeUpdate();
+            }
+
+            // Then delete records in `tbl_leave_applications`
+            try (PreparedStatement pstmtLeaveApplication = connection.prepareStatement(deleteLeaveApplicationSQL)) {
+                pstmtLeaveApplication.setInt(1, employeeId);
+                pstmtLeaveApplication.executeUpdate();
+            }
+
+            // Delete records in `tbl_leave_balances`
+            try (PreparedStatement pstmtLeaveBalances = connection.prepareStatement(deleteLeaveBalanceSQL)) {
+                pstmtLeaveBalances.setInt(1, employeeId);
+                pstmtLeaveBalances.executeUpdate();
+            }
+
+            // Delete records in `tbl_attendance`
             try (PreparedStatement pstmtAttendance = connection.prepareStatement(deleteAttendanceSQL)) {
                 pstmtAttendance.setInt(1, employeeId);
                 pstmtAttendance.executeUpdate();
             }
 
-            // Now, delete the employee
+            // Finally, delete the employee record in `tbl_employees`
             try (PreparedStatement pstmtEmployee = connection.prepareStatement(deleteEmployeeSQL)) {
                 pstmtEmployee.setInt(1, employeeId);
                 int rowsAffected = pstmtEmployee.executeUpdate();
 
-                // Commit the transaction if the employee was deleted
                 if (rowsAffected > 0) {
                     connection.commit();
-                    return true; 
+                    return true;
                 } else {
                     connection.rollback();
-                    return false; 
+                    return false;
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); 
+            e.printStackTrace();
             try {
-                // Roll back the transaction in case of error
                 connection.rollback();
             } catch (SQLException rollbackEx) {
                 rollbackEx.printStackTrace();
             }
-            return false; 
+            return false;
         } finally {
             try {
-                // Reset auto-commit to true for future transactions
                 connection.setAutoCommit(true);
             } catch (SQLException resetEx) {
                 resetEx.printStackTrace();
