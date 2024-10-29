@@ -401,7 +401,7 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
     }
 
        
-    private void setUserDetails(UserAuthenticate user) {
+    private void setUserDetails(UserAuthenticate loggedInUser) {
         if (loggedInUser != null) {
             fullName.setText(loggedInUser.getFirstname().toUpperCase() + " " + loggedInUser.getLastname().toUpperCase());
             userWelcome.setText(loggedInUser.getFirstname() + "!");
@@ -1680,15 +1680,32 @@ public final class MainAdmin extends javax.swing.JFrame implements UserUpdateLis
             Employee employees = employeeMethod.getEmployeeIdById(employeeId);
 
             if (employees != null) {
-                String rateText = rateHourTextField.getText().replace(" hrs", "").trim(); // Remove 'hrs' and trim spaces
-                double newRatePerHour = Double.parseDouble(rateText);  
+                String rateText = rateHourTextField.getText().replace(" hrs", "").trim();
+                BigDecimal newRatePerHour = new BigDecimal(rateText);
+
+                // Check if the new rate is the same as the current one
+                if (employees.getRatePerHour().compareTo(newRatePerHour) == 0) {
+                    JOptionPane.showMessageDialog(this, "The rate per hour is already set to this value.", "No Change", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
 
                 String jobTitle = employees.getJobtitle(); 
-                employeeMethod.updateRatePerHourInDatabase(jobTitle, newRatePerHour);
+                employeeMethod.updateRatePerHourInDatabase(jobTitle, newRatePerHour.doubleValue()); // Update the rate
 
                 JOptionPane.showMessageDialog(this, "Rate updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                // Fetch updated employee details
                 Employee updatedEmployee = employeeMethod.getEmployeeIdById(employeeId);
-                updateEmployeeDetails(updatedEmployee);
+                updateEmployeeDetails(updatedEmployee); // Update UI with new employee data
+
+                // Recalculate and display the new details for the currently selected month and year
+                int selectedMonth = monthChooser.getMonth() + 1; // Convert to 1-based month
+                int selectedYear = (int) yearSpinner.getValue();
+                updateEmployeeDetailsForSelectedMonth(selectedMonth, selectedYear); // Recalculate for selected month/year
+
+                // Refresh the panel
+                jPanel9.revalidate();  
+                jPanel9.repaint();     
             } else {
                 JOptionPane.showMessageDialog(this, "Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
             }
